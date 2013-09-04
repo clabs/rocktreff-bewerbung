@@ -1,0 +1,37 @@
+{
+	"curly": false,
+	"eqeqeq": true,
+	"immed": true,
+	"latedef": true,
+	"newcap": true,
+	"noarg": true,
+	"undef": true,
+	"boss": true,
+	"eqnull": true,
+	"quotmark": "single",
+	"node": true,
+	"browser": true,
+	"strict": true,
+	"asi": true,
+	"es5": true,
+	"plusplus": true,
+	"sub": true,
+	"smarttabs": true,
+
+	"globals": {
+		"window": true,
+		"document": true,
+		"console": true,
+		"setTimeout": true
+	},
+
+	"predef": [
+		"Ember",
+		"require",
+		"define",
+		"requirejs",
+		"jQuery",
+		"$",
+		"moment"
+	]
+}

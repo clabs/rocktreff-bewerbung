@@ -1,0 +1,144 @@
+<div class="container">
+	<div class="row">
+		<div class="col-md-4">
+			<h3>
+				<span class="icon-stack">
+					<i class="icon-circle-blank icon-stack-base"></i>
+					<i class="icon-light">1</i>
+				</span>
+				Band
+			</h3>
+			<div class="input-group">
+				<span class="input-group-addon"><i class="icon-group"></i></span>
+				{{input placeholder="Name der Band"}}
+			</div>
+			<p>Suspendisse lectus leo, consectetur in tempor sit amet, placerat quis neque. Etiam luctus porttitor lorem, sed suscipit est rutrum non. Curabitur lobortis nisl a enim congue semper.</p>
+			<div class="btn-group">
+				<button type="button" class="btn btn-default"><i class="icon-star-empty"></i> Schüler</button>
+				<button type="button" class="btn btn-default"><i class="icon-star-half-full"></i> Amateur</button>
+				<button type="button" class="btn btn-default"><i class="icon-star"></i> Semipro</button>
+			</div>
+			<div class="checkbox">
+				<label>
+					{{#input type="checkbox"}}Bewerbung via Management{{/input}}
+				</label>
+			</div>
+		</div>
+		<div class="col-md-8">
+			<h3>
+				<span class="icon-stack">
+					<i class="icon-circle-blank icon-stack-base"></i>
+					<i class="icon-light">2</i>
+				</span>
+				Pressefoto
+			</h3>
+
+			<div class="row">
+				<div class="col-md-6">
+					<img src="http://placehold.it/350x150" alt="..." class="img-rounded">
+				</div>
+				<div class="col-md-6">
+					<p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In euismod ultrices facilisis. Vestibulum porta sapien adipiscing augue congue id pretium lectus molestie. Proin quis dictum nisl.</p>
+					<p><a href="#" class="btn btn-primary">Add</a></p>
+				</div>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-8">
+			<h3>
+				<span class="icon-stack">
+					<i class="icon-circle-blank icon-stack-base"></i>
+					<i class="icon-light">3</i>
+				</span>
+				Medien
+			</h3>
+			<p>
+				Sed non tortor sodales quam auctor elementum. Donec hendrerit nunc eget elit pharetra pulvinar. Suspendisse id tempus tortor. Aenean luctus, elit commodo laoreet commodo, justo nisi consequat massa, sed vulputate quam urna quis eros. Donec vel.
+			</p>
+		</div>
+		<div class="col-md-4">
+			<h3>Videos</h3>
+			<div class="input-group">
+				<span class="input-group-addon"><i class="icon-youtube"></i></span>
+				{{input placeholder="URL"}}
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<h3>
+				<span class="icon-stack">
+					<i class="icon-circle-blank icon-stack-base"></i>
+					<i class="icon-light">4</i>
+				</span>
+				Dokumente
+			</h3>
+			<p>
+				Vivamus fermentum semper porta. Nunc diam velit, adipiscing ut tristique vitae, sagittis vel odio. Maecenas convallis ullamcorper ultricies. Curabitur ornare, ligula semper consectetur sagittis, nisi diam iaculis velit, id fringilla sem nunc vel mi. Nam dictum, odio nec pretium volutpat, arcu ante placerat erat, non tristique elit urna et turpis. Quisque mi metus, ornare sit amet fermentum et, tincidunt et orci. Fusce eget orci a orci congue vestibulum. Ut dolor diam, elementum et vestibulum eu, porttitor vel elit.
+			<p>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-8">
+			<h3>
+				<span class="icon-stack">
+					<i class="icon-circle-blank icon-stack-base"></i>
+					<i class="icon-light">5</i>
+				</span>
+				Kontakt
+			</h3>
+
+			<div class="row">
+				<div class="col-md-6">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="icon-user"></i></span>
+						{{input placeholder="Ansprechpartner"}}
+					</div>
+					&nbsp;
+					<div class="input-group">
+						<span class="input-group-addon"><i class="icon-phone"></i></span>
+						{{input placeholder="+49 xxx xxxxxxxx"}}
+					</div>
+					&nbsp;
+					<div class="input-group">
+						<span class="input-group-addon"><i class="icon-envelope"></i></span>
+						{{input type="email" placeholder="foo@bar"}}
+					</div>
+				</div>
+				<div class="col-md-6">
+					<div class="input-group">
+						<span class="input-group-addon"><i class="icon-home"></i></span>
+						{{input placeholder="URL"}}
+					</div>
+					&nbsp;
+					<div class="input-group">
+						<span class="input-group-addon"><i class="icon-facebook"></i></span>
+						{{input placeholder="URL"}}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<h3>
+				<span class="icon-stack">
+					<i class="icon-circle-blank icon-stack-base"></i>
+					<i class="icon-light">6</i>
+				</span>
+				Anschreiben
+			</h3>
+			<div class="input-group">
+				<span class="input-group-addon"><i class="icon-pencil"></i></span>
+				{{view Ember.TextArea value="Anschreiben"}}
+			</div>
+		</div>
+	</div>
+
+</div>

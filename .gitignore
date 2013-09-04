@@ -1,0 +1,7 @@
+dist
+.DS_Store
+.sass-cache
+.tmp
+node_modules
+bewerbung.sublime-project
+client/js/vendor

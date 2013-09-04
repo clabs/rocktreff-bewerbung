@@ -1,0 +1,62 @@
+// basic colors
+@gelb:       #ffef03;
+
+
+// BOOTSTRAP Kram
+@import "bootstrap.less";
+@import "../js/vendor/font-awesome/less/font-awesome.less";
+@FontAwesomePath:    "../js/vendor/font-awesome/font";
+@brand-primary:                  darken( @gelb, 10% );
+@input-bg:                       #444;
+@input-color:                    #ddd;
+@input-border-focus:             @gelb;
+@input-group-addon-bg:           @gelb;
+@input-group-addon-border-color: @gelb;
+@headings-color:                 #f00;
+
+
+.input-group-addon {
+	color: black;
+}
+
+.icon-light {
+	color: inherit;
+}
+
+
+
+body {
+	color: #999;
+	background-image: url( "../images/bgtextur.png" );
+	background-color: rgb(20, 20, 20);
+	margin-top: 51px;
+}
+
+.navbar-brand {
+	padding-left: 163px;
+	&:before {
+		position: absolute;
+		top: 0px;
+		margin-left: -155px;
+		content: ' ';
+		background-image: url( "../images/rt.png" );
+		background-size: 100% auto;
+		background-repeat: no-repeat;
+		width: 150px;
+		height: 60px;
+	}
+}
+
+.jumbotron {
+	text-align: center;
+	background-color: transparent;
+	background-image: url( "../images/jumbo1.jpg" );
+	background-position-y: 20%;
+	background-size: 100% auto;
+	height: 400px;
+	color: white;
+	text-shadow: 1px 1px 3px #000;
+}
+
+
+textarea{overflow:scroll; max-height:300px}
