@@ -27,7 +27,8 @@ requirejs.config({
 		restless: 'vendor/ember-restless/dist/ember-restless+extras',
 		templates: 'templates/compiled',
 		wysiwyg: 'vendor/bootstrap-wysiwyg/bootstrap-wysiwyg',
-		'jquery-hotkeys': 'vendor/jquery.hotkeys/jquery.hotkeys'
+		'jquery-hotkeys': 'vendor/jquery.hotkeys/jquery.hotkeys',
+		socketio: 'vendor/socket.io-client/dist/socket.io'
 	},
 	shim:{
 		ember: {
@@ -57,7 +58,7 @@ define( 'bb', [
 ], function ( Ember ) {
 	var BB = Ember.Application.create({
 		// namespaces
-		Widgets: Ember.Namespace.create( { } )
+		Widgets: Ember.Namespace.create()
 	})
 	// defer initialization until all modules are loaded
 	BB.deferReadiness()
@@ -80,8 +81,10 @@ require([
 	// models
 
 	// helper
+	'helpers/handlebar_helpers',
 
 	// controllers
+	'controllers/new',
 
 	// views
 	'views/application',
