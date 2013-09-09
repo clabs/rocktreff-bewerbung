@@ -16,15 +16,17 @@
 
 'use strict';
 
-var lrSnippet = require( 'grunt-contrib-livereload/lib/utils' ).livereloadSnippet
-var mountFolder = function ( connect, dir ) {
-	return connect.static( require( 'path' ).resolve( dir ) )
-}
 
 module.exports = function( grunt ) {
 
 	// load all grunt tasks
 	require( 'matchdep' ).filterDev( 'grunt-*' ).forEach( grunt.loadNpmTasks )
+
+	var path = require( 'path' )
+	var livereload = require( 'grunt-contrib-livereload/lib/utils' ).livereloadSnippet
+	var mount = function ( connect, dir ) {
+		return connect.static( path.resolve( dir ) )
+	}
 
 	//
 	// Grunt configuration:
@@ -33,10 +35,14 @@ module.exports = function( grunt ) {
 	//
 	grunt.initConfig({
 
+
 		// configurable paths
 		bb: {
 			client: 'client',
-			dist: 'dist'
+			server: 'server',
+			dist: 'dist',
+			port: 1337,
+			apiport: 1338
 		},
 
 		less: {
@@ -49,49 +55,48 @@ module.exports = function( grunt ) {
 				files: {
 					'.tmp/js/templates/compiled.js': [ '<%= bb.client %>/js/templates/**/*.hbs' ]
 				}
-			},
-			dist: {
-				files: {
-					'<%= bb.dist %>/js/templates/compiled.js': [ '<%= bb.client %>/js/templates/**/*.hbs' ]
-				}
+			}
+		},
+
+		express: {
+			options: {
+				port: '<%= bb.apiport %>',
+				server: './<%= bb.server %>/server.js'
 			}
 		},
 
 		watch: {
+			fronend_assets: {
+				files: [
+					'<%= bb.client %>/*.html',
+					'{.tmp,<%= bb.client %>}/js/**/*.js',
+					'!{.tmp,<%= bb.client %>}/js/vendor/**/*.js',
+					'<%= bb.client %>/images/**/*.{png,jpg,jpeg,gif,webp}'
+				],
+				tasks: [ 'livereload' ]
+			},
 			less: {
 				files: [ '<%= bb.client %>/styles/{,*/}*.{scss,less}' ],
 				tasks: [ 'less' ]
 			},
-			livereload: {
-				files: [
-					'<%= bb.client %>/*.html',
-					'{.tmp,<%= bb.client %>}/styles/**/*.css',
-					'{.tmp,<%= bb.client %>}/js/**/*.js',
-					'!{.tmp,<%= bb.client %>}/js/vendor/**/*.js',
-					'<%= bb.client %>/images/**/*.{png,jpg,jpeg,webp}'
-				],
-				tasks: [ 'livereload' ]
-			},
 			handlebars: {
-				files: [
-					'<%= bb.client %>/js/**/*.hbs'
-				],
+				files: [ '<%= bb.client %>/js/**/*.hbs' ],
 				tasks: [ 'handlebars' ]
 			}
 		},
 
 		connect: {
 			options: {
-				port: 1337,
+				port: '<%= bb.port %>',
 				hostname: '0.0.0.0'
 			},
 			dev: {
 				options: {
 					middleware: function ( connect ) {
 						return [
-								lrSnippet,
-								mountFolder( connect, '.tmp' ),
-								mountFolder( connect, 'client' )
+								livereload,
+								mount( connect, '.tmp' ),
+								mount( connect, 'client' )
 							]
 						}
 				}
@@ -100,8 +105,8 @@ module.exports = function( grunt ) {
 				options: {
 					middleware: function ( connect ) {
 						return [
-							mountFolder( connect, '.tmp' ),
-							mountFolder( connect, 'test/<%= bb.client %>' )
+							mount( connect, '.tmp' ),
+							mount( connect, 'test/<%= bb.client %>' )
 						]
 					}
 				}
@@ -110,7 +115,7 @@ module.exports = function( grunt ) {
 				options: {
 					middleware: function ( connect ) {
 						return [
-							mountFolder( connect, 'dist' )
+							mount( connect, 'dist' )
 						]
 					}
 				}
@@ -125,7 +130,7 @@ module.exports = function( grunt ) {
 
 		clean: {
 			dist: [ '.tmp', '<%= bb.dist %>/*' ],
-			dev: '.tmp'
+			frontend: '.tmp'
 		},
 
 		jshint: {
@@ -157,11 +162,14 @@ module.exports = function( grunt ) {
 			dist: {
 				options: {
 					baseUrl: 'client/js',
-					optimize: 'none',
 					preserveLicenseComments: true,
 					useStrict: true,
 					wrap: true,
-					dir: '<%= bb.dist %>/js'
+					dir: '<%= bb.dist %>/js',
+					optimize: 'uglify2',
+					// use almond in production
+					// https://github.com/asciidisco/grunt-requirejs/blob/master/docs/almondIntegration.md
+					almond: true
 				}
 			}
 		},
@@ -259,30 +267,39 @@ module.exports = function( grunt ) {
 		})
 	})
 
-
-
+	/**
+	 * Yet another simple task runner for an express app.
+	 *
+	 * @author Robert Pagel
+	 */
+	grunt.registerTask( 'express', 'starting up express web server', function () {
+		var done = this.async()
+		var options = this.options({
+			port: 1337,
+			server: './'
+		})
+		grunt.log.writeln( 'Starting up express web server on port '+options.port+'.')
+		require( options.server )
+			.listen( options.port )
+			.on( 'close', done )
+		done()
+	})
 
 
 	grunt.renameTask( 'regarde', 'watch' )
 
-	grunt.registerTask( 'dev', function ( target ) {
-		if ( target === 'dist' )
-			return grunt.task.run([
-				'build',
-				'open',
-				'connect:dist:keepalive'
-				])
-		else
-			return grunt.task.run([
-				'clean:dev',
-				'less',
-				'handlebars',
-				'livereload-start',
-				'connect:dev',
-				'open:frontend',
-				'watch'
-			])
-	})
+
+	grunt.registerTask( 'server', [
+		'express',
+		'clean:frontend',
+		'less',
+		'handlebars',
+		'livereload-start',
+		'connect:dev',
+		'open:frontend',
+		'watch'
+	])
+
 
 	grunt.registerTask( 'test', [
 		'clean:dev',

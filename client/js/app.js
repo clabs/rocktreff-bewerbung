@@ -15,7 +15,8 @@
 define([
 
 	'bb',
-	'store/store'
+	'store/store',
+	'store/adapter'
 
 ], function ( BB ) {
 
@@ -25,9 +26,9 @@ define([
 
 		// a basic store
 		client: RL.Client.create({
-			adapter: RL.RESTAdapter.create({
-				url: 'http://api.myservice.com',
-				namespace: 'v1'
+			adapter: BB.SocketAdapter.create({
+				host: 'http://localhost',
+				port: 1338
 			})
 		}),
 
