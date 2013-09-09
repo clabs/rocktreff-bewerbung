@@ -9,14 +9,14 @@
 				Band
 			</h3>
 			<div class="input-group">
-				<span class="input-group-addon"><i class="icon-group"></i></span>
+				<span class="input-group-addon">{{icon "group"}}</span>
 				{{input placeholder="Name der Band"}}
 			</div>
 			<p>Suspendisse lectus leo, consectetur in tempor sit amet, placerat quis neque. Etiam luctus porttitor lorem, sed suscipit est rutrum non. Curabitur lobortis nisl a enim congue semper.</p>
 			<div class="btn-group">
-				<button type="button" class="btn btn-default"><i class="icon-star-empty"></i> Schüler</button>
-				<button type="button" class="btn btn-default"><i class="icon-star-half-full"></i> Amateur</button>
-				<button type="button" class="btn btn-default"><i class="icon-star"></i> Semipro</button>
+				<button type="button" class="btn btn-default">{{icon "star-empty"}} Schüler</button>
+				<button type="button" class="btn btn-default">{{icon "star-half-full"}} Amateur</button>
+				<button type="button" class="btn btn-default">{{icon "star"}} Semipro</button>
 			</div>
 			<div class="checkbox">
 				<label>
@@ -39,7 +39,7 @@
 				</div>
 				<div class="col-md-6">
 					<p>Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In euismod ultrices facilisis. Vestibulum porta sapien adipiscing augue congue id pretium lectus molestie. Proin quis dictum nisl.</p>
-					<p><a href="#" class="btn btn-primary">Add</a></p>
+					<p><a href="#" class="btn btn-primary"><i class="icon-cloud-upload icon-2x"></i></a></p>
 				</div>
 			</div>
 
@@ -61,9 +61,9 @@
 		</div>
 		<div class="col-md-4">
 			<h3>Videos</h3>
-			<div class="input-group">
-				<span class="input-group-addon"><i class="icon-youtube"></i></span>
-				{{input placeholder="URL"}}
+			<div {{bind-attr class="isYoutubeValid:has-success:has-error :input-group"}}>
+				<span class="input-group-addon">{{icon "youtube"}}</span>
+				{{input placeholder="URL" valueBinding="content.youtube"}}
 			</div>
 		</div>
 	</div>
@@ -96,28 +96,28 @@
 			<div class="row">
 				<div class="col-md-6">
 					<div class="input-group">
-						<span class="input-group-addon"><i class="icon-user"></i></span>
+						<span class="input-group-addon">{{icon "user"}}</span>
 						{{input placeholder="Ansprechpartner"}}
 					</div>
 					&nbsp;
 					<div class="input-group">
-						<span class="input-group-addon"><i class="icon-phone"></i></span>
+						<span class="input-group-addon">{{icon "phone"}}</span>
 						{{input placeholder="+49 xxx xxxxxxxx"}}
 					</div>
 					&nbsp;
 					<div class="input-group">
-						<span class="input-group-addon"><i class="icon-envelope"></i></span>
+						<span class="input-group-addon">{{icon "envelope"}}</span>
 						{{input type="email" placeholder="foo@bar"}}
 					</div>
 				</div>
 				<div class="col-md-6">
 					<div class="input-group">
-						<span class="input-group-addon"><i class="icon-home"></i></span>
+						<span class="input-group-addon">{{icon "home"}}</span>
 						{{input placeholder="URL"}}
 					</div>
 					&nbsp;
 					<div class="input-group">
-						<span class="input-group-addon"><i class="icon-facebook"></i></span>
+						<span class="input-group-addon">{{icon "facebook"}}</span>
 						{{input placeholder="URL"}}
 					</div>
 				</div>
@@ -135,7 +135,7 @@
 				Anschreiben
 			</h3>
 			<div class="input-group">
-				<span class="input-group-addon"><i class="icon-pencil"></i></span>
+				<span class="input-group-addon">{{icon "pencil"}}</span>
 				{{view Ember.TextArea value="Anschreiben"}}
 			</div>
 		</div>
