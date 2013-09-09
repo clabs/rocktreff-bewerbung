@@ -51,13 +51,16 @@ module.exports = function( grunt ) {
 				}
 			},
 			dist: {
+				files: {
+					'<%= bb.dist %>/js/templates/compiled.js': [ '<%= bb.client %>/js/templates/**/*.hbs' ]
+				}
 			}
 		},
 
 		watch: {
 			less: {
-				files: ['<%= bb.client %>/styles/{,*/}*.{scss,less}'],
-				tasks: ['less']
+				files: [ '<%= bb.client %>/styles/{,*/}*.{scss,less}' ],
+				tasks: [ 'less' ]
 			},
 			livereload: {
 				files: [
@@ -80,9 +83,9 @@ module.exports = function( grunt ) {
 		connect: {
 			options: {
 				port: 1337,
-				hostname: 'localhost'
+				hostname: '0.0.0.0'
 			},
-			livereload: {
+			dev: {
 				options: {
 					middleware: function ( connect ) {
 						return [
@@ -115,14 +118,14 @@ module.exports = function( grunt ) {
 		},
 
 		open: {
-			server: {
+			frontend: {
 				path: 'http://localhost:<%= connect.options.port %>'
 			}
 		},
 
 		clean: {
 			dist: [ '.tmp', '<%= bb.dist %>/*' ],
-			server: '.tmp'
+			dev: '.tmp'
 		},
 
 		jshint: {
@@ -152,21 +155,13 @@ module.exports = function( grunt ) {
 
 		requirejs: {
 			dist: {
-				// Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
 				options: {
-					// `name` and `out` is set by grunt-usemin
 					baseUrl: 'client/js',
 					optimize: 'none',
-					// TODO: Figure out how to make sourcemaps work with grunt-usemin
-					// https://github.com/yeoman/grunt-usemin/issues/30
-					//generateSourceMaps: true,
-					// required to support SourceMaps
-					// http://requirejs.org/docs/errors.html#sourcemapcomments
-					preserveLicenseComments: false,
+					preserveLicenseComments: true,
 					useStrict: true,
 					wrap: true,
 					dir: '<%= bb.dist %>/js'
-					//uglify2: {} // https://github.com/mishoo/UglifyJS2
 				}
 			}
 		},
@@ -183,17 +178,6 @@ module.exports = function( grunt ) {
 			css: ['<%= bb.dist %>/styles/{,*/}*.css'],
 			options: {
 				dirs: ['<%= bb.dist %>']
-			}
-		},
-
-		imagemin: {
-			dist: {
-				files: [{
-					expand: true,
-					cwd: '<%= bb.client %>/images',
-					src: '{,*/}*.{png,jpg,jpeg}',
-					dest: '<%= bb.dist %>/images'
-				}]
 			}
 		},
 
@@ -244,19 +228,9 @@ module.exports = function( grunt ) {
 					]
 				}]
 			}
-		},
-
-		bower: {
-			all: {
-				rjsConfig: '<%= bb.client %>/js/bb.js'
-			}
 		}
 
 	})
-
-
-
-
 
 
 
@@ -285,39 +259,45 @@ module.exports = function( grunt ) {
 		})
 	})
 
-	grunt.renameTask('regarde', 'watch')
 
-	grunt.registerTask('server', function (target) {
-		if (target === 'dist') {
-			return grunt.task.run(['build', 'open', 'connect:dist:keepalive'])
-		}
 
-		grunt.task.run([
-			'clean:server',
-			'less',
-			'handlebars',
-			'livereload-start',
-			'connect:livereload',
-			'open',
-			'watch'
-		])
+
+
+	grunt.renameTask( 'regarde', 'watch' )
+
+	grunt.registerTask( 'dev', function ( target ) {
+		if ( target === 'dist' )
+			return grunt.task.run([
+				'build',
+				'open',
+				'connect:dist:keepalive'
+				])
+		else
+			return grunt.task.run([
+				'clean:dev',
+				'less',
+				'handlebars',
+				'livereload-start',
+				'connect:dev',
+				'open:frontend',
+				'watch'
+			])
 	})
 
-	grunt.registerTask('test', [
-		'clean:server',
+	grunt.registerTask( 'test', [
+		'clean:dev',
 		'less',
 		'handlebars',
 		'connect:test',
 		'mocha'
 	])
 
-	grunt.registerTask('build', [
+	grunt.registerTask( 'build', [
 		'clean:dist',
 		'less:dist',
 		'handlebars:dist',
 		'useminPrepare',
 		'requirejs',
-		'imagemin',
 		'htmlmin',
 		'concat',
 		'cssmin',
@@ -326,7 +306,7 @@ module.exports = function( grunt ) {
 		'usemin'
 	])
 
-	grunt.registerTask('default', [
+	grunt.registerTask( 'default', [
 		'jshint',
 		'test',
 		'build'
