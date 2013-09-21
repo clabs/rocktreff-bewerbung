@@ -17,7 +17,7 @@
 exports = module.exports = function( app, passport ) {
 	var LocalStrategy = require( 'passport-local' ).Strategy
 	var FacebookStrategy = require( 'passport-facebook' ).Strategy
-	var User = require( '../models/user' )( app )
+	var User = app.get( 'models' ).user
 	var crypto = require( 'crypto' )
 
 	// Local

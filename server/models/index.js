@@ -16,8 +16,11 @@
 
 exports = module.exports = function ( app ) {
 
+	var collection = require( './collection' )
+
 	app.set( 'models', {
-		user: require( './user' )( app )
+		user: collection( 'users' ),
+		bid: collection( 'bids' )
 	})
 
 }

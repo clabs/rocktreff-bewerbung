@@ -16,11 +16,40 @@
 
 exports = module.exports = function ( app ) {
 
-	var db = require( '../models/index' )( app )
 
-	app.use( function ( req, res, next ) {
-		req.db = db
-		next()
-	})
+	var models = app.get( 'models' )
+	var toJSON = function ( user ) {
+		return {
+			id: user.id,
+			name: user.name,
+			email: user.email,
+			created: user.created,
+			rights: user.rights,
+			events: user.events
+		}
+	}
+
+	return {
+		me: {
+			get: function ( req, res ) {
+				var user = [ toJSON( req.user ) ]
+				res.send( { users: user } )
+			}
+		},
+		users: {
+			get: function ( req, res ) { },
+			put: function ( req, res ) { },
+			del: function ( req, res ) { },
+			list: function ( req, res ) {
+				models.user.all( function ( err, all ) {
+					if ( err ) return res.status( 500 ).send()
+					var users = all.map( toJSON )
+					res.send( { users: users } )
+				})
+			}
+		}
+
+	}
+
 
 }

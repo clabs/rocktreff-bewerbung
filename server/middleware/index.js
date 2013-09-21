@@ -17,6 +17,5 @@
 exports = module.exports = function ( app ) {
 
 	require( './CORSmiddleware' )( app )
-	require( './DBmiddleware' )( app )
 
 }

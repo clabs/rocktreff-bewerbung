@@ -16,20 +16,31 @@
 
 exports = module.exports = function ( app, passport ) {
 
+	// Views
+	var users = require( './users' )( app )
+
+
+	// Authentication/Authorization Middlewares
 	var loginRequired = function ( req, res, next ) {
 		if ( req.user ) next()
+		else res.status( 401 ).send()
+	}
+	var adminRequired = function ( req, res, next ) {
+		var user = req.user
+		if ( user && user.rights.godmode ) next()
+		else res.status( 401 ).send()
 	}
 
+
 	app.post( '/auth/local', passport.authenticate( 'local' ), function ( req, res ) {
-		if ( req.user )
-			res.redirect( '/me' )
-		else
-			res.send( 'no wai!' )
+		res.redirect( '/me' )
 	})
 
-	app.get( '/me', loginRequired, function ( req, res ) {
-		res.send( req.user )
-	})
+	app.get( '/me',       loginRequired, users.me.get )
+	app.get( '/users',    adminRequired, users.users.list )
+	app.get( '/user/:id', adminRequired, users.users.get )
+	app.put( '/user/:id', adminRequired, users.users.put )
+	app.del( '/user/:id', adminRequired, users.users.del )
 
 
 }

@@ -1,9 +1,9 @@
-dist
 .DS_Store
 client/.tmp
 client/js/vendor
 client/node_modules
 server/node_modules
-bewerbung.sublime-project
-bewerbung.sublime-workspace
-server/.db
+*.sublime-project
+*.sublime-workspace
+server/.db/development
+server/.db/production

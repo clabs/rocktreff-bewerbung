@@ -18,51 +18,52 @@ var store = require( '../store' )
 var guid = require( '../utils/guid' )
 var _ = require( 'lodash' )
 
-exports = module.exports = function ( app ) {
-
-	// setup users collection
-	var users = store( 'users' )
-
+exports = module.exports = function ( name ) {
+	// setup collection
+	var collection = store( 'users' )
 	return {
 
-		/**
-		 * find a user
-		 * @param  {Object}   query    [description]
-		 * @param  {Function} done     [description]
-		 */
 		find: function ( query, done ) {
-			users.all( function ( err, data ) {
-				var user = _.find( data, query )
-				if ( err )
-					return done( err, null )
-				if ( !user )
-					return done( 'User not found. (Query: '+ query+')', null )
-				return done( null, user )
+			collection.all( function ( err, data ) {
+				var item = _.find( data, query )
+				if ( err ) return done( err, null )
+				return done( null, item )
+			})
+		},
+
+
+		all: function ( done ) {
+			if ( !done ) return _.map( collection.all() )
+			collection.all( function ( err, all ) {
+				if ( err ) return done( err, null )
+				return done( null, _.map( all ) )
 			})
 		},
 
 
 		get: function ( id, done ) {
-			return users.get( id, function ( err, user ) {
-				done( null, user )
+			if ( !done ) return collection.get( id )
+			return collection.get( id, function ( err, item ) {
+				done( null, item )
 			})
 		},
 
 
-		set: function ( id, user, done ) {
-			users.set( id, user, function ( err ) {
+		set: function ( id, item, done ) {
+			if ( !done ) collection.set( id, item )
+			collection.set( id, item, function ( err ) {
 				if ( err ) return done( err, null )
-				return done( null, user )
+				return done( null, item )
 			})
 		},
 
 
-		create: function ( user, done ) {
+		create: function ( item, done ) {
 			var id = guid()
-			user.id = id
-			users.set( id, user, function ( err ) {
+			item.id = id
+			collection.set( id, item, function ( err ) {
 				if ( err ) return done( err, null )
-				return done( null, user )
+				return done( null, item )
 			})
 		}
 	}
