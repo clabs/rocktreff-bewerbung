@@ -285,7 +285,6 @@ module.exports = function( grunt ) {
 		done()
 	})
 
-
 	grunt.renameTask( 'regarde', 'watch' )
 
 
@@ -300,6 +299,15 @@ module.exports = function( grunt ) {
 		'watch'
 	])
 
+	grunt.registerTask( 'noexpress', [
+		'clean:frontend',
+		'less',
+		'handlebars',
+		'livereload-start',
+		'connect:dev',
+		'open:frontend',
+		'watch'
+	])
 
 	grunt.registerTask( 'test', [
 		'clean:dev',

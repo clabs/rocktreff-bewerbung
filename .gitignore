@@ -6,3 +6,4 @@ node_modules
 bewerbung.sublime-project
 client/js/vendor
 bewerbung.sublime-workspace
+server/.db

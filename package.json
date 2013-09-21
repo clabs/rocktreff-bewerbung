@@ -2,6 +2,7 @@
   "author": "rob",
   "name": "rocktreff-bb",
   "version": "0.0.1",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/clabs/rocktreff-bewerbung.git"
@@ -28,7 +29,11 @@
     "grunt-contrib-livereload": "~0.1.2",
     "express": "~3.4.0",
     "socket.io": "~0.9.16",
-    "express.io": "~1.1.12"
+    "passport-local": "~0.1.6",
+    "passport": "~0.1.17",
+    "lodash": "~2.0.0",
+    "bases": "~0.1.1",
+    "passport-facebook": "~1.0.1"
   },
   "engines": {
     "node": ">=0.8.0"
