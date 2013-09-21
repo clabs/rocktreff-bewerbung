@@ -14,7 +14,8 @@
  */
 'use strict';
 
-var store = require( 'ministore' )( './server/.db' )
+var mode = process.env.NODE_ENV || 'development'
+var store = require( 'ministore' )( '.db/' + mode )
 var sessions = store( 'sessions', { polling: 3000 } ) // will save every 3 secs
 
 module.exports = store

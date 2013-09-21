@@ -36,7 +36,7 @@ exports = module.exports = function ( app ) {
 				if ( err )
 					return done( err, null )
 				if ( !user )
-					return done( 'User not found', null )
+					return done( 'User not found. (Query: '+ query+')', null )
 				return done( null, user )
 			})
 		},

@@ -21,6 +21,7 @@ var passport = require ( 'passport' )
 // Instantiate app
 var app = express()
 
+
 // General app config stuff
 app.configure( function () {
 	app.disable( 'x-powered-by' )
@@ -29,6 +30,8 @@ app.configure( function () {
 
 	// Password encryption
 	app.set( 'crypto-key', 'otETq4Tq' )
+
+	app.set( 'port', 1338 )
 
 	// Middlewares
 	app.use( express.logger( 'dev' ) )
@@ -44,7 +47,10 @@ app.configure( function () {
 	app.use( passport.session() )
 
 	// Development only
-	app.use( express.errorHandler() )
+	app.use( express.errorHandler({
+		dumpExceptions: true,
+		showStack: true
+	}))
 })
 
 
@@ -55,5 +61,23 @@ var middlewares = require( './middleware/index' )( app )
 var endpoints = require( './endpoints/index' )( app, passport )
 
 
+// yay ho!
+app.listen( app.get( 'port' ) )
 
-exports = module.exports = app
+
+// nerdy stuff
+process.stdout.write( '\u001B[2J\u001B[0;0f' +
+	' ______ _____ _____  _   _____________ _________________  ____________\n' +
+	' | ___ \\  _  /  __ \\| | / /_   _| ___ \\  ___|  ___|  ___| | ___ \\ ___ \\\n' +
+	' | |_/ / | | | /  \\/| |/ /  | | | |_/ / |__ | |_  | |_    | |_/ / |_/ /\n' +
+	' |    /| | | | |    |    \\  | | |    /|  __||  _| |  _|   | ___ \\ ___ \\\n' +
+	' | |\\ \\\\ \\_/ / \\__/\\| |\\  \\ | | | |\\ \\| |___| |   | |     | |_/ / |_/ /\n' +
+	' \\_| \\_|\\___/ \\____/\\_| \\_/ \\_/ \\_| \\_\\____/\\_|   \\_|     \\____/\\____/\n' +
+	'\n'
+)
+process.stdout.write( '\u001b[32mStarting api server on port '+ app.get( 'port' ) +' in '+ app.get( 'mode' ) +' mode.\u001b[39m\n')
+process.on( 'SIGINT', function () {
+	process.stdout.write( '\nHave a nice day! ...\n' )
+	process.exit( 0 )
+})
+

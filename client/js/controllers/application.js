@@ -14,22 +14,16 @@
  */
 define([
 
-	'bb'
+	'bb',
+	'models/user'
 
 ], function ( BB ) {
 
 	'use strict';
 
-	BB.IndexRoute = Ember.Route.extend({
-		redirect: function () {
-			this.transitionTo( 'home' )
-		}
-	})
+	BB.ApplicationController = Ember.ObjectController.extend({
 
+		content: BB.User.find()
 
-	BB.ApplicationRoute = Ember.Route.extend({
-		model: function ( params ) {
-			return BB.User.find(1)
-		}
 	})
 })

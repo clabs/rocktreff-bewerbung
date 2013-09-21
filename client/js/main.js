@@ -25,7 +25,6 @@ requirejs.config({
 		handlebars:'vendor/handlebars/handlebars',
 		ember: 'vendor/ember/ember',
 		restless: 'vendor/ember-restless/dist/ember-restless+extras',
-		templates: 'templates/compiled',
 		wysiwyg: 'vendor/bootstrap-wysiwyg/bootstrap-wysiwyg',
 		'jquery-hotkeys': 'vendor/jquery.hotkeys/jquery.hotkeys',
 		socketio: 'vendor/socket.io-client/dist/socket.io'
@@ -79,6 +78,7 @@ require([
 	'store/store',
 
 	// models
+	'models/user',
 
 	// helper
 	'helpers/handlebar_helpers',

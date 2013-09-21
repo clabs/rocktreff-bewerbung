@@ -38,39 +38,35 @@ module.exports = function( grunt ) {
 
 		// configurable paths
 		bb: {
-			client: 'client',
-			server: 'server',
-			dist: 'dist',
-			port: 1337,
-			apiport: 1338
+			client: '.',
+			dist: '../dist/client',
+			tmp: '../.tmp',
+			port: 1337
 		},
 
 		less: {
-			'.tmp/styles/main.css': '<%= bb.client %>/styles/{,*/}*.{scss,less}'
+			'<%= bb.tmp %>/styles/main.css': '<%= bb.client %>/styles/{,*/}*.{scss,less}'
 		},
 
 		// compile handlebars templates
 		handlebars: {
-			compile: {
+			dev: {
 				files: {
-					'.tmp/js/templates/compiled.js': [ '<%= bb.client %>/js/templates/**/*.hbs' ]
+					'<%= bb.tmp %>/js/templates.js': [ '<%= bb.client %>/templates/**/*.hbs' ]
 				}
 			}
 		},
 
-		express: {
-			options: {
-				port: '<%= bb.apiport %>',
-				server: './<%= bb.server %>/server.js'
-			}
+		livereload: {
+			port: 35728
 		},
 
 		watch: {
-			fronend_assets: {
+			client: {
 				files: [
 					'<%= bb.client %>/*.html',
-					'{.tmp,<%= bb.client %>}/js/**/*.js',
-					'!{.tmp,<%= bb.client %>}/js/vendor/**/*.js',
+					'{<%= bb.tmp %>,<%= bb.client %>}/js/**/*.js',
+					'!{<%= bb.tmp %>,<%= bb.client %>}/js/vendor/**/*.js',
 					'<%= bb.client %>/images/**/*.{png,jpg,jpeg,gif,webp}'
 				],
 				tasks: [ 'livereload' ]
@@ -80,7 +76,7 @@ module.exports = function( grunt ) {
 				tasks: [ 'less' ]
 			},
 			handlebars: {
-				files: [ '<%= bb.client %>/js/**/*.hbs' ],
+				files: [ '<%= bb.client %>/templates/**/*.hbs' ],
 				tasks: [ 'handlebars' ]
 			}
 		},
@@ -95,8 +91,8 @@ module.exports = function( grunt ) {
 					middleware: function ( connect ) {
 						return [
 								livereload,
-								mount( connect, '.tmp' ),
-								mount( connect, 'client' )
+								mount( connect, '../.tmp' ),
+								mount( connect, '.' )
 							]
 						}
 				}
@@ -105,8 +101,8 @@ module.exports = function( grunt ) {
 				options: {
 					middleware: function ( connect ) {
 						return [
-							mount( connect, '.tmp' ),
-							mount( connect, 'test/<%= bb.client %>' )
+							mount( connect, '../.tmp' ),
+							mount( connect, 'test' )
 						]
 					}
 				}
@@ -129,8 +125,9 @@ module.exports = function( grunt ) {
 		},
 
 		clean: {
-			dist: [ '.tmp', '<%= bb.dist %>/*' ],
-			frontend: '.tmp'
+			options: { force: true },
+			dist: [ '<%= bb.tmp %>', '<%= bb.dist %>/*' ],
+			frontend: '<%= bb.tmp %>'
 		},
 
 		jshint: {
@@ -161,7 +158,7 @@ module.exports = function( grunt ) {
 		requirejs: {
 			dist: {
 				options: {
-					baseUrl: 'client/js',
+					baseUrl: './js',
 					preserveLicenseComments: true,
 					useStrict: true,
 					wrap: true,
@@ -193,7 +190,7 @@ module.exports = function( grunt ) {
 			dist: {
 				files: {
 					'<%= bb.dist %>/styles/main.css': [
-						'.tmp/styles/{,*/}*.css',
+						'<%= bb.tmp %>/styles/{,*/}*.css',
 						'<%= bb.client %>/styles/{,*/}*.css'
 					]
 				}
@@ -254,11 +251,12 @@ module.exports = function( grunt ) {
 			var output = ''
 			file.src.forEach( function ( src ) {
 				grunt.file.expand( src ).forEach( function ( filepath ) {
-					var filename = filepath.replace( /^client\/js\/templates\/(.*?).hbs$/, '$1' )
+					var filename = filepath
+						.replace( /^\.\/templates\/(.*?).hbs$/, '$1' )
 					var src = grunt.file.read( filepath )
 								.replace( /\n|\n\r|\r\n/g , '\\n' )
 								.replace( /'/g, '\\\'' )
-					compiled.push( 'Ember.TEMPLATES[ \''+ filename +'\' ] = Ember.Handlebars.compile( \''+ src +'\' );' )
+					compiled.push( 'Ember.TEMPLATES[\''+ filename +'\']=Ember.Handlebars.compile(\''+ src +'\' );' )
 				})
 			})
 			output = 'define(["ember"],function(Ember){\n'+compiled.join( '\n' )+'\n})'
@@ -267,29 +265,10 @@ module.exports = function( grunt ) {
 		})
 	})
 
-	/**
-	 * Yet another simple task runner for an express app.
-	 *
-	 * @author Robert Pagel
-	 */
-	grunt.registerTask( 'express', 'starting up express web server', function () {
-		var done = this.async()
-		var options = this.options({
-			port: 1337,
-			server: './'
-		})
-		grunt.log.writeln( 'Starting up express web server on port '+options.port+'.')
-		require( options.server )
-			.listen( options.port )
-			.on( 'close', done )
-		done()
-	})
-
 	grunt.renameTask( 'regarde', 'watch' )
 
 
 	grunt.registerTask( 'server', [
-		'express',
 		'clean:frontend',
 		'less',
 		'handlebars',
@@ -299,15 +278,6 @@ module.exports = function( grunt ) {
 		'watch'
 	])
 
-	grunt.registerTask( 'noexpress', [
-		'clean:frontend',
-		'less',
-		'handlebars',
-		'livereload-start',
-		'connect:dev',
-		'open:frontend',
-		'watch'
-	])
 
 	grunt.registerTask( 'test', [
 		'clean:dev',
@@ -320,7 +290,7 @@ module.exports = function( grunt ) {
 	grunt.registerTask( 'build', [
 		'clean:dist',
 		'less:dist',
-		'handlebars:dist',
+		'handlebars',
 		'useminPrepare',
 		'requirejs',
 		'htmlmin',

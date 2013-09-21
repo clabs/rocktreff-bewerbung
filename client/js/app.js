@@ -22,16 +22,16 @@ define([
 
 	'use strict';
 
+
+
 	BB.reopen({
 
-		// a basic store
-		client: RL.Client.create({
+		Client: RL.Client.create({
 			adapter: BB.SocketAdapter.create({
 				host: 'http://localhost',
 				port: 1338
 			})
 		}),
-
 
 		// reference to the current user
 		currentUser: null,

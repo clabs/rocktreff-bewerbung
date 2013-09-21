@@ -14,22 +14,18 @@
  */
 define([
 
-	'bb'
+	'bb',
+	'restless'
 
-], function ( BB ) {
+], function ( BB, RL ) {
 
 	'use strict';
 
-	BB.IndexRoute = Ember.Route.extend({
-		redirect: function () {
-			this.transitionTo( 'home' )
-		}
-	})
+	BB.User = RL.Model.extend({
 
+		name: RL.attr( 'string' ),
+		email: RL.attr( 'string' ),
+		gravatar_url: RL.attr( 'string' )
 
-	BB.ApplicationRoute = Ember.Route.extend({
-		model: function ( params ) {
-			return BB.User.find(1)
-		}
 	})
 })

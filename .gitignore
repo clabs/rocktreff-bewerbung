@@ -1,9 +1,9 @@
 dist
 .DS_Store
-.sass-cache
-.tmp
-node_modules
-bewerbung.sublime-project
+client/.tmp
 client/js/vendor
+client/node_modules
+server/node_modules
+bewerbung.sublime-project
 bewerbung.sublime-workspace
 server/.db

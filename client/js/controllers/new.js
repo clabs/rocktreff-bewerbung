@@ -12,6 +12,17 @@
  * this stuff is worth it, you can buy me a beer in return.
  *
  */
-var port = 1338
-console.log( 'Starting standalone rocktreff-bb api server on port '+port )
-require( './server/server' ).listen( port )
+define([
+
+	'bb'
+
+], function ( BB ) {
+
+	'use strict';
+
+	BB.NewController = Ember.ObjectController.extend({
+
+		content: Ember.Object.create({})
+
+	})
+})

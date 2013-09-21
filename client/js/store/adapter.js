@@ -69,7 +69,8 @@ define([
 		/*
 		 * App.Post => 'posts',  App.PostGroup => 'post_groups'
 		 */
-		pluralize: function( name ) {
+		eventkey: function( model ) {
+			var name = model.constructor.toString().replace(/^.+\.(.+)$/, '$1')
 			return this.pluralize( Ember.String.decamelize( name ) )
 		},
 
@@ -77,17 +78,20 @@ define([
 		/*
 		 * send: creates and executes a socket event wrapped in a promise
 		 */
-		send: function ( model, options ) {
+		send: function ( model, action ) {
 			var self = this
 			var serializer = this.serializer
 			var socket = this.get( 'socket' )
 			var data = model.serialize()
-			var name = this.pluralize( model )
-			var eventname = '%@:%@'.fmt( name, options.action )
+			var name = this.eventkey( model )
+			var eventname = '%@:%@'.fmt( name, action )
 			return new Ember.RSVP.Promise( function ( resolve ) {
-				socket.emit( eventname, data, function ( data ) {
-					Ember.run( null, resolve, data )
-				})
+				Ember.run.later(function () {
+					socket.emit( eventname, data )
+					socket.on( name, function ( data ) {
+						Ember.run( null, resolve, data )
+					})
+				}, 300)
 			})
 		},
 
@@ -103,7 +107,7 @@ define([
 				return new Ember.RSVP.Promise( function ( resolve ) { resolve( record ) } )
 			// update state
 			record.set( 'isSaving', true )
-			// return 
+			// return
 			return this.send( record, isNew ? 'create' : 'update' )
 				.then( function ( data ) {
 					if ( data ) record.deserialize( data )
@@ -140,6 +144,10 @@ define([
 				}, function ( error ) {
 					record.onError( error )
 				})
+		},
+
+		find: function ( type ) {
+			return this.findQuery( type )
 		},
 
 		findAll: function( type ) {

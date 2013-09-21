@@ -25,7 +25,6 @@ exports = module.exports = function( app, passport ) {
 			usernameField: 'email'
 		},
 		function ( email, password, done ) {
-			console.log( 'LocalStrategy', email, password )
 			User.find( { email: email }, function ( err, user ) {
 				var sha256 = crypto.createHash( 'sha256' )
 				var hash = sha256.update( password ) && sha256.digest( 'hex' )
