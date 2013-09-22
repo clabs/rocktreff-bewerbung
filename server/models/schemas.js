@@ -25,7 +25,6 @@ exports = module.exports = {
 			email: { type: 'string', required: true, pattern: /^[\w.+-]+@[\w\d.-]+\.[\w\d.-]+$/ },
 			password: { type: 'string', required: true },
 			created: { type: 'string' },
-			picture_url: { type: 'string', required: true },
 			provider: { type: 'string', required: true },
 			role: { type: 'string', required: true },
 		}

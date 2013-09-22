@@ -10,7 +10,6 @@ API Prefix `/v1`
 		name: STRING,
 		created: DATE,
 		email: STRING,
-		picture_url: STRING,
 		provider: STRING,
 		role: STRING
 	}

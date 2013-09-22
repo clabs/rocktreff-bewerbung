@@ -5,7 +5,6 @@
     "email": "admin@rocktreff.de",
     "password": "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2",
     "created": "2013-09-20T19:48:40.501Z",
-    "avatar_url": "",
     "provider": "local",
     "role": "admin"
   },
@@ -15,7 +14,6 @@
     "email": "ini@rocktreff.de",
     "password": "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2",
     "created": "2013-09-20T19:48:40.501Z",
-    "avatar_url": "",
     "provider": "local",
     "role": "ini"
   },
@@ -25,7 +23,6 @@
     "email": "friend@rocktreff.de",
     "password": "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2",
     "created": "2013-09-20T19:48:40.501Z",
-    "avatar_url": "",
     "provider": "local",
     "role": "friend"
   },
@@ -35,7 +32,6 @@
     "email": "some@one.com",
     "password": "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2",
     "created": "2013-09-20T19:48:40.501Z",
-    "avatar_url": "",
     "provider": "local",
     "role": ""
   }

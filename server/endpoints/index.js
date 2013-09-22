@@ -31,24 +31,26 @@ exports = module.exports = function ( app, passport ) {
 	}
 	var adminRequired = function ( req, res, next ) {
 		var user = req.user
-		if ( !user || user.role !== 'admin' ) return res.status( 401 ).send()
-		next()
+		if ( user && user.role === 'admin' ) next()
+		else res.status( 401 ).send()
 	}
 	var validateJSON = function ( schema ) {
 		return function ( req, res, next ) {
 			if ( !req.is( 'json' ) ) return res.status( 400 )
 			var v = validate( req.body, schema )
-			if ( v.errors.length > 0) return res.status( 400 )
-			next()
+			if ( v.errors.length > 0) res.status( 400 ).send( v.errors )
+			else next()
 		}
 	}
 
 	/**
 	 * Endpoint Definitions
 	 */
-	app.post( '/auth/local', passport.authenticate( 'local' ), function ( req, res ) {
-		res.redirect( '/me' )
-	})
+	app.post( '/auth/local', passport.authenticate( 'local' ),
+		function ( req, res ) {
+			res.redirect( '/me' )
+		}
+	)
 
 	app.get( '/me', loginRequired, UserViews.me.get )
 
