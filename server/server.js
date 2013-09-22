@@ -77,7 +77,7 @@ process.stdout.write( '\u001B[2J\u001B[0;0f' +
 )
 process.stdout.write( '\u001b[32mStarting api server on port '+ app.get( 'port' ) +' in '+ app.get( 'env' ) +' mode.\u001b[39m\n')
 process.on( 'SIGINT', function () {
-	process.stdout.write( '\nHave a nice day! ...\n' )
+	process.stdout.write( '\nHave a nice day! ... (^_^)/\"\n' )
 	process.exit( 0 )
 })
 

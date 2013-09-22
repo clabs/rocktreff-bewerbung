@@ -24,13 +24,14 @@ var url = 'http://localhost:1338'
  */
 
 var login = function ( email ) {
-	return function ( agent, async ) {
+	return function ( agent, done ) {
 		agent
 			.post( '/auth/local' )
 			.send( { email: email, password: 'foobar' } )
-			.end( function ( err ) {
+			.end( function ( err, res ) {
 				should.not.exist( err )
-				async()
+				agent.saveCookies( res )
+				done()
 			})
 	}
 }
@@ -120,8 +121,9 @@ describe( 'REST API', function () {
 
 		describe( 'GET /users', function () {
 			var agent = null
-			before( function () {
+			beforeEach( function ( done ) {
 				agent = request.agent( url )
+				done()
 			})
 
 			it( 'should not be accessible for anyone', function ( done ) {
@@ -176,6 +178,152 @@ describe( 'REST API', function () {
 							json.users[ 0 ].should.not.have.property( 'password' )
 							done()
 						})
+				})
+			})
+
+		})
+
+		describe( 'POST /users', function () {
+
+			var agent
+			beforeEach( function() {
+				agent = request.agent( url )
+			})
+
+			it( 'should return a JSON object with an id property', function ( done ) {
+				agent
+					.post( '/users' )
+					.send({
+						name: 'foo',
+						email: 'foo@bar.com',
+						password: 'foobar',
+						picture_url: '',
+						provider: 'local',
+						role: ''
+					})
+					.expect( 200 )
+					.end( function ( err, res ) {
+						should.not.exist( err )
+						res.should.be.json
+						var json = res.body
+						json.should.have.property( 'users' )
+						json.should.have.property( 'users' ).with.lengthOf( 1 )
+						var user = json.users[ 0 ]
+						should.exist( user.id )
+						// cleanup user
+						var agent = request.agent( url )
+						loginAsAdmin( agent, function () {
+							agent
+								.del( '/user/' + user.id )
+								.expect( 200, done )
+						})
+					})
+			})
+
+			it( 'should reject duplicate emails', function ( done ) {
+				agent
+					.post( '/users' )
+					.send({
+						name: 'foo',
+						email: 'admin@rocktreff.de',
+						password: '12345',
+						picture_url: '',
+						provider: 'local',
+						role: ''
+					})
+					.expect( 409, done )
+			})
+
+			it( 'should reject new users with a role', function ( done ) {
+				agent
+					.post( '/users' )
+					.send({
+						name: 'foo',
+						email: 'foo@baz.com',
+						password: '12345',
+						picture_url: '',
+						provider: 'local',
+						role: 'admin'
+					})
+					.expect( 400, done )
+			})
+
+		})
+
+		describe( 'DELETE /user/:id', function () {
+			var id = 1, agent
+			var create_user = function ( agent, done ) {
+				agent
+					.post( '/users' )
+					.send({
+						name: 'foo',
+						email:  ( id += 1 )+ 'foo@foo.bar',
+						password: 'foobar',
+						picture_url: '',
+						provider: 'local',
+						role: ''
+					})
+					.end( function ( err, res ) {
+						should.not.exist( err )
+						res.should.be.json
+						var json = res.body
+						json.should.have.property( 'users' ).with.lengthOf( 1 )
+						var user = json.users[ 0 ]
+						done( user.id, user.email )
+					})
+			}
+			var remove_user = function ( agent, id, done ) {
+				loginAsAdmin( agent, function () {
+					agent
+						.del( '/user/' + id )
+						.expect( 200, done || function () {} )
+				})
+			}
+
+
+			beforeEach( function () {
+				agent = request.agent( url )
+			})
+
+
+			it( 'should return a bad request for unknown ids', function ( done ) {
+				loginAsAdmin( agent, function () {
+					agent
+						.del( '/user/some_random_id' )
+						.expect( 400, done )
+				})
+			})
+
+
+			it( 'should be accessible for admins', function ( done ) {
+				create_user( agent, function ( id, email ) {
+					loginAsAdmin( agent, function () {
+						agent
+							.del( '/user/' + id )
+							.expect( 200, done )
+					})
+				})
+			})
+
+
+			it( 'should not be accessible for anyone', function ( done ) {
+				agent
+					.del( '/user/some_random_id' )
+					.expect( 401, done )
+			})
+
+
+			it( 'should not be accessible for someone else', function ( done ) {
+				create_user( agent, function ( id, email ) {
+					loginAsSomeone( agent, function () {
+						agent
+							.del( '/user/' + id )
+							.expect( 401 )
+							.end( function ( err, res ) {
+								should.not.exist( err )
+								remove_user( agent, id, done )
+							})
+					})
 				})
 			})
 

@@ -14,15 +14,21 @@
  */
 'use strict';
 
-exports = module.exports = function ( app ) {
+// based on http://tools.ietf.org/html/draft-zyp-json-schema-03
+exports = module.exports = {
 
-	var collection = require( './collection' )
-	var schemas = require( './schemas' )
-
-	app.set( 'models', {
-		user: collection( 'users' ),
-		bid: collection( 'bids' )
-	})
+	user: {
+		id: '/User',
+		properties: {
+			id: { type: 'string' },
+			name: { type: 'string', required: true },
+			email: { type: 'string', required: true, pattern: /^[\w.+-]+@[\w\d.-]+\.[\w\d.-]+$/ },
+			password: { type: 'string', required: true },
+			created: { type: 'string' },
+			picture_url: { type: 'string', required: true },
+			provider: { type: 'string', required: true },
+			role: { type: 'string', required: true },
+		}
+	}
 
 }
-

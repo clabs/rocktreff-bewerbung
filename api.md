@@ -10,18 +10,18 @@ API Prefix `/v1`
 		name: STRING,
 		created: DATE,
 		email: STRING,
-		avatar_url: STRING,
+		picture_url: STRING,
 		provider: STRING,
-		rights: {
-			godmode: BOOLEAN,
-			ini: BOOLEAN,
-			friend: BOOLEAN 
-		},
-		events: [ OBJECT ]
+		role: STRING
 	}
 
-	/me
-	/users
+	GET /me
+	GET /users
+	POST /users
+	GET /user/:id
+	POST /user/:id
+	PUT /user/:id
+	DELETE /user/:id
 
 ## Bids
 
@@ -43,9 +43,9 @@ API Prefix `/v1`
 		}
 		picture_small: STRING,
 		picture: STRING,
-		videos: [ OBJECT ],
-		audios: [ OBJECT ],
-		docs: [ OBJECT ]
+		videos: [ STRING ],
+		audios: [ STRING ],
+		docs: [ STRING ]
 	}
 
 	/bids[?year]
@@ -53,7 +53,7 @@ API Prefix `/v1`
 	/bid/:id/votes
 
 ## Regions
-	
+
 	{
 		id: STRING,
 		name: STRING

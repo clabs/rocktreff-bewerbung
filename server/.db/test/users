@@ -7,12 +7,7 @@
     "created": "2013-09-20T19:48:40.501Z",
     "avatar_url": "",
     "provider": "local",
-    "rights": {
-      "godmode": true,
-      "ini": true,
-      "friend": false
-    },
-    "events": []
+    "role": "admin"
   },
   "GNbUQQgL": {
     "id": "GNbUQQgL",
@@ -22,12 +17,7 @@
     "created": "2013-09-20T19:48:40.501Z",
     "avatar_url": "",
     "provider": "local",
-    "rights": {
-      "godmode": false,
-      "ini": true,
-      "friend": false
-    },
-    "events": []
+    "role": "ini"
   },
   "U6Jp1nEf": {
     "id": "U6Jp1nEf",
@@ -37,12 +27,7 @@
     "created": "2013-09-20T19:48:40.501Z",
     "avatar_url": "",
     "provider": "local",
-    "rights": {
-      "godmode": false,
-      "ini": false,
-      "friend": true
-    },
-    "events": []
+    "role": "friend"
   },
   "90fFt41t": {
     "id": "90fFt41t",
@@ -52,11 +37,6 @@
     "created": "2013-09-20T19:48:40.501Z",
     "avatar_url": "",
     "provider": "local",
-    "rights": {
-      "godmode": false,
-      "ini": false,
-      "friend": false
-    },
-    "events": []
+    "role": ""
   }
 }

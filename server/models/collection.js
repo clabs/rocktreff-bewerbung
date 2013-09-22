@@ -20,13 +20,14 @@ var _ = require( 'lodash' )
 
 exports = module.exports = function ( name ) {
 	// setup collection
-	var collection = store( 'users' )
+	var collection = store( name )
+
 	return {
 
 		find: function ( query, done ) {
 			collection.all( function ( err, data ) {
+				if ( err || !data ) return done( err, null )
 				var item = _.find( data, query )
-				if ( err ) return done( err, null )
 				return done( null, item )
 			})
 		},
@@ -59,11 +60,20 @@ exports = module.exports = function ( name ) {
 
 
 		create: function ( item, done ) {
-			var id = guid()
-			item.id = id
-			collection.set( id, item, function ( err ) {
+			item.id = guid()
+			collection.set( item.id, item, function ( err ) {
 				if ( err ) return done( err, null )
 				return done( null, item )
+			})
+		},
+
+
+		del: function ( id, done ) {
+			if ( !done ) collection.remove( id )
+			if ( !collection.has( id ) ) done( 'unknown', null )
+			collection.remove( id, function ( err ) {
+				if ( err ) return done( err, null )
+				return done( null, null )
 			})
 		}
 	}

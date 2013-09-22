@@ -17,30 +17,47 @@
 exports = module.exports = function ( app, passport ) {
 
 	// Views
-	var users = require( './users' )( app )
+	var UserViews = require( './users' )( app )
+	var schema = require( '../models/schemas' )
+	var validate = require( 'jsonschema' ).validate
 
 
-	// Authentication/Authorization Middlewares
+	/**
+	 * Middlewares
+	 */
 	var loginRequired = function ( req, res, next ) {
 		if ( req.user ) next()
 		else res.status( 401 ).send()
 	}
 	var adminRequired = function ( req, res, next ) {
 		var user = req.user
-		if ( user && user.rights.godmode ) next()
-		else res.status( 401 ).send()
+		if ( !user || user.role !== 'admin' ) return res.status( 401 ).send()
+		next()
+	}
+	var validateJSON = function ( schema ) {
+		return function ( req, res, next ) {
+			if ( !req.is( 'json' ) ) return res.status( 400 )
+			var v = validate( req.body, schema )
+			if ( v.errors.length > 0) return res.status( 400 )
+			next()
+		}
 	}
 
-
+	/**
+	 * Endpoint Definitions
+	 */
 	app.post( '/auth/local', passport.authenticate( 'local' ), function ( req, res ) {
 		res.redirect( '/me' )
 	})
 
-	app.get( '/me',       loginRequired, users.me.get )
-	app.get( '/users',    adminRequired, users.users.list )
-	app.get( '/user/:id', adminRequired, users.users.get )
-	app.put( '/user/:id', adminRequired, users.users.put )
-	app.del( '/user/:id', adminRequired, users.users.del )
+	app.get( '/me', loginRequired, UserViews.me.get )
+
+	app.get( '/users', adminRequired, UserViews.users.list )
+	app.post( '/users', validateJSON( schema.user ), UserViews.users.post )
+
+	app.del( '/user/:id', adminRequired, UserViews.users.del )
+	app.get( '/user/:id', loginRequired, UserViews.users.get )
+	app.put( '/user/:id', adminRequired, UserViews.users.put )
 
 
 }

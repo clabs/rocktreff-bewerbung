@@ -16,30 +16,62 @@
 
 exports = module.exports = function ( app ) {
 
-
+	var crypto = require( 'crypto' )
 	var models = app.get( 'models' )
+
 	var toJSON = function ( user ) {
 		return {
 			id: user.id,
 			name: user.name,
 			email: user.email,
 			created: user.created,
-			rights: user.rights,
-			events: user.events
+			role: user.role
 		}
 	}
 
 	return {
+
 		me: {
 			get: function ( req, res ) {
 				var user = [ toJSON( req.user ) ]
 				res.send( { users: user } )
 			}
 		},
+
 		users: {
+
 			get: function ( req, res ) { },
+
+			post: function ( req, res ) {
+				var json = req.body
+				// set password hash
+				var sha256 = crypto.createHash( 'sha256' )
+				json.password = sha256.update( json.password ) && sha256.digest( 'hex' )
+				// validate role field
+				var byAdmin = req.user && req.user.role === 'admin'
+				if ( json.role !== '' && !byAdmin )
+					return res.status( 400 ).send()
+				models.user.find( { email: json.email }, function ( err, user ) {
+					if ( user ) return res.status( 409 ).send()
+					models.user.create( json, function ( err, user ) {
+						res.send( { users: [ toJSON( user ) ] } )
+					})
+				})
+			},
+
+
 			put: function ( req, res ) { },
-			del: function ( req, res ) { },
+
+
+			del: function ( req, res ) {
+				var id = req.params.id
+				models.user.del( id, function ( err ) {
+					if ( err ) return res.status( 400 ).send()
+					res.send()
+				})
+			},
+
+
 			list: function ( req, res ) {
 				models.user.all( function ( err, all ) {
 					if ( err ) return res.status( 500 ).send()
