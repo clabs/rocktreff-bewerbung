@@ -27,6 +27,6 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "make test"
+    "test": "(NODE_ENV=test npm start >/dev/null & ( sleep 2; make test )); kill -s INT $(cat ./server.pid )"
   }
 }

@@ -20,7 +20,7 @@ var passport = require ( 'passport' )
 
 // Instantiate app
 var app = express()
-
+var ENV = app.get( 'env' )
 
 // General app config stuff
 app.configure( function () {
@@ -34,7 +34,8 @@ app.configure( function () {
 	app.set( 'port', 1338 )
 
 	// Middlewares
-	app.use( express.logger( 'dev' ) )
+	if ( 'development' === ENV )
+		app.use( express.logger( 'dev' ) )
 	app.use( express.compress() )
 	app.use( express.cookieParser() )
 	app.use( express.json() )
@@ -47,7 +48,7 @@ app.configure( function () {
 	app.use( passport.session() )
 
 	// Development only
-	if ( 'development' === app.get( 'env' ) )
+	if ( 'development' === ENV )
 	app.use( express.errorHandler({
 		dumpExceptions: true,
 		showStack: true
@@ -65,6 +66,19 @@ var endpoints = require( './endpoints/index' )( app, passport )
 // yay ho!
 app.listen( app.get( 'port' ) )
 
+var PID_FILE  = './server.pid'
+var fs = require( 'fs' )
+
+// set process title
+process.title = 'rocktreff-api-server ('+ ENV +')'
+// write .pid file
+fs.writeFileSync( PID_FILE, process.pid + '\n' )
+// cleanup
+process.on( 'SIGINT', function () {
+	process.stdout.write( '\nHave a nice day! ... (^_^)/\"\n' )
+	fs.unlinkSync( PID_FILE )
+	process.exit( 0 )
+})
 
 // nerdy stuff
 process.stdout.write( '\u001B[2J\u001B[0;0f' +
@@ -75,10 +89,5 @@ process.stdout.write( '\u001B[2J\u001B[0;0f' +
 	' | |\\ \\\\ \\_/ / \\__/\\| |\\  \\ | | | |\\ \\| |___| |   | |     | |_/ / |_/ /\n' +
 	' \\_| \\_|\\___/ \\____/\\_| \\_/ \\_/ \\_| \\_\\____/\\_|   \\_|     \\____/\\____/\n' +
 	'\n' +
-	'\u001b[32mStarting api server on port '+ app.get( 'port' ) +' in '+ app.get( 'env' ) +' mode.\u001b[39m\n'
+	'\u001b[32mStarting api server on port '+ app.get( 'port' ) +' in '+ ENV +' mode.\u001b[39m\n'
 )
-process.on( 'SIGINT', function () {
-	process.stdout.write( '\nHave a nice day! ... (^_^)/\"\n' )
-	process.exit( 0 )
-})
-
