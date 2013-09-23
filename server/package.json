@@ -27,6 +27,6 @@
   },
   "scripts": {
     "start": "node server.js",
-    "test": "mocha --ui bdd --reporter spec"
+    "test": "make test"
   }
 }
