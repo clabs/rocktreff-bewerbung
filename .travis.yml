@@ -2,7 +2,4 @@ env: NODE_ENV=test
 language: node_js
 node_js:
   - 0.11
-  - 0.8
-before_script: "cd server"
-install: "npm install"
-script: "npm test"
+before_install: cd server
