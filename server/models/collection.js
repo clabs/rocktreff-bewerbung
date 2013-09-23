@@ -70,7 +70,7 @@ exports = module.exports = function ( name ) {
 
 		del: function ( id, done ) {
 			if ( !done ) collection.remove( id )
-			if ( !collection.has( id ) ) done( 'unknown', null )
+			if ( !collection.has( id ) ) return done( 'unknown', null )
 			collection.remove( id, function ( err ) {
 				if ( err ) return done( err, null )
 				return done( null, null )

@@ -197,7 +197,6 @@ describe( 'REST API', function () {
 						name: 'foo',
 						email: 'foo@bar.com',
 						password: 'foobar',
-						picture_url: '',
 						provider: 'local',
 						role: ''
 					})
@@ -227,11 +226,22 @@ describe( 'REST API', function () {
 						name: 'foo',
 						email: 'admin@rocktreff.de',
 						password: '12345',
-						picture_url: '',
 						provider: 'local',
 						role: ''
 					})
 					.expect( 409, done )
+			})
+
+			it( 'should reject users with password not set', function ( done ) {
+				agent
+					.post( '/users' )
+					.send({
+						name: 'foo',
+						email: 'admin@rocktreff.de',
+						provider: 'local',
+						role: ''
+					})
+					.expect( 400, done )
 			})
 
 			it( 'should reject new users with a role', function ( done ) {
@@ -327,6 +337,90 @@ describe( 'REST API', function () {
 				})
 			})
 
+		})
+
+		describe( 'GET /user/:id', function () {
+			var agent, id = '90fFt41t' // id of someone
+			beforeEach( function (){
+				agent = request.agent( url )
+			})
+
+
+			it( 'should be not accessible for anyone', function ( done ) {
+				agent
+					.get( '/user/' + id )
+					.expect( 401, done )
+			})
+
+			it( 'should be accessible for authenticated users', function ( done ) {
+				loginAsSomeone( agent, function () {
+					agent
+						.get( '/user/' + id )
+						.expect( 200 )
+						.end( function ( err, res ) {
+							should.not.exist( err )
+							res.should.be.json
+							res.body.should.have.property( 'users' ).with.lengthOf( 1 )
+							var user = res.body.users[ 0 ]
+							user.id.should.eql( id )
+							done()
+						})
+				})
+			})
+
+		})
+
+		describe( 'PUT /user/:id', function () {
+			var agent
+			var someone = {
+				id: '90fFt41t',
+				name: 'someone',
+				email: 'some@one.com',
+				created: '2013-09-20T19:48:40.501Z',
+				provider: 'local',
+				role: ''
+			}
+			beforeEach( function (){
+				agent = request.agent( url )
+			})
+
+
+			it( 'should not be accessible for anyone', function ( done ) {
+				agent
+					.put( '/user/' + someone.id )
+					.send({
+						name: 'foobar'
+					})
+					.expect( 401, done )
+			})
+
+			it( 'should not be accessible for other authenticated users', function ( done ) {
+				loginAsIni( agent, function () {
+					agent
+						.put( '/user/' + someone.id )
+						.expect( 403, done )
+				})
+			})
+
+			it( 'should be accessible for the user', function ( done ) {
+				loginAsSomeone( agent, function () {
+					agent
+						.put( '/user/' + someone.id )
+						.send( someone )
+						.expect( 200, done )
+				})
+			})
+
+			it( 'should be accessible for an admin', function ( done ) {
+				loginAsAdmin( agent, function () {
+					agent
+						.put( '/user/' + someone.id )
+						.send( someone )
+						.expect( 200, done )
+				})
+			})
+
+			// TODO: add specs for updated settings
 		})
 
 	})

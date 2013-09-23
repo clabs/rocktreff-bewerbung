@@ -34,8 +34,7 @@ app.configure( function () {
 	app.set( 'port', 1338 )
 
 	// Middlewares
-	if ( 'development' === ENV )
-		app.use( express.logger( 'dev' ) )
+	app.use( express.logger( 'dev' ) )
 	app.use( express.compress() )
 	app.use( express.cookieParser() )
 	app.use( express.json() )

@@ -29,22 +29,36 @@ exports = module.exports = function ( app ) {
 		}
 	}
 
+	var send = function ( res, user ) {
+		return res.send({
+			users: user instanceof Array ?
+				user.map( toJSON ) :
+				[ toJSON( user ) ]
+		})
+	}
+
 	return {
 
 		me: {
 			get: function ( req, res ) {
-				var user = [ toJSON( req.user ) ]
-				res.send( { users: user } )
+				send( res, req.user )
 			}
 		},
 
 		users: {
 
-			get: function ( req, res ) { },
+			get: function ( req, res ) {
+				var id = req.params.id
+				models.user.get( id, function ( err, user ) {
+					if ( err ) return res.status( 400 ).send()
+					send( res, user )
+				})
+			},
 
 			post: function ( req, res ) {
 				var json = req.body
 				// set password hash
+				if ( !json.password ) return res.status( 400 ).send()
 				var sha256 = crypto.createHash( 'sha256' )
 				json.password = sha256.update( json.password ) && sha256.digest( 'hex' )
 				// validate role field
@@ -54,20 +68,22 @@ exports = module.exports = function ( app ) {
 				models.user.find( { email: json.email }, function ( err, user ) {
 					if ( user ) return res.status( 409 ).send()
 					models.user.create( json, function ( err, user ) {
-						res.send( { users: [ toJSON( user ) ] } )
+						send( res, user )
 					})
 				})
 			},
 
 
-			put: function ( req, res ) { },
+			put: function ( req, res ) {
+				send( res, req.user )
+			},
 
 
 			del: function ( req, res ) {
 				var id = req.params.id
 				models.user.del( id, function ( err ) {
-					if ( err ) return res.status( 400 ).send()
-					res.send()
+					if ( err ) res.status( 400 ).send()
+					else send( res, [] )
 				})
 			},
 
@@ -75,8 +91,7 @@ exports = module.exports = function ( app ) {
 			list: function ( req, res ) {
 				models.user.all( function ( err, all ) {
 					if ( err ) return res.status( 500 ).send()
-					var users = all.map( toJSON )
-					res.send( { users: users } )
+					send( res, all )
 				})
 			}
 		}

@@ -23,10 +23,10 @@ exports = module.exports = {
 			id: { type: 'string' },
 			name: { type: 'string', required: true },
 			email: { type: 'string', required: true, pattern: /^[\w.+-]+@[\w\d.-]+\.[\w\d.-]+$/ },
-			password: { type: 'string', required: true },
+			password: { type: 'string' },
 			created: { type: 'string' },
 			provider: { type: 'string', required: true },
-			role: { type: 'string', required: true },
+			role: { type: 'string', required: true }
 		}
 	}
 

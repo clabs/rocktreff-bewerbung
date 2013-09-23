@@ -34,6 +34,13 @@ exports = module.exports = function ( app, passport ) {
 		if ( user && user.role === 'admin' ) next()
 		else res.status( 401 ).send()
 	}
+	var adminOrUserRequired = function ( req, res, next ) {
+		var user = req.user
+		if ( !user ) return res.status( 401 ).send()
+		if ( user.role === 'admin' || user.id === req.params.id )
+			 return next()
+		else return res.status( 403 ).send()
+	}
 	var validateJSON = function ( schema ) {
 		return function ( req, res, next ) {
 			if ( !req.is( 'json' ) ) return res.status( 400 )
@@ -59,7 +66,7 @@ exports = module.exports = function ( app, passport ) {
 
 	app.del( '/user/:id', adminRequired, UserViews.users.del )
 	app.get( '/user/:id', loginRequired, UserViews.users.get )
-	app.put( '/user/:id', adminRequired, UserViews.users.put )
+	app.put( '/user/:id', [ adminOrUserRequired, validateJSON( schema.user ) ], UserViews.users.put )
 
 
 }
