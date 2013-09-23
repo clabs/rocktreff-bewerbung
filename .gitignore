@@ -1,9 +1,12 @@
 .DS_Store
+
 client/.tmp
-client/js/vendor
+client/app/js/vendor
 client/node_modules
+
 server/node_modules
-*.sublime-project
-*.sublime-workspace
 server/.db/development
 server/.db/production
+
+*.sublime-project
+*.sublime-workspace

@@ -38,9 +38,9 @@ module.exports = function( grunt ) {
 
 		// configurable paths
 		bb: {
-			client: '.',
-			dist: '../dist/client',
-			tmp: '../.tmp',
+			client: 'app',
+			dist: 'dist/client',
+			tmp: '.tmp',
 			port: 1337
 		},
 
@@ -91,8 +91,8 @@ module.exports = function( grunt ) {
 					middleware: function ( connect ) {
 						return [
 								livereload,
-								mount( connect, '../.tmp' ),
-								mount( connect, '.' )
+								mount( connect, '.tmp' ),
+								mount( connect, 'app' )
 							]
 						}
 				}
@@ -101,7 +101,7 @@ module.exports = function( grunt ) {
 				options: {
 					middleware: function ( connect ) {
 						return [
-							mount( connect, '../.tmp' ),
+							mount( connect, '.tmp' ),
 							mount( connect, 'test' )
 						]
 					}
@@ -252,7 +252,7 @@ module.exports = function( grunt ) {
 			file.src.forEach( function ( src ) {
 				grunt.file.expand( src ).forEach( function ( filepath ) {
 					var filename = filepath
-						.replace( /^\.\/templates\/(.*?).hbs$/, '$1' )
+						.replace( /^app\/templates\/(.*?).hbs$/, '$1' )
 					var src = grunt.file.read( filepath )
 								.replace( /\n|\n\r|\r\n/g , '\\n' )
 								.replace( /'/g, '\\\'' )
