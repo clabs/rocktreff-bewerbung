@@ -1,0 +1,23 @@
+{
+  "XgLG868X": {
+    "id": "XgLG868X",
+    "user": "GNbUQQgL",
+    "event": "9egP7Q0E",
+    "region": "7Un4iRxj",
+    "created": "Mon Sep 30 2013 11:05:20 GMT+0200 (CEST)",
+    "modified": "Mon Sep 30 2013 11:05:21 GMT+0200 (CEST)",
+    "bandname": "Rob'n'Roll",
+    "skill": "",
+    "managed": false,
+    "letter": "",
+    "contact": {
+      "name": "Rob",
+      "phone": "+49 123 4567890",
+      "mail": "me@robnroll.de",
+      "url": "http://www.robnroll.de",
+      "fb": ""
+    },
+    "picture": "",
+    "picture_small": ""
+  }
+}
