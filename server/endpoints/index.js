@@ -72,12 +72,12 @@ exports = module.exports = function ( app, passport ) {
 			res.redirect( '/me' )
 		}
 	)
-	app.get( '/me', loginRequired, UserViews.me.get )
-	app.get( '/users', adminRequired, UserViews.users.list )
-	app.post( '/users', validateJSON( schema.user ), UserViews.users.post )
-	app.del( '/user/:id', adminRequired, UserViews.users.del )
-	app.get( '/user/:id', loginRequired, UserViews.users.get )
-	app.put( '/user/:id', [ adminOrUserRequired, validateJSON( schema.user ) ], UserViews.users.put )
+	app.get( '/me', loginRequired, UserViews.me )
+	app.get( '/users', adminRequired, UserViews.list )
+	app.post( '/users', validateJSON( schema.user ), UserViews.post )
+	app.del( '/user/:id', adminRequired, UserViews.del )
+	app.get( '/user/:id', loginRequired, UserViews.get )
+	app.put( '/user/:id', [ adminOrUserRequired, validateJSON( schema.user ) ], UserViews.put )
 
 
 	app.get( '/events', loginRequired, EventViews.list )
@@ -97,7 +97,7 @@ exports = module.exports = function ( app, passport ) {
 	app.post( '/votes', [ friendIniOrAdminRequired, validateJSON( schema.vote ) ], VoteViews.post )
 	app.get( '/vote/:id', friendIniOrAdminRequired, VoteViews.get )
 	app.del( '/vote/:id', adminRequired, VoteViews.del )
-	app.put( '/vote/:id', friendIniOrAdminRequired, VoteViews.put )
+	app.put( '/vote/:id', [ friendIniOrAdminRequired, validateJSON( schema.vote ) ], VoteViews.put )
 
 
 }

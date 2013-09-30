@@ -39,61 +39,57 @@ exports = module.exports = function ( app ) {
 
 	return {
 
-		me: {
-			get: function ( req, res ) {
-				send( res, req.user )
-			}
+		me: function ( req, res ) {
+			send( res, req.user )
 		},
 
-		users: {
 
-			get: function ( req, res ) {
-				var id = req.params.id
-				models.user.get( id, function ( err, user ) {
-					if ( err ) return res.status( 400 ).send()
+		get: function ( req, res ) {
+			var id = req.params.id
+			models.user.get( id, function ( err, user ) {
+				if ( err ) return res.status( 400 ).send()
+				send( res, user )
+			})
+		},
+
+		post: function ( req, res ) {
+			var json = req.body
+			// set password hash
+			if ( !json.password ) return res.status( 400 ).send()
+			var sha256 = crypto.createHash( 'sha256' )
+			json.password = sha256.update( json.password ) && sha256.digest( 'hex' )
+			// validate role field
+			var byAdmin = req.user && req.user.role === 'admin'
+			if ( json.role !== '' && !byAdmin )
+				return res.status( 400 ).send()
+			models.user.find( { email: json.email }, function ( err, user ) {
+				if ( user ) return res.status( 409 ).send()
+				models.user.create( json, function ( err, user ) {
 					send( res, user )
 				})
-			},
-
-			post: function ( req, res ) {
-				var json = req.body
-				// set password hash
-				if ( !json.password ) return res.status( 400 ).send()
-				var sha256 = crypto.createHash( 'sha256' )
-				json.password = sha256.update( json.password ) && sha256.digest( 'hex' )
-				// validate role field
-				var byAdmin = req.user && req.user.role === 'admin'
-				if ( json.role !== '' && !byAdmin )
-					return res.status( 400 ).send()
-				models.user.find( { email: json.email }, function ( err, user ) {
-					if ( user ) return res.status( 409 ).send()
-					models.user.create( json, function ( err, user ) {
-						send( res, user )
-					})
-				})
-			},
+			})
+		},
 
 
-			put: function ( req, res ) {
-				send( res, req.user )
-			},
+		put: function ( req, res ) {
+			send( res, req.user )
+		},
 
 
-			del: function ( req, res ) {
-				var id = req.params.id
-				models.user.del( id, function ( err ) {
-					if ( err ) res.status( 400 ).send()
-					else send( res, [] )
-				})
-			},
+		del: function ( req, res ) {
+			var id = req.params.id
+			models.user.del( id, function ( err ) {
+				if ( err ) res.status( 400 ).send()
+				else send( res, [] )
+			})
+		},
 
 
-			list: function ( req, res ) {
-				models.user.all( function ( err, all ) {
-					if ( err ) return res.status( 500 ).send()
-					send( res, all )
-				})
-			}
+		list: function ( req, res ) {
+			models.user.all( function ( err, all ) {
+				if ( err ) return res.status( 500 ).send()
+				send( res, all )
+			})
 		}
 
 	}

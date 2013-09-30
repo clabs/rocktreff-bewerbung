@@ -10,3 +10,4 @@ server/.db/production
 
 *.sublime-project
 *.sublime-workspace
+*.pid
