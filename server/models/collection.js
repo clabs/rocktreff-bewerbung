@@ -51,6 +51,7 @@ exports = module.exports = function ( name ) {
 
 
 		set: function ( id, item, done ) {
+			if ( !item.id ) item.id = id
 			if ( !done ) collection.set( id, item )
 			collection.set( id, item, function ( err ) {
 				if ( err ) return done( err, null )
@@ -69,12 +70,16 @@ exports = module.exports = function ( name ) {
 
 
 		del: function ( id, done ) {
-			if ( !done ) collection.remove( id )
+			if ( !done ) return collection.remove( id )
 			if ( !collection.has( id ) ) return done( 'unknown', null )
 			collection.remove( id, function ( err ) {
 				if ( err ) return done( err, null )
 				return done( null, null )
 			})
+		},
+
+		has: function ( id ) {
+			return collection.has( id )
 		}
 	}
 }

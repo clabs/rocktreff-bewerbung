@@ -17,8 +17,8 @@
 exports = module.exports = function ( app ) {
 
 	app.use( function ( req, res, next ) {
-		var origin = app.get( 'client-url' ) || req.secure + '://' + req.host +( req.port ? ':' + req.port : '' )
-		res.header( 'Access-Control-Allow-Origin', app.get( 'client-url' ) )
+		var origin = app.get( 'client-url' ) || '*'
+		res.header( 'Access-Control-Allow-Origin', origin )
 		res.header( 'Access-Control-Allow-Headers', 'Content-Type,X-Requested-With' )
 		res.header( 'Access-Control-Allow-Credentials', 'true' )
 		next()

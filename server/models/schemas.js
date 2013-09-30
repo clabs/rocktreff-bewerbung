@@ -17,6 +17,7 @@
 // based on http://tools.ietf.org/html/draft-zyp-json-schema-03
 exports = module.exports = {
 
+
 	user: {
 		id: '/User',
 		properties: {
@@ -27,6 +28,99 @@ exports = module.exports = {
 			created: { type: 'string' },
 			provider: { type: 'string', required: true },
 			role: { type: 'string', required: true }
+		}
+	},
+
+
+	bid: {
+		id: '/Bid',
+		properties: {
+			id: { type: 'string' },
+			user: { type: 'string', required: true },
+			event: { type: 'string', required: true },
+			region: { type: 'string', required: true },
+
+			created: { type: 'string' },
+			modified: { type: 'string' },
+			bandname: { type: 'string', required: true },
+			skill: { type: 'string', required: true },
+			managed: { type: 'boolean' },
+			letter: { type: 'string', required: true },
+			contact: {
+				type: 'object',
+				required: true,
+				properties: {
+					name: { type: 'string' },
+					phone: { type: 'string' },
+					mail: { type: 'string' },
+					url: { type: 'string' },
+					fb: { type: 'string' }
+				}
+			},
+			picture: { type: 'string' },
+			picture_small: { type: 'string' },
+			media: { type: 'array', items: { type: 'string' } },
+			// non "public" properties
+			votes: { type: 'array', items: { type: 'string' } },
+			notes: { type: 'array', items: { type: 'string' } },
+		}
+	},
+
+
+	media: {
+		id: '/Media',
+		properties: {
+			id: { type: 'string' },
+			bid: { type: 'string', required: true },
+			type: { type: 'string', required: true },
+			url: { type: 'string' },
+			mimetype: { type: 'string' },
+			filename: { type: 'string' },
+			filesize: { type: 'string' },
+		}
+	},
+
+
+	event: {
+		id: '/Event',
+		properties: {
+			id: { type: 'string' },
+			name: { type: 'string', required: true },
+			opening_date: { type: 'string', required: true },
+			closing_date: { type: 'string', required: true }
+		}
+	},
+
+
+	vote: {
+		id: '/Vote',
+		properties: {
+			id: { type: 'string' },
+			user: { type: 'string', required: true },
+			bid: { type: 'string', required: true },
+			rating: { type: 'integer', required: true, minimum: 0, maximum: 5 }
+		}
+
+	},
+
+
+	note: {
+		id: '/Note',
+		properties: {
+			id: { type: 'string' },
+			user: { type: 'string', required: true },
+			bid: { type: 'string', required: true },
+			type: { type: 'string', required: true, pattern: /^(flag.+|memo)$/ },
+			text: { type: 'string' }
+		}
+	},
+
+
+	region: {
+		id: '/Region',
+		properties: {
+			id: { type: 'string' },
+			name: { type: 'string', required: true }
 		}
 	}
 

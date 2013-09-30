@@ -18,6 +18,12 @@ exports = module.exports = function ( app, passport ) {
 
 	// Views
 	var UserViews = require( './users' )( app )
+	var EventViews = require( './events' )( app )
+	var RegionViews = require( './regions' )( app )
+	var VoteViews = require( './votes' )( app )
+
+
+
 	var schema = require( '../models/schemas' )
 	var validate = require( 'jsonschema' ).validate
 
@@ -31,21 +37,29 @@ exports = module.exports = function ( app, passport ) {
 	}
 	var adminRequired = function ( req, res, next ) {
 		var user = req.user
-		if ( user && user.role === 'admin' ) next()
-		else res.status( 401 ).send()
+		if ( user && user.role === 'admin' ) return next()
+		if ( user ) return res.status( 403 ).send()
+		return res.status( 401 ).send()
 	}
 	var adminOrUserRequired = function ( req, res, next ) {
 		var user = req.user
 		if ( !user ) return res.status( 401 ).send()
 		if ( user.role === 'admin' || user.id === req.params.id )
 			 return next()
-		else return res.status( 403 ).send()
+		return res.status( 403 ).send()
+	}
+	var friendIniOrAdminRequired = function ( req, res, next ) {
+		var user = req.user
+		if ( !user ) return res.status( 401 ).send()
+		if ( /friend|ini|admin/.test( user.role ) )
+			return next()
+		return res.status( 403 ).send()
 	}
 	var validateJSON = function ( schema ) {
 		return function ( req, res, next ) {
 			if ( !req.is( 'json' ) ) return res.status( 400 )
 			var v = validate( req.body, schema )
-			if ( v.errors.length > 0) res.status( 400 ).send( v.errors )
+			if ( v.errors.length > 0) res.status( 422 ).send( v.errors )
 			else next()
 		}
 	}
@@ -58,15 +72,32 @@ exports = module.exports = function ( app, passport ) {
 			res.redirect( '/me' )
 		}
 	)
-
 	app.get( '/me', loginRequired, UserViews.me.get )
-
 	app.get( '/users', adminRequired, UserViews.users.list )
 	app.post( '/users', validateJSON( schema.user ), UserViews.users.post )
-
 	app.del( '/user/:id', adminRequired, UserViews.users.del )
 	app.get( '/user/:id', loginRequired, UserViews.users.get )
 	app.put( '/user/:id', [ adminOrUserRequired, validateJSON( schema.user ) ], UserViews.users.put )
+
+
+	app.get( '/events', loginRequired, EventViews.list )
+	app.post( '/events', [ adminRequired, validateJSON( schema.event ) ], EventViews.post )
+	app.get( '/event/:id', loginRequired, EventViews.get )
+	app.del( '/event/:id', adminRequired, EventViews.del )
+	app.put( '/event/:id', [ adminRequired, validateJSON( schema.event ) ], EventViews.put )
+
+
+	app.get( '/regions', loginRequired, RegionViews.list )
+	app.post( '/regions', [ adminRequired, validateJSON( schema.region ) ], RegionViews.post )
+	app.get( '/region/:id', loginRequired, RegionViews.get )
+	app.del( '/region/:id', adminRequired, RegionViews.del )
+	app.put( '/region/:id', [ adminRequired, validateJSON( schema.region ) ], RegionViews.put )
+
+	app.get( '/votes', adminRequired, VoteViews.list )
+	app.post( '/votes', [ friendIniOrAdminRequired, validateJSON( schema.vote ) ], VoteViews.post )
+	app.get( '/vote/:id', friendIniOrAdminRequired, VoteViews.get )
+	app.del( '/vote/:id', adminRequired, VoteViews.del )
+	app.put( '/vote/:id', friendIniOrAdminRequired, VoteViews.put )
 
 
 }

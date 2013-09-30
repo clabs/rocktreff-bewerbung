@@ -14,20 +14,29 @@
  */
 'use strict';
 
-exports = module.exports = function ( app ) {
+var should = require( 'should' )
+var assert = require( 'assert' )
 
-	var collection = require( './collection' )
-	var schemas = require( './schemas' )
-
-	app.set( 'models', {
-		user: collection( 'users' ),
-		bid: collection( 'bids' ),
-		media: collection( 'media' ),
-		vote: collection( 'votes' ),
-		note: collection( 'notes' ),
-		region: collection( 'regions' ),
-		event: collection( 'events' )
-	})
-
+var login = function ( email ) {
+	return function ( agent, done ) {
+		agent
+			.post( '/auth/local' )
+			.send( { email: email, password: 'foobar' } )
+			.end( function ( err, res ) {
+				should.not.exist( err )
+				agent.saveCookies( res )
+				done()
+			})
+	}
 }
 
+exports = module.exports = {
+	auth: {
+		login: login,
+		loginAsAdmin: login( 'admin@rocktreff.de' ),
+		loginAsIni: login( 'ini@rocktreff.de' ),
+		loginAsFriend: login( 'friend@rocktreff.de' ),
+		loginAsSomeone: login( 'some@one.com' )
+	},
+	url: 'http://localhost:1338'
+}
