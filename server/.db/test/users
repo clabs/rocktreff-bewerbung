@@ -34,5 +34,14 @@
     "created": "2013-09-20T19:48:40.501Z",
     "provider": "local",
     "role": ""
+  },
+  "EMAGd8AY": {
+    "id": "EMAGd8AY",
+    "name": "Band",
+    "email": "me@band.com",
+    "password": "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2",
+    "created": "2013-09-20T19:48:40.501Z",
+    "provider": "local",
+    "role": ""
   }
 }
