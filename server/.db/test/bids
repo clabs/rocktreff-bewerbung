@@ -8,13 +8,34 @@
     "modified": "Mon Sep 30 2013 11:05:21 GMT+0200 (CEST)",
     "bandname": "Rob'n'Roll",
     "skill": "",
-    "managed": false,
+    "managed": true,
     "letter": "",
     "contact": {
       "name": "Rob",
       "phone": "+49 123 4567890",
       "mail": "me@robnroll.de",
       "url": "http://www.robnroll.de",
+      "fb": ""
+    },
+    "picture": "",
+    "picture_small": ""
+  },
+  "h8ikuujA": {
+    "id": "h8ikuujA",
+    "user": "90fFt41t",
+    "event": "9egP7Q0E",
+    "region": "3kuSFRwx",
+    "created": "Mon Sep 30 2013 11:05:20 GMT+0200 (CEST)",
+    "modified": "Mon Sep 30 2013 11:05:21 GMT+0200 (CEST)",
+    "bandname": "Someones Band",
+    "skill": "",
+    "managed": false,
+    "letter": "",
+    "contact": {
+      "name": "Some One",
+      "phone": "+49 123 4567890",
+      "mail": "some@one.com",
+      "url": "http://www.one.com",
       "fb": ""
     },
     "picture": "",
