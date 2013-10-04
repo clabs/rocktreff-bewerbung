@@ -1,46 +1,51 @@
 {
   "dnjnCB3T": {
     "id": "dnjnCB3T",
+    "created": "2013-10-04T18:25:11.574Z",
+    "modified": "2013-10-04T18:25:11.575Z",
     "name": "admin",
     "email": "admin@rocktreff.de",
     "password": "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2",
-    "created": "2013-09-20T19:48:40.501Z",
     "provider": "local",
     "role": "admin"
   },
   "GNbUQQgL": {
     "id": "GNbUQQgL",
+    "created": "2013-10-04T18:25:11.574Z",
+    "modified": "2013-10-04T18:25:11.575Z",
     "name": "ini",
     "email": "ini@rocktreff.de",
     "password": "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2",
-    "created": "2013-09-20T19:48:40.501Z",
     "provider": "local",
     "role": "ini"
   },
   "U6Jp1nEf": {
     "id": "U6Jp1nEf",
+    "created": "2013-10-04T18:25:11.574Z",
+    "modified": "2013-10-04T18:25:11.575Z",
     "name": "friend",
     "email": "friend@rocktreff.de",
     "password": "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2",
-    "created": "2013-09-20T19:48:40.501Z",
     "provider": "local",
     "role": "friend"
   },
   "90fFt41t": {
     "id": "90fFt41t",
+    "created": "2013-10-04T18:25:11.574Z",
+    "modified": "2013-10-04T18:25:11.575Z",
     "name": "someone",
     "email": "some@one.com",
     "password": "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2",
-    "created": "2013-09-20T19:48:40.501Z",
     "provider": "local",
     "role": ""
   },
   "EMAGd8AY": {
     "id": "EMAGd8AY",
+    "created": "2013-10-04T18:25:11.574Z",
+    "modified": "2013-10-04T18:25:11.575Z",
     "name": "Band",
     "email": "me@band.com",
     "password": "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2",
-    "created": "2013-09-20T19:48:40.501Z",
     "provider": "local",
     "role": ""
   }

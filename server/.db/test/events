@@ -1,8 +1,10 @@
 {
   "9egP7Q0E": {
     "id": "9egP7Q0E",
+    "created": "2013-10-04T18:25:11.574Z",
+    "modified": "2013-10-04T18:25:11.575Z",
     "name": "ROCKTREFF Festival",
-    "opening_date": "Nov 11 2013 11:11:11 GMT+0200 (CEST)",
-    "closing_date": "Feb 28 2014 23:59:59 GMT+0200 (CEST)"
+    "opening_date": "2013-11-1T11:11:11.111Z",
+    "closing_date": "2014-02-28T23:59:59.999Z"
   }
 }

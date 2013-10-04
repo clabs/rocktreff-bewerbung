@@ -4,8 +4,8 @@
     "user": "EMAGd8AY",
     "event": "9egP7Q0E",
     "region": "7Un4iRxj",
-    "created": "Mon Sep 30 2013 11:05:20 GMT+0200 (CEST)",
-    "modified": "Mon Sep 30 2013 11:05:21 GMT+0200 (CEST)",
+    "created": "2013-10-04T18:25:11.574Z",
+    "modified": "2013-10-04T18:25:11.575Z",
     "bandname": "Rob'n'Roll",
     "skill": "",
     "managed": true,
@@ -18,15 +18,18 @@
       "fb": ""
     },
     "picture": "",
-    "picture_small": ""
+    "picture_small": "",
+    "media": [],
+    "notes": [],
+    "votes": []
   },
   "h8ikuujA": {
     "id": "h8ikuujA",
     "user": "90fFt41t",
     "event": "9egP7Q0E",
     "region": "3kuSFRwx",
-    "created": "Mon Sep 30 2013 11:05:20 GMT+0200 (CEST)",
-    "modified": "Mon Sep 30 2013 11:05:21 GMT+0200 (CEST)",
+    "created": "2013-10-04T18:25:11.576Z",
+    "modified": "2013-10-04T18:25:11.577Z",
     "bandname": "Someones Band",
     "skill": "",
     "managed": false,
@@ -40,5 +43,8 @@
     },
     "picture": "",
     "picture_small": ""
+    "media": [],
+    "notes": [],
+    "votes": []
   }
 }
