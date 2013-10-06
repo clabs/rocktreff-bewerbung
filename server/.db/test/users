@@ -48,5 +48,15 @@
     "password": "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2",
     "provider": "local",
     "role": ""
+  },
+  "Hgwpou8k": {
+    "id": "Hgwpou8k",
+    "created": "2013-10-04T18:25:11.574Z",
+    "modified": "2013-10-04T18:25:11.575Z",
+    "name": "Another Band",
+    "email": "me@band2.com",
+    "password": "c3ab8ff13720e8ad9047dd39466b3c8974e592c2fa383d4a3960714caef0c4f2",
+    "provider": "local",
+    "role": ""
   }
 }
