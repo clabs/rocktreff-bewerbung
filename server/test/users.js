@@ -193,7 +193,7 @@ describe( 'Users', function () {
 					provider: 'local',
 					role: 'admin'
 				})
-				.expect( 400, done )
+				.expect( 403, done )
 		})
 
 	})

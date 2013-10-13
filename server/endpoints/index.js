@@ -21,7 +21,9 @@ exports = module.exports = function ( app, passport ) {
 	var EventViews = require( './events' )( app )
 	var RegionViews = require( './regions' )( app )
 	var VoteViews = require( './votes' )( app )
-
+	var NoteViews = require( './notes' )( app )
+	var MediaViews = require( './media' )( app )
+	var BidViews = require( './bids' )( app )
 
 
 	var schema = require( '../models/schemas' )
@@ -100,4 +102,21 @@ exports = module.exports = function ( app, passport ) {
 	app.put( '/vote/:id', [ friendIniOrAdminRequired, validateJSON( schema.vote ) ], VoteViews.put )
 
 
+	app.get( '/notes', adminRequired, NoteViews.list )
+	app.post( '/notes', [ friendIniOrAdminRequired, validateJSON( schema.note ) ], NoteViews.post )
+	app.get( '/note/:id', friendIniOrAdminRequired, NoteViews.get )
+	app.del( '/note/:id', friendIniOrAdminRequired, NoteViews.del )
+	app.put( '/note/:id', [ friendIniOrAdminRequired, validateJSON( schema.note ) ], NoteViews.put )
+
+
+	app.get( '/media', adminRequired, MediaViews.list )
+	app.post( '/media', [ loginRequired, validateJSON( schema.media ) ], MediaViews.post )
+	app.get( '/media/:id', loginRequired, MediaViews.get )
+	app.del( '/media/:id', loginRequired, MediaViews.del )
+
+	app.get( '/bids', loginRequired, BidViews.list )
+	app.post( '/bids', [ loginRequired, validateJSON( schema.bid ) ], BidViews.post )
+	app.get( '/bid/:id', loginRequired, BidViews.get )
+	app.del( '/bid/:id', adminRequired, BidViews.del )
+	app.put( '/bid/:id', loginRequired, BidViews.put )
 }

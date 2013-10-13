@@ -18,36 +18,48 @@ exports = module.exports = function ( app ) {
 
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
-	var json = require( '../utils/json' )( schema.region )
-	var send = json.send( 'regions' )
+	var json = require( '../utils/json' )( schema.note )
+	var send = json.send( 'notes' )
 	var empty = function ( res ) {
 		return function () {
 			send( res )( [] )
 		}
 	}
 
-	return {
 
+	return {
 
 		get: function ( req, res ) {
 			var id = req.params.id
-			models.region.get( id )
+			models.note.get( id )
 				.then( send( res ), empty( res ) )
 		},
 
 
 		post: function ( req, res ) {
 			var json = req.body
-			models.region.create( json ).then( send( res ) )
+
+			if ( json.user !== req.user.id ) return res.status( 403 ).send()
+			if ( !models.bid.has( json.bid ) ) return res.status( 404 ).send()
+
+			models.note.create( json ).then( send( res ) )
 		},
 
 
 		put: function ( req, res ) {
 			var id = req.params.id
-			models.region.get( id )
+
+			if ( req.body.user !== req.user.id ) return res.status( 403 ).send()
+			if ( !models.bid.has( req.body.bid ) ) return res.status( 404 ).send()
+
+			models.note.get( id )
+				.then( function ( note ) {
+					if ( !note ) throw res.status( 400 ).send()
+					return note
+				})
 				.then( json.merge( req.body ) )
-				.then( function ( region ) {
-					return models.region.set( id, region )
+				.then( function ( note ) {
+					return models.note.set( id, note )
 				})
 				.then( send( res ) )
 		},
@@ -55,16 +67,22 @@ exports = module.exports = function ( app ) {
 
 		del: function ( req, res ) {
 			var id = req.params.id
-			models.region.del( id )
-				.then( send( res ), function ( err ) {
-					res.status( 400 ).send()
+			models.note.get( id )
+				.then( function ( note ) {
+					if ( !note )
+						throw res.status( 400 ).send()
+					if ( note.user !== req.user.id )
+						throw res.status( 403 ).send()
+					return models.note.del( id )
 				})
+				.then( send( res ) )
 		},
 
 
 		list: function ( req, res ) {
-			var query = req.query
-			models.region.find( query )
+			var query = req.user.role === '' ?
+				{ user: req.user.id } : req.query
+			models.note.find( query )
 				.then( send( res ), function ( err ) {
 					res.status( 500 ).send()
 				})

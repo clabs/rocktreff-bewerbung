@@ -17,6 +17,7 @@
 var store = require( '../store' )
 var guid = require( '../utils/guid' )
 var _ = require( 'lodash' )
+var Promise = require( 'promise' )
 
 exports = module.exports = function ( name ) {
 	// setup collection
@@ -24,58 +25,74 @@ exports = module.exports = function ( name ) {
 
 	return {
 
-		find: function ( query, done ) {
-			collection.all( function ( err, data ) {
-				if ( err || !data ) return done( err, null )
-				var item = _.find( data, query )
-				return done( null, item )
+		find: function ( query ) {
+			if ( !query || _.isEmpty( query ) )
+				return this.all()
+			return new Promise( function ( resolve, reject ) {
+				collection.all( function ( err, items ) {
+					if ( err ) reject( err )
+					else resolve( _.filter( items || [], query ) )
+				})
 			})
 		},
 
 
-		all: function ( done ) {
-			if ( !done ) return _.map( collection.all() )
-			collection.all( function ( err, all ) {
-				if ( err ) return done( err, null )
-				return done( null, _.map( all ) )
+		all: function () {
+			return new Promise( function ( resolve, reject ) {
+				collection.all( function ( err, items ) {
+					if ( err ) reject( err )
+					else resolve( _.map( items || [] ) )
+				})
 			})
 		},
 
 
-		get: function ( id, done ) {
-			if ( !done ) return collection.get( id )
-			return collection.get( id, function ( err, item ) {
-				done( null, item )
+		get: function ( id ) {
+			return new Promise( function ( resolve, reject ) {
+				collection.get( id, function ( err, item ) {
+					if ( err ) reject( err )
+					else resolve( item )
+				})
 			})
 		},
 
 
-		set: function ( id, item, done ) {
+		set: function ( id, item ) {
 			if ( !item.id ) item.id = id
-			if ( !done ) collection.set( id, item )
-			collection.set( id, item, function ( err ) {
-				if ( err ) return done( err, null )
-				return done( null, item )
+			item.modified = ( new Date() ).toISOString()
+			return new Promise( function ( resolve, reject ) {
+				collection.set( id, item, function ( err ) {
+					if ( err ) reject( err )
+					else resolve( item )
+				})
 			})
+
 		},
 
 
-		create: function ( item, done ) {
-			item.id = guid()
-			collection.set( item.id, item, function ( err ) {
-				if ( err ) return done( err, null )
-				return done( null, item )
+		create: function ( item ) {
+			do { item.id = guid() }
+			while ( collection.has( item.id ) )
+			item.created = ( new Date() ).toISOString()
+			return new Promise( function ( resolve, reject ) {
+				collection.set( item.id, item, function ( err ) {
+					if ( err ) reject( err )
+					else resolve( item )
+				})
 			})
+
 		},
 
 
-		del: function ( id, done ) {
-			if ( !done ) return collection.remove( id )
-			if ( !collection.has( id ) ) return done( 'unknown', null )
-			collection.remove( id, function ( err ) {
-				if ( err ) return done( err, null )
-				return done( null, null )
+		del: function ( id ) {
+			return new Promise( function ( resolve, reject ) {
+				if ( !collection.has( id ) ) reject( new Error( 'unknown' ) )
+				collection.remove( id, function ( err ) {
+					if ( err ) reject( err )
+					else resolve()
+				})
 			})
+
 		},
 
 		has: function ( id ) {

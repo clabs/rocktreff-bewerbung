@@ -22,10 +22,11 @@ exports = module.exports = {
 		id: '/User',
 		properties: {
 			id: { type: 'string' },
+			created: { type: 'string', format: 'date-time' },
+			modified: { type: 'string', format: 'date-time' },
 			name: { type: 'string', required: true },
-			email: { type: 'string', required: true, pattern: /^[\w.+-]+@[\w\d.-]+\.[\w\d.-]+$/ },
+			email: { type: 'string', required: true, format: 'email' },
 			password: { type: 'string' },
-			created: { type: 'string' },
 			provider: { type: 'string', required: true },
 			role: { type: 'string', required: true }
 		}
@@ -36,12 +37,11 @@ exports = module.exports = {
 		id: '/Bid',
 		properties: {
 			id: { type: 'string' },
+			created: { type: 'string', format: 'date-time' },
+			modified: { type: 'string', format: 'date-time' },
 			user: { type: 'string', required: true },
 			event: { type: 'string', required: true },
 			region: { type: 'string', required: true },
-
-			created: { type: 'string' },
-			modified: { type: 'string' },
 			bandname: { type: 'string', required: true },
 			skill: { type: 'string', required: true },
 			managed: { type: 'boolean' },
@@ -50,11 +50,11 @@ exports = module.exports = {
 				type: 'object',
 				required: true,
 				properties: {
-					name: { type: 'string' },
-					phone: { type: 'string' },
-					mail: { type: 'string' },
-					url: { type: 'string' },
-					fb: { type: 'string' }
+					name: { type: 'string', required: true },
+					phone: { type: 'string', required: true, format: 'phone' },
+					mail: { type: 'string', required: true, format: 'email' },
+					url: { type: 'string', format: 'uri' },
+					fb: { type: 'string', format: 'uri' }
 				}
 			},
 			picture: { type: 'string' },
@@ -62,7 +62,7 @@ exports = module.exports = {
 			media: { type: 'array', items: { type: 'string' } },
 			// non "public" properties
 			votes: { type: 'array', items: { type: 'string' } },
-			notes: { type: 'array', items: { type: 'string' } },
+			notes: { type: 'array', items: { type: 'string' } }
 		}
 	},
 
@@ -71,9 +71,11 @@ exports = module.exports = {
 		id: '/Media',
 		properties: {
 			id: { type: 'string' },
+			created: { type: 'string', format: 'date-time' },
+			modified: { type: 'string', format: 'date-time' },
 			bid: { type: 'string', required: true },
-			type: { type: 'string', required: true },
-			url: { type: 'string' },
+			type: { type: 'string', required: true, pattern: /^youtube|file$/ },
+			url: { type: 'string', format: 'uri' },
 			mimetype: { type: 'string' },
 			filename: { type: 'string' },
 			filesize: { type: 'string' },
@@ -85,9 +87,11 @@ exports = module.exports = {
 		id: '/Event',
 		properties: {
 			id: { type: 'string' },
+			created: { type: 'string', format: 'date-time' },
+			modified: { type: 'string', format: 'date-time' },
 			name: { type: 'string', required: true },
-			opening_date: { type: 'string', required: true },
-			closing_date: { type: 'string', required: true }
+			opening_date: { type: 'string', required: true, format: 'date-time' },
+			closing_date: { type: 'string', required: true, format: 'date-time' }
 		}
 	},
 
@@ -96,6 +100,8 @@ exports = module.exports = {
 		id: '/Vote',
 		properties: {
 			id: { type: 'string' },
+			created: { type: 'string', format: 'date-time' },
+			modified: { type: 'string', format: 'date-time' },
 			user: { type: 'string', required: true },
 			bid: { type: 'string', required: true },
 			rating: { type: 'integer', required: true, minimum: 0, maximum: 5 }
@@ -108,9 +114,11 @@ exports = module.exports = {
 		id: '/Note',
 		properties: {
 			id: { type: 'string' },
+			created: { type: 'string', format: 'date-time' },
+			modified: { type: 'string', format: 'date-time' },
 			user: { type: 'string', required: true },
 			bid: { type: 'string', required: true },
-			type: { type: 'string', required: true, pattern: /^(flag.+|memo)$/ },
+			type: { type: 'string', required: true, pattern: /^(flag.?|memo)$/ },
 			text: { type: 'string' }
 		}
 	},
@@ -120,6 +128,8 @@ exports = module.exports = {
 		id: '/Region',
 		properties: {
 			id: { type: 'string' },
+			created: { type: 'string', format: 'date-time' },
+			modified: { type: 'string', format: 'date-time' },
 			name: { type: 'string', required: true }
 		}
 	}

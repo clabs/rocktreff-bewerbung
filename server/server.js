@@ -26,7 +26,7 @@ var ENV = app.get( 'env' )
 app.configure( function () {
 	app.disable( 'x-powered-by' )
 
-	app.set( 'client-url', 'http://localhost:1337' )
+	app.set( 'client-url', '*' )
 
 	// Password encryption
 	app.set( 'crypto-key', 'otETq4Tq' )
@@ -37,8 +37,7 @@ app.configure( function () {
 	app.use( express.logger( 'dev' ) )
 	app.use( express.compress() )
 	app.use( express.cookieParser() )
-	app.use( express.json() )
-	app.use( express.urlencoded() )
+	app.use( express.bodyParser() )
 	app.use( express.session({
 		secret: 'R0(|<7R3PhPhB4|\\|DB3\\/\\/3RBU|\\|9'
 	}))

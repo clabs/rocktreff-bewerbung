@@ -18,78 +18,95 @@ exports = module.exports = function ( app ) {
 
 	var crypto = require( 'crypto' )
 	var models = app.get( 'models' )
-
-	var toJSON = function ( user ) {
-		return {
-			id: user.id,
-			name: user.name,
-			email: user.email,
-			created: user.created,
-			role: user.role
+	var schema = require( '../models/schemas' )
+	var json = require( '../utils/json' )( schema.user )
+	var stripPassword = json.omit( 'password' )
+	var send = json.send( 'users' )
+	var hashPassword = function ( user ) {
+		// only hash the password if it's not already hashed …
+		if ( !/[a-f0-9]{64}/.test( user.password ) ) {
+			var sha256 = require( 'crypto' ).createHash( 'sha256' )
+			user.password = sha256.update( user.password ) && sha256.digest( 'hex' )
 		}
+		return user
 	}
 
-	var send = function ( res, user ) {
-		return res.send({
-			users: user instanceof Array ?
-				user.map( toJSON ) :
-				[ toJSON( user ) ]
-		})
-	}
 
 	return {
 
 		me: function ( req, res ) {
-			send( res, req.user )
+			models.user.get( req.user.id )
+				.then( stripPassword )
+				.done( send( res ) )
 		},
 
 
 		get: function ( req, res ) {
 			var id = req.params.id
-			models.user.get( id, function ( err, user ) {
-				if ( err ) return res.status( 400 ).send()
-				send( res, user )
-			})
+			models.user.get( id )
+				.then( send( res ), function ( err ) {
+					res.status( 400 ).send()
+				})
 		},
 
 		post: function ( req, res ) {
-			var json = req.body
-			// set password hash
-			if ( !json.password ) return res.status( 400 ).send()
-			var sha256 = crypto.createHash( 'sha256' )
-			json.password = sha256.update( json.password ) && sha256.digest( 'hex' )
-			// validate role field
-			var byAdmin = req.user && req.user.role === 'admin'
-			if ( json.role !== '' && !byAdmin )
+			if ( req.body.role !== '' )
+				if ( !req.user || req.user.role !== 'admin' )
+					return res.status( 403 ).send()
+			if ( !req.body.password )
 				return res.status( 400 ).send()
-			models.user.find( { email: json.email }, function ( err, user ) {
-				if ( user ) return res.status( 409 ).send()
-				models.user.create( json, function ( err, user ) {
-					send( res, user )
+
+
+			models.user.find( { email: req.body.email } )
+				.then( function ( user ) {
+					if ( user ) throw res.status( 409 ).send()
+					return json.create( req.body )
 				})
-			})
+				.then( hashPassword )
+				.then( function ( user ) {
+					return models.user.create( user )
+				})
+				.then( stripPassword )
+				.then( send( res ) )
 		},
 
 
 		put: function ( req, res ) {
-			send( res, req.user )
+			var id = req.params.id
+			if ( id !== req.user.id || req.body.role !== '' )
+				if ( !req.user || req.user.role !== 'admin' )
+					return res.status( 403 ).send()
+			if ( id !== req.body.id )
+				return res.status( 400 ).send()
+
+			models.user.get( id )
+				.then( json.merge( req.body ) )
+				.then( hashPassword )
+				.then( function ( user ) {
+					return models.user.set( id, user )
+				})
+				.then( stripPassword )
+				.then( send( res ) )
 		},
 
 
 		del: function ( req, res ) {
 			var id = req.params.id
-			models.user.del( id, function ( err ) {
-				if ( err ) res.status( 400 ).send()
-				else send( res, [] )
-			})
+			models.user.del( id )
+				.then( send( res ), function ( err ) {
+					res.status( 400 ).send()
+				})
 		},
 
 
 		list: function ( req, res ) {
-			models.user.all( function ( err, all ) {
-				if ( err ) return res.status( 500 ).send()
-				send( res, all )
-			})
+			var query = req.user.role === '' ?
+				{ id: req.user.id } : req.query
+			models.user.find( query )
+				.then( stripPassword )
+				.then( send( res ), function ( err ) {
+					res.status( 500 ).send()
+				})
 		}
 
 	}

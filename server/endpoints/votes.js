@@ -17,77 +17,67 @@
 exports = module.exports = function ( app ) {
 
 	var models = app.get( 'models' )
-
-	var toJSON = function ( vote ) {
-		return {
-			id: vote.id,
-			user: vote.user,
-			bid: vote.bid,
-			rating: vote.rating
+	var schema = require( '../models/schemas' )
+	var json = require( '../utils/json' )( schema.vote )
+	var send = json.send( 'votes' )
+	var empty = function ( res ) {
+		return function () {
+			send( res )( [] )
 		}
 	}
 
-	var send = function ( res, vote ) {
-		return res.send({
-			votes: vote instanceof Array ?
-				vote.map( toJSON ) :
-				[ toJSON( vote ) ]
-		})
-	}
 
 	return {
 
+
 		get: function ( req, res ) {
 			var id = req.params.id
-			models.vote.get( id, function ( err, vote ) {
-				if ( err ) return res.status( 400 ).send()
-				if ( !vote ) return send( res, [] )
-				send( res, vote )
-			})
+			models.vote.get( id )
+				.then( send( res ), empty( res ) )
 		},
 
+
 		post: function ( req, res ) {
-			var json = req.body
-			if ( json.user !== req.user.id ) return res.status( 403 ).send()
-			if ( !models.bid.has( json.bid ) ) return res.status( 404 ).send()
-			models.vote.create( json, function ( err, vote ) {
-				send( res, vote )
-			})
+			var body = req.body
+
+			if ( body.user !== req.user.id ) return res.status( 403 ).send()
+			if ( !models.bid.has( body.bid ) ) return res.status( 404 ).send()
+
+			models.vote.create( body ).then( send( res ) )
 		},
 
 
 		put: function ( req, res ) {
 			var id = req.params.id
-			var json = req.body
-			if ( json.user !== req.user.id ) return res.status( 403 ).send()
-			if ( !models.bid.has( json.bid ) ) return res.status( 404 ).send()
-			models.vote.get( id, function ( err, vote ) {
-				if ( err || !vote ) return res.status( 400 ).send()
-				models.vote.set( id, json, function ( err, vote ) {
-					if ( err || !vote ) return res.status( 400 ).send()
-					send( res, vote )
+			var body = req.body
+
+			if ( body.user !== req.user.id ) return res.status( 403 ).send()
+			if ( !models.bid.has( body.bid ) ) return res.status( 404 ).send()
+
+			models.vote.get( id )
+				.then( json.merge( body ) )
+				.then( function ( vote ) {
+					return models.vote.set( id, vote )
 				})
-			})
+				.then( send( res ) )
 		},
 
 
 		del: function ( req, res ) {
 			var id = req.params.id
-			models.vote.del( id, function ( err ) {
-				if ( err ) res.status( 400 ).send()
-				else send( res, [] )
-			})
+			models.vote.del( id ).then( send( res ) )
 		},
 
 
 		list: function ( req, res ) {
-			models.vote.all( function ( err, all ) {
-				if ( err ) return res.status( 500 ).send()
-				send( res, all )
-			})
+			var query = req.user.role === '' ?
+				{ user: req.user.id } : req.query
+			models.vote.find( query )
+				.then( send( res ), function ( err ) {
+					res.status( 500 ).send()
+				})
 		}
 
+
 	}
-
-
 }

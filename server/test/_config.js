@@ -36,7 +36,9 @@ exports = module.exports = {
 		loginAsAdmin: login( 'admin@rocktreff.de' ),
 		loginAsIni: login( 'ini@rocktreff.de' ),
 		loginAsFriend: login( 'friend@rocktreff.de' ),
-		loginAsSomeone: login( 'some@one.com' )
+		loginAsSomeone: login( 'some@one.com' ),
+		loginAsBand: login( 'me@band.com' ),
+		loginAsAnotherBand: login( 'me@band2.com' )
 	},
 	url: 'http://localhost:1338'
 }

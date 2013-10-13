@@ -207,8 +207,8 @@ describe( 'Events', function () {
 					.post( '/events' )
 					.send({
 						name: 'new event 1',
-						opening_date: "Nov 11 2013 11:11:11 GMT+0200 (CEST)",
-						closing_date: "Nov 12 2013 11:11:11 GMT+0200 (CEST)"
+						opening_date: "2013-11-11T11:11:00.000Z",
+						closing_date: "2014-02-28T23:59:59.999Z"
 					})
 					.expect( 200 )
 					.end( function ( err, res ) {
@@ -238,8 +238,8 @@ describe( 'Events', function () {
 					.post( '/events' )
 					.send({
 						name: 'new event 2',
-						opening_date: "Nov 11 2013 11:11:11 GMT+0200 (CEST)",
-						closing_date: "Nov 12 2013 11:11:11 GMT+0200 (CEST)"
+						opening_date: "2013-11-11T11:11:00.000Z",
+						closing_date: "2014-02-28T23:59:59.999Z"
 					})
 					.expect( 'Content-Type', /json/ )
 					.expect( 200 )
@@ -315,8 +315,8 @@ describe( 'Events', function () {
 					.post( '/events' )
 					.send({
 						name: 'Rockini Party',
-						opening_date: "Nov 11 2013 11:11:11 GMT+0200 (CEST)",
-						closing_date: "Nov 12 2013 11:11:11 GMT+0200 (CEST)"
+						opening_date: "2013-11-11T11:11:00.000Z",
+						closing_date: "2014-02-28T23:59:59.999Z"
 					})
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -382,8 +382,8 @@ describe( 'Events', function () {
 					.put( '/event/' + id )
 					.send({
 						name: 'Schlagerfestival',
-						opening_date: "Nov 11 2013 11:11:11 GMT+0200 (CEST)",
-						closing_date: "Nov 12 2013 11:11:11 GMT+0200 (CEST)"
+						opening_date: "2013-11-11T11:11:00.000Z",
+						closing_date: "2014-02-28T23:59:59.999Z"
 					})
 					.expect( 200 )
 					.end( function ( err, res ) {
@@ -398,8 +398,8 @@ describe( 'Events', function () {
 							.put( '/event/' + id )
 							.send({
 								name: 'ROCKTREFF Festival',
-								opening_date: "Nov 11 2013 11:11:11 GMT+0200 (CEST)",
-								closing_date: "Nov 12 2013 11:11:11 GMT+0200 (CEST)"
+								opening_date: "2013-11-11T11:11:00.000Z",
+								closing_date: "2014-02-28T23:59:59.999Z"
 							})
 							.expect( 200, done )
 					})

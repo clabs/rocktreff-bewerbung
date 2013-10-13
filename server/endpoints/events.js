@@ -17,70 +17,60 @@
 exports = module.exports = function ( app ) {
 
 	var models = app.get( 'models' )
-
-	var toJSON = function ( event ) {
-		return {
-			id: event.id,
-			name: event.name,
-			opening_date: event.opening_date,
-			closing_date: event.closing_date,
+	var schema = require( '../models/schemas' )
+	var json = require( '../utils/json' )( schema.event )
+	var send = json.send( 'events' )
+	var empty = function ( res ) {
+		return function () {
+			send( res )( )
 		}
-	}
-
-	var send = function ( res, event ) {
-		return res.send({
-			events: event instanceof Array ?
-				event.map( toJSON ) :
-				[ toJSON( event ) ]
-		})
 	}
 
 	return {
 
 		get: function ( req, res ) {
 			var id = req.params.id
-			models.event.get( id, function ( err, event ) {
-				if ( err ) return res.status( 400 ).send()
-				if ( !event ) return send( res, [] )
-				send( res, event )
-			})
+			models.event.get( id )
+				.then( null, empty( res ) )
+				.then( send( res ) )
 		},
 
 		post: function ( req, res ) {
 			var json = req.body
-			models.event.create( json, function ( err, event ) {
-				send( res, event )
-			})
+			models.event.create( json )
+				.then( send( res ) )
 		},
 
 
 		put: function ( req, res ) {
 			var id = req.params.id
 			var json = req.body
-			models.event.get( id, function ( err, event ) {
-				if ( err || !event ) return res.status( 400 ).send()
-				models.event.set( id, json, function ( err, event ) {
-					if ( err || !event ) return res.status( 400 ).send()
-					send( res, event )
+			models.event.get( id )
+				.then( function ( event ) {
+					if ( !event ) throw res.status( 400 ).send()
+					return models.event.set( id, json )
 				})
-			})
+				.then( send( res ), function ( err ) {
+					res.status( 400 ).send()
+				})
 		},
 
 
 		del: function ( req, res ) {
 			var id = req.params.id
-			models.event.del( id, function ( err ) {
-				if ( err ) res.status( 400 ).send()
-				else send( res, [] )
-			})
+			models.event.del( id )
+				.then( send( res ), function ( err ) {
+					res.status( 400 ).send()
+				})
 		},
 
 
 		list: function ( req, res ) {
-			models.event.all( function ( err, all ) {
-				if ( err ) return res.status( 500 ).send()
-				send( res, all )
-			})
+			var query = req.query
+			models.event.find( query )
+				.then( send( res ), function ( err ) {
+					res.status( 500 ).send()
+				})
 		}
 
 	}

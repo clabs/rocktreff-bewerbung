@@ -25,14 +25,18 @@ exports = module.exports = function( app, passport ) {
 			usernameField: 'email'
 		},
 		function ( email, password, done ) {
-			User.find( { email: email }, function ( err, user ) {
-				var sha256 = crypto.createHash( 'sha256' )
-				var hash = sha256.update( password ) && sha256.digest( 'hex' )
-				if ( user && user.password === hash )
-					return done( null, user )
-				else
-					return done( err, false, { message: 'Incorrect email or password' } )
-			})
+			User.find( { email: email } )
+				.then( function ( user ) {
+					user = user[ 0 ]
+					var sha256 = crypto.createHash( 'sha256' )
+					var hash = sha256.update( password ) && sha256.digest( 'hex' )
+					if ( user && user.password === hash )
+						done( null, user )
+					else
+						done( null, null, { message: 'Incorrect email or password' } )
+				}, function ( err ) {
+					done( err, null, { message: 'Incorrect email or password' } )
+				})
 		}
 	))
 
@@ -59,9 +63,10 @@ exports = module.exports = function( app, passport ) {
 
 	// Deserialize
 	passport.deserializeUser( function( id, done ) {
-		User.get( id, function ( err, user ) {
-			done( err, user )
-		})
+		User.get( id ).then(
+			function ( user ) { done( null, user ) },
+			function ( err)   { done( err, false ) }
+		)
 	})
 
 }
