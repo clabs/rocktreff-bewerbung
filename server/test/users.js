@@ -151,7 +151,7 @@ describe( 'Users', function () {
 					var agent = request.agent( url )
 					auth.loginAsAdmin( agent, function () {
 						agent
-							.del( '/user/' + user.id )
+							.del( '/users/' + user.id )
 							.expect( 200, done )
 					})
 				})
@@ -198,7 +198,7 @@ describe( 'Users', function () {
 
 	})
 
-	describe( 'DELETE /user/:id', function () {
+	describe( 'DELETE /users/:id', function () {
 		var id = 1, agent
 		var create_user = function ( agent, done ) {
 			agent
@@ -224,7 +224,7 @@ describe( 'Users', function () {
 		var remove_user = function ( agent, id, done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.del( '/user/' + id )
+					.del( '/users/' + id )
 					.expect( 200, done || function () {} )
 			})
 		}
@@ -238,7 +238,7 @@ describe( 'Users', function () {
 		it( 'should return a bad request for unknown ids', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.del( '/user/some_random_id' )
+					.del( '/users/some_random_id' )
 					.expect( 400, done )
 			})
 		})
@@ -248,7 +248,7 @@ describe( 'Users', function () {
 			create_user( agent, function ( id, email ) {
 				auth.loginAsAdmin( agent, function () {
 					agent
-						.del( '/user/' + id )
+						.del( '/users/' + id )
 						.expect( 200, done )
 				})
 			})
@@ -257,7 +257,7 @@ describe( 'Users', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.del( '/user/some_random_id' )
+				.del( '/users/some_random_id' )
 				.expect( 401, done )
 		})
 
@@ -266,7 +266,7 @@ describe( 'Users', function () {
 			create_user( agent, function ( id, email ) {
 				auth.loginAsSomeone( agent, function () {
 					agent
-						.del( '/user/' + id )
+						.del( '/users/' + id )
 						.expect( 403 )
 						.end( function ( err, res ) {
 							should.not.exist( err )
@@ -278,7 +278,7 @@ describe( 'Users', function () {
 
 	})
 
-	describe( 'GET /user/:id', function () {
+	describe( 'GET /users/:id', function () {
 		var agent, id = '90fFt41t' // id of someone
 		beforeEach( function (){
 			agent = request.agent( url )
@@ -287,14 +287,14 @@ describe( 'Users', function () {
 
 		it( 'should be not accessible for anyone', function ( done ) {
 			agent
-				.get( '/user/' + id )
+				.get( '/users/' + id )
 				.expect( 401, done )
 		})
 
 		it( 'should be accessible for authenticated users', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.get( '/user/' + id )
+					.get( '/users/' + id )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -309,7 +309,7 @@ describe( 'Users', function () {
 
 	})
 
-	describe( 'PUT /user/:id', function () {
+	describe( 'PUT /users/:id', function () {
 		var agent
 		var someone = {
 			id: '90fFt41t',
@@ -326,7 +326,7 @@ describe( 'Users', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.put( '/user/' + someone.id )
+				.put( '/users/' + someone.id )
 				.send({
 					name: 'foobar'
 				})
@@ -336,7 +336,7 @@ describe( 'Users', function () {
 		it( 'should not be accessible for other authenticated users', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.put( '/user/' + someone.id )
+					.put( '/users/' + someone.id )
 					.expect( 403, done )
 			})
 		})
@@ -344,7 +344,7 @@ describe( 'Users', function () {
 		it( 'should be accessible for the user', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.put( '/user/' + someone.id )
+					.put( '/users/' + someone.id )
 					.send( someone )
 					.expect( 200, done )
 			})
@@ -353,7 +353,7 @@ describe( 'Users', function () {
 		it( 'should be accessible for an admin', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.put( '/user/' + someone.id )
+					.put( '/users/' + someone.id )
 					.send( someone )
 					.expect( 200, done )
 			})

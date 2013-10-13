@@ -78,36 +78,36 @@ exports = module.exports = function ( app, passport ) {
 	app.get( '/me', loginRequired, UserViews.me )
 	app.get( '/users', adminRequired, UserViews.list )
 	app.post( '/users', validateJSON( schema.user ), UserViews.post )
-	app.del( '/user/:id', adminRequired, UserViews.del )
-	app.get( '/user/:id', loginRequired, UserViews.get )
-	app.put( '/user/:id', [ adminOrUserRequired, validateJSON( schema.user ) ], UserViews.put )
+	app.del( '/users/:id', adminRequired, UserViews.del )
+	app.get( '/users/:id', loginRequired, UserViews.get )
+	app.put( '/users/:id', [ adminOrUserRequired, validateJSON( schema.user ) ], UserViews.put )
 
 
 	app.get( '/events', loginRequired, EventViews.list )
 	app.post( '/events', [ adminRequired, validateJSON( schema.event ) ], EventViews.post )
-	app.get( '/event/:id', loginRequired, EventViews.get )
-	app.del( '/event/:id', adminRequired, EventViews.del )
-	app.put( '/event/:id', [ adminRequired, validateJSON( schema.event ) ], EventViews.put )
+	app.get( '/events/:id', loginRequired, EventViews.get )
+	app.del( '/events/:id', adminRequired, EventViews.del )
+	app.put( '/events/:id', [ adminRequired, validateJSON( schema.event ) ], EventViews.put )
 
 
 	app.get( '/regions', loginRequired, RegionViews.list )
 	app.post( '/regions', [ adminRequired, validateJSON( schema.region ) ], RegionViews.post )
-	app.get( '/region/:id', loginRequired, RegionViews.get )
-	app.del( '/region/:id', adminRequired, RegionViews.del )
-	app.put( '/region/:id', [ adminRequired, validateJSON( schema.region ) ], RegionViews.put )
+	app.get( '/regions/:id', loginRequired, RegionViews.get )
+	app.del( '/regions/:id', adminRequired, RegionViews.del )
+	app.put( '/regions/:id', [ adminRequired, validateJSON( schema.region ) ], RegionViews.put )
 
 	app.get( '/votes', adminRequired, VoteViews.list )
 	app.post( '/votes', [ friendIniOrAdminRequired, validateJSON( schema.vote ) ], VoteViews.post )
-	app.get( '/vote/:id', friendIniOrAdminRequired, VoteViews.get )
-	app.del( '/vote/:id', adminRequired, VoteViews.del )
-	app.put( '/vote/:id', [ friendIniOrAdminRequired, validateJSON( schema.vote ) ], VoteViews.put )
+	app.get( '/votes/:id', friendIniOrAdminRequired, VoteViews.get )
+	app.del( '/votes/:id', adminRequired, VoteViews.del )
+	app.put( '/votes/:id', [ friendIniOrAdminRequired, validateJSON( schema.vote ) ], VoteViews.put )
 
 
 	app.get( '/notes', adminRequired, NoteViews.list )
 	app.post( '/notes', [ friendIniOrAdminRequired, validateJSON( schema.note ) ], NoteViews.post )
-	app.get( '/note/:id', friendIniOrAdminRequired, NoteViews.get )
-	app.del( '/note/:id', friendIniOrAdminRequired, NoteViews.del )
-	app.put( '/note/:id', [ friendIniOrAdminRequired, validateJSON( schema.note ) ], NoteViews.put )
+	app.get( '/notes/:id', friendIniOrAdminRequired, NoteViews.get )
+	app.del( '/notes/:id', friendIniOrAdminRequired, NoteViews.del )
+	app.put( '/notes/:id', [ friendIniOrAdminRequired, validateJSON( schema.note ) ], NoteViews.put )
 
 
 	app.get( '/media', adminRequired, MediaViews.list )
@@ -117,7 +117,7 @@ exports = module.exports = function ( app, passport ) {
 
 	app.get( '/bids', loginRequired, BidViews.list )
 	app.post( '/bids', [ loginRequired, validateJSON( schema.bid ) ], BidViews.post )
-	app.get( '/bid/:id', loginRequired, BidViews.get )
-	app.del( '/bid/:id', adminRequired, BidViews.del )
-	app.put( '/bid/:id', [ loginRequired, validateJSON( schema.bid ) ], BidViews.put )
+	app.get( '/bids/:id', loginRequired, BidViews.get )
+	app.del( '/bids/:id', adminRequired, BidViews.del )
+	app.put( '/bids/:id', [ loginRequired, validateJSON( schema.bid ) ], BidViews.put )
 }

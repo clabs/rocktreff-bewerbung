@@ -74,7 +74,7 @@ describe( 'Events', function () {
 
 
 
-	describe( 'GET /event/:id', function () {
+	describe( 'GET /events/:id', function () {
 		var agent
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -83,7 +83,7 @@ describe( 'Events', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.get( '/event/' + id )
+				.get( '/events/' + id )
 				.expect( 401, done )
 		})
 
@@ -91,7 +91,7 @@ describe( 'Events', function () {
 		it( 'should be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.get( '/event/' + id )
+					.get( '/events/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -100,7 +100,7 @@ describe( 'Events', function () {
 		it( 'should be accessible for friends', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.get( '/event/' + id )
+					.get( '/events/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -109,7 +109,7 @@ describe( 'Events', function () {
 		it( 'should be accessible for members of rockini', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.get( '/event/' + id )
+					.get( '/events/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -118,7 +118,7 @@ describe( 'Events', function () {
 		it( 'should be accessible for admin', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.get( '/event/' + id )
+					.get( '/events/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -127,7 +127,7 @@ describe( 'Events', function () {
 		it( 'should return the correct json object', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.get( '/event/' + id )
+					.get( '/events/' + id )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -146,7 +146,7 @@ describe( 'Events', function () {
 		it( 'should return an empty list for an unknown id', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.get( '/event/unknown_id' )
+					.get( '/events/unknown_id' )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -215,7 +215,7 @@ describe( 'Events', function () {
 						should.not.exist( err )
 						var newid = res.body.events[ 0 ].id
 						agent
-							.del( '/event/' + newid )
+							.del( '/events/' + newid )
 							.expect( 200, done )
 					})
 			})
@@ -257,7 +257,7 @@ describe( 'Events', function () {
 						event.id.should.not.be.empty
 						var newid = event.id
 						agent
-							.del( '/event/' + newid )
+							.del( '/events/' + newid )
 							.expect( 200, done )
 					})
 			})
@@ -267,7 +267,7 @@ describe( 'Events', function () {
 
 
 
-	describe( 'DELETE /region/:id', function () {
+	describe( 'DELETE /regions/:id', function () {
 		var agent
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -277,7 +277,7 @@ describe( 'Events', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.del( '/event/' + id )
+				.del( '/events/' + id )
 				.expect( 401, done )
 		})
 
@@ -285,7 +285,7 @@ describe( 'Events', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.del( '/event/' + id )
+					.del( '/events/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -294,7 +294,7 @@ describe( 'Events', function () {
 		it( 'should not be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.del( '/event/' + id )
+					.del( '/events/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -303,7 +303,7 @@ describe( 'Events', function () {
 		it( 'should not be accessible for members of rockini', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.del( '/event/' + id )
+					.del( '/events/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -322,7 +322,7 @@ describe( 'Events', function () {
 						should.not.exist( err )
 						var id = res.body.events[ 0 ].id
 						agent
-							.del( '/event/' + id )
+							.del( '/events/' + id )
 							.expect( 200, done)
 					})
 			})
@@ -332,7 +332,7 @@ describe( 'Events', function () {
 
 
 
-	describe( 'PUT /event/:id', function () {
+	describe( 'PUT /events/:id', function () {
 		var agent
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -340,7 +340,7 @@ describe( 'Events', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.put( '/event/' + id )
+				.put( '/events/' + id )
 				.send( { name: 'Schlagerfestival' } )
 				.expect( 401, done )
 		})
@@ -349,7 +349,7 @@ describe( 'Events', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.put( '/event/' + id )
+					.put( '/events/' + id )
 					.send( { name: 'Schlagerfestival' } )
 					.expect( 403, done )
 			})
@@ -359,7 +359,7 @@ describe( 'Events', function () {
 		it( 'should not be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.put( '/event/' + id )
+					.put( '/events/' + id )
 					.send( { name: 'Schlagerfestival' } )
 					.expect( 403, done )
 			})
@@ -369,7 +369,7 @@ describe( 'Events', function () {
 		it( 'should not be accessible for members of rockini', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.put( '/event/' + id )
+					.put( '/events/' + id )
 					.send( { name: 'Schlagerfestival' } )
 					.expect( 403, done )
 			})
@@ -379,7 +379,7 @@ describe( 'Events', function () {
 		it( 'should be accessible for admins', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.put( '/event/' + id )
+					.put( '/events/' + id )
 					.send({
 						name: 'Schlagerfestival',
 						opening_date: "2013-11-11T11:11:00.000Z",
@@ -395,7 +395,7 @@ describe( 'Events', function () {
 						event.id.should.equal( id )
 						event.name.should.equal( 'Schlagerfestival' ) // no wai!
 						agent
-							.put( '/event/' + id )
+							.put( '/events/' + id )
 							.send({
 								name: 'ROCKTREFF Festival',
 								opening_date: "2013-11-11T11:11:00.000Z",

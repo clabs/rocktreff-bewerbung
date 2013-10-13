@@ -71,7 +71,7 @@ describe( 'Regions', function () {
 
 
 
-	describe( 'GET /region/:id', function () {
+	describe( 'GET /regions/:id', function () {
 		var agent
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -80,7 +80,7 @@ describe( 'Regions', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.get( '/region/' + id )
+				.get( '/regions/' + id )
 				.expect( 401, done )
 		})
 
@@ -88,7 +88,7 @@ describe( 'Regions', function () {
 		it( 'should be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.get( '/region/' + id )
+					.get( '/regions/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -97,7 +97,7 @@ describe( 'Regions', function () {
 		it( 'should be accessible for friends', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.get( '/region/' + id )
+					.get( '/regions/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -106,7 +106,7 @@ describe( 'Regions', function () {
 		it( 'should be accessible for members of rockini', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.get( '/region/' + id )
+					.get( '/regions/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -115,7 +115,7 @@ describe( 'Regions', function () {
 		it( 'should be accessible for admin', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.get( '/region/' + id )
+					.get( '/regions/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -124,7 +124,7 @@ describe( 'Regions', function () {
 		it( 'should return the correct json object', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.get( '/region/' + id )
+					.get( '/regions/' + id )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -143,7 +143,7 @@ describe( 'Regions', function () {
 		it( 'should return an empty list for an unknown id', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.get( '/region/unknown_id' )
+					.get( '/regions/unknown_id' )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -208,7 +208,7 @@ describe( 'Regions', function () {
 						should.not.exist( err )
 						var id = res.body.regions[ 0 ].id
 						agent
-							.del( '/region/' + id )
+							.del( '/regions/' + id )
 							.expect( 200 )
 						done()
 					})
@@ -245,7 +245,7 @@ describe( 'Regions', function () {
 						region.id.should.not.be.empty
 						var id = region.id
 						agent
-							.del( '/region/' + id )
+							.del( '/regions/' + id )
 							.expect( 200 )
 						done()
 					})
@@ -256,7 +256,7 @@ describe( 'Regions', function () {
 
 
 
-	describe( 'DELETE /region/:id', function () {
+	describe( 'DELETE /regions/:id', function () {
 		var agent
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -266,7 +266,7 @@ describe( 'Regions', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.del( '/region/' + id )
+				.del( '/regions/' + id )
 				.expect( 401, done )
 		})
 
@@ -274,7 +274,7 @@ describe( 'Regions', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.del( '/region/' + id )
+					.del( '/regions/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -283,7 +283,7 @@ describe( 'Regions', function () {
 		it( 'should not be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.del( '/region/' + id )
+					.del( '/regions/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -292,7 +292,7 @@ describe( 'Regions', function () {
 		it( 'should not be accessible for members of rockini', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.del( '/region/' + id )
+					.del( '/regions/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -307,7 +307,7 @@ describe( 'Regions', function () {
 						should.not.exist( err )
 						var id = res.body.regions[ 0 ].id
 						agent
-							.del( '/region/' + id )
+							.del( '/regions/' + id )
 							.expect( 200, done)
 					})
 			})
@@ -317,7 +317,7 @@ describe( 'Regions', function () {
 
 
 
-	describe( 'PUT /region/:id', function () {
+	describe( 'PUT /regions/:id', function () {
 		var agent
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -325,7 +325,7 @@ describe( 'Regions', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.put( '/region/' + id )
+				.put( '/regions/' + id )
 				.send( { name: 'Hamburg' } )
 				.expect( 401, done )
 		})
@@ -334,7 +334,7 @@ describe( 'Regions', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.put( '/region/' + id )
+					.put( '/regions/' + id )
 					.send( { name: 'Hamburg' } )
 					.expect( 403, done )
 			})
@@ -344,7 +344,7 @@ describe( 'Regions', function () {
 		it( 'should not be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.put( '/region/' + id )
+					.put( '/regions/' + id )
 					.send( { name: 'Hamburg' } )
 					.expect( 403, done )
 			})
@@ -354,7 +354,7 @@ describe( 'Regions', function () {
 		it( 'should not be accessible for members of rockini', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.put( '/region/' + id )
+					.put( '/regions/' + id )
 					.send( { name: 'Hamburg' } )
 					.expect( 403, done )
 			})
@@ -364,7 +364,7 @@ describe( 'Regions', function () {
 		it( 'should be accessible for admins', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.put( '/region/' + id )
+					.put( '/regions/' + id )
 					.send( { name: 'Hamburg' } )
 					.expect( 200 )
 					.end( function ( err, res ) {
@@ -376,7 +376,7 @@ describe( 'Regions', function () {
 						region.id.should.equal( id )
 						region.name.should.equal( 'Hamburg' ) // no wai!
 						agent
-							.put( '/region/' + id )
+							.put( '/regions/' + id )
 							.send( { name: 'Berlin' } )
 							.expect( 200, done )
 					})

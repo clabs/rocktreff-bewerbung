@@ -99,7 +99,7 @@ describe( 'Votes', function () {
 
 
 
-	describe( 'GET /vote/:id', function () {
+	describe( 'GET /votes/:id', function () {
 		var agent
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -108,7 +108,7 @@ describe( 'Votes', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.get( '/vote/' + id )
+				.get( '/votes/' + id )
 				.expect( 401, done )
 		})
 
@@ -116,7 +116,7 @@ describe( 'Votes', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.get( '/vote/' + id )
+					.get( '/votes/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -125,7 +125,7 @@ describe( 'Votes', function () {
 		it( 'should be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.get( '/vote/' + id )
+					.get( '/votes/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -134,7 +134,7 @@ describe( 'Votes', function () {
 		it( 'should be accessible for members of rockini', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.get( '/vote/' + id )
+					.get( '/votes/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -143,7 +143,7 @@ describe( 'Votes', function () {
 		it( 'should be accessible for admin', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.get( '/vote/' + id )
+					.get( '/votes/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -152,7 +152,7 @@ describe( 'Votes', function () {
 		it( 'should return the correct json object', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.get( '/vote/' + id )
+					.get( '/votes/' + id )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -177,7 +177,7 @@ describe( 'Votes', function () {
 		it( 'should return an empty list for an unknown id', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.get( '/vote/unknown_id' )
+					.get( '/votes/unknown_id' )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -224,7 +224,7 @@ describe( 'Votes', function () {
 						should.not.exist( err )
 						var newid = res.body.votes[ 0 ].id
 						agent
-							.del( '/vote/' + newid )
+							.del( '/votes/' + newid )
 							.expect( 200 )
 						done()
 					})
@@ -242,7 +242,7 @@ describe( 'Votes', function () {
 						should.not.exist( err )
 						var newid = res.body.votes[ 0 ].id
 						agent
-							.del( '/vote/' + newid )
+							.del( '/votes/' + newid )
 							.expect( 200 )
 						done()
 					})
@@ -260,7 +260,7 @@ describe( 'Votes', function () {
 						should.not.exist( err )
 						var newid = res.body.votes[ 0 ].id
 						agent
-							.del( '/vote/' + newid )
+							.del( '/votes/' + newid )
 							.expect( 200 )
 						done()
 					})
@@ -310,7 +310,7 @@ describe( 'Votes', function () {
 						vote.rating.should.equal( 1 )
 						var id = vote.id
 						agent
-							.del( '/vote/' + id )
+							.del( '/votes/' + id )
 							.expect( 200 )
 						done()
 					})
@@ -321,7 +321,7 @@ describe( 'Votes', function () {
 
 
 
-	describe( 'DELETE /vote/:id', function () {
+	describe( 'DELETE /votes/:id', function () {
 		var agent, bid = 'XgLG868X'
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -331,7 +331,7 @@ describe( 'Votes', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.del( '/vote/' + id )
+				.del( '/votes/' + id )
 				.expect( 401, done )
 		})
 
@@ -339,7 +339,7 @@ describe( 'Votes', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.del( '/vote/' + id )
+					.del( '/votes/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -348,7 +348,7 @@ describe( 'Votes', function () {
 		it( 'should not be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.del( '/vote/' + id )
+					.del( '/votes/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -357,7 +357,7 @@ describe( 'Votes', function () {
 		it( 'should not be accessible for members of rockini', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.del( '/vote/' + id )
+					.del( '/votes/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -372,7 +372,7 @@ describe( 'Votes', function () {
 						should.not.exist( err )
 						var id = res.body.votes[ 0 ].id
 						agent
-							.del( '/vote/' + id )
+							.del( '/votes/' + id )
 							.expect( 200, done)
 					})
 			})
@@ -382,7 +382,7 @@ describe( 'Votes', function () {
 
 
 
-	describe( 'PUT /vote/:id', function () {
+	describe( 'PUT /votes/:id', function () {
 		var agent, uid = 'GNbUQQgL', bid = 'XgLG868X'
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -390,7 +390,7 @@ describe( 'Votes', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.put( '/vote/' + id )
+				.put( '/votes/' + id )
 				.send( { id: id, user: uid, bid: bid, rating: 5 } )
 				.expect( 401, done )
 		})
@@ -399,7 +399,7 @@ describe( 'Votes', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.put( '/vote/' + id )
+					.put( '/votes/' + id )
 					.send( { id: id, user: uid, bid: bid, rating: 5 } )
 					.expect( 403, done )
 			})
@@ -409,7 +409,7 @@ describe( 'Votes', function () {
 		it( 'should not be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.put( '/vote/' + id )
+					.put( '/votes/' + id )
 					.send( { id: id, user: uid, bid: bid, rating: 5 } )
 					.expect( 403, done )
 			})
@@ -419,7 +419,7 @@ describe( 'Votes', function () {
 		it( 'should be accessible for the owner', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.put( '/vote/' + id )
+					.put( '/votes/' + id )
 					.send( { id: id, user: uid, bid: bid, rating: 5 } )
 					.expect( 200 )
 					.end( function ( err, res ) {
@@ -435,7 +435,7 @@ describe( 'Votes', function () {
 		it( 'should be impossible to alter the owner', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.put( '/vote/' + id )
+					.put( '/votes/' + id )
 					.send( { id: id, user: 'U6Jp1nEf', bid: bid, rating: 5 } )
 					.expect( 403, done )
 			})
@@ -445,7 +445,7 @@ describe( 'Votes', function () {
 		it( 'should not be accessible for admins', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.put( '/vote/' + id )
+					.put( '/votes/' + id )
 					.send( { id: id, user: uid, bid: bid, rating: 5 } )
 					.expect( 403, done )
 			})

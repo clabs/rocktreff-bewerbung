@@ -142,7 +142,7 @@ describe( 'Bids', function () {
 
 
 
-	describe( 'GET /bid/:id', function () {
+	describe( 'GET /bids/:id', function () {
 		var agent
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -151,7 +151,7 @@ describe( 'Bids', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.get( '/bid/' + id )
+				.get( '/bids/' + id )
 				.expect( 401, done )
 		})
 
@@ -159,7 +159,7 @@ describe( 'Bids', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.get( '/bid/' + id )
+					.get( '/bids/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -168,7 +168,7 @@ describe( 'Bids', function () {
 		it( 'should be accessible for the band', function ( done ) {
 			auth.loginAsBand( agent, function () {
 				agent
-					.get( '/bid/' + id )
+					.get( '/bids/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -177,7 +177,7 @@ describe( 'Bids', function () {
 		it( 'should be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.get( '/bid/' + id )
+					.get( '/bids/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -186,7 +186,7 @@ describe( 'Bids', function () {
 		it( 'should be accessible for members of rockini', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.get( '/bid/' + id )
+					.get( '/bids/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -195,7 +195,7 @@ describe( 'Bids', function () {
 		it( 'should be accessible for admin', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.get( '/bid/' + id )
+					.get( '/bids/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -204,7 +204,7 @@ describe( 'Bids', function () {
 		it( 'should return votes array for friends, ini, etc.', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.get( '/bid/' + id )
+					.get( '/bids/' + id )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -221,7 +221,7 @@ describe( 'Bids', function () {
 		it( 'should not return the votes or notes array for the band', function ( done ) {
 			auth.loginAsBand( agent, function () {
 				agent
-					.get( '/bid/' + id )
+					.get( '/bids/' + id )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -237,7 +237,7 @@ describe( 'Bids', function () {
 		it( 'should return the notes and votes array for friends, ini, etc.', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.get( '/bid/' + id )
+					.get( '/bids/' + id )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -253,7 +253,7 @@ describe( 'Bids', function () {
 		it( 'should return the only the own notes', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.get( '/bid/' + id )
+					.get( '/bids/' + id )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -269,7 +269,7 @@ describe( 'Bids', function () {
 		it( 'should return all votes for friends, ini, etc.', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.get( '/bid/' + id )
+					.get( '/bids/' + id )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -284,7 +284,7 @@ describe( 'Bids', function () {
 		it( 'should return an empty list for an unknown id', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.get( '/bid/unknown_id' )
+					.get( '/bids/unknown_id' )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -474,7 +474,7 @@ describe( 'Bids', function () {
 
 
 
-	describe( 'DELETE /bid/:id', function () {
+	describe( 'DELETE /bids/:id', function () {
 		var agent, bid = 'XgLG868X'
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -484,7 +484,7 @@ describe( 'Bids', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.del( '/bid/' + id )
+				.del( '/bids/' + id )
 				.expect( 401, done )
 		})
 
@@ -492,7 +492,7 @@ describe( 'Bids', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.del( '/bid/' + id )
+					.del( '/bids/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -501,7 +501,7 @@ describe( 'Bids', function () {
 		it( 'should not be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.del( '/bid/' + id )
+					.del( '/bids/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -510,7 +510,7 @@ describe( 'Bids', function () {
 		it( 'should not be accessible for members of rockini', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.del( '/bid/' + id )
+					.del( '/bids/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -519,7 +519,7 @@ describe( 'Bids', function () {
 		it( 'should be accessible for admins', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.del( '/bid/h8ikuujA' )
+					.del( '/bids/h8ikuujA' )
 					.expect( 200, done )
 			})
 		})
@@ -528,14 +528,14 @@ describe( 'Bids', function () {
 
 
 
-	describe( 'PUT /bid/:id', function () {
+	describe( 'PUT /bids/:id', function () {
 		var agent, bid
 
 		before( function ( done ) {
 			var agent = request.agent( url )
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.get( '/bid/' + id )
+					.get( '/bids/' + id )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -558,7 +558,7 @@ describe( 'Bids', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.put( '/bid/' + id )
+				.put( '/bids/' + id )
 				.send( bid )
 				.expect( 401, done )
 		})
@@ -567,7 +567,7 @@ describe( 'Bids', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.put( '/bid/' + id )
+					.put( '/bids/' + id )
 					.send( bid )
 					.expect( 403, done )
 			})
@@ -577,7 +577,7 @@ describe( 'Bids', function () {
 		it( 'should not be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.put( '/bid/' + id )
+					.put( '/bids/' + id )
 					.send( bid )
 					.expect( 403, done )
 			})
@@ -587,7 +587,7 @@ describe( 'Bids', function () {
 		it( 'should be accessible for the owner', function ( done ) {
 			auth.loginAsBand( agent, function () {
 				agent
-					.put( '/bid/' + id )
+					.put( '/bids/' + id )
 					.send( bid )
 					.expect( 200 )
 					.end( function ( err, res ) {
@@ -603,7 +603,7 @@ describe( 'Bids', function () {
 			bid.user = 'U6Jp1nEf'
 			auth.loginAsIni( agent, function () {
 				agent
-					.put( '/bid/' + id )
+					.put( '/bids/' + id )
 					.send( bid )
 					.expect( 403, done )
 			})
@@ -613,7 +613,7 @@ describe( 'Bids', function () {
 		it( 'should not be accessible for admins', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.put( '/bid/' + id )
+					.put( '/bids/' + id )
 					.send( bid )
 					.expect( 403, done )
 			})

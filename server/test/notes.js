@@ -100,7 +100,7 @@ describe( 'Notes', function () {
 
 
 
-	describe( 'GET /note/:id', function () {
+	describe( 'GET /notes/:id', function () {
 		var agent
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -109,7 +109,7 @@ describe( 'Notes', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.get( '/note/' + id )
+				.get( '/notes/' + id )
 				.expect( 401, done )
 		})
 
@@ -117,7 +117,7 @@ describe( 'Notes', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.get( '/note/' + id )
+					.get( '/notes/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -126,7 +126,7 @@ describe( 'Notes', function () {
 		it( 'should be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.get( '/note/' + id )
+					.get( '/notes/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -135,7 +135,7 @@ describe( 'Notes', function () {
 		it( 'should be accessible for members of rockini', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.get( '/note/' + id )
+					.get( '/notes/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -144,7 +144,7 @@ describe( 'Notes', function () {
 		it( 'should be accessible for admin', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.get( '/note/' + id )
+					.get( '/notes/' + id )
 					.expect( 200, done )
 			})
 		})
@@ -153,7 +153,7 @@ describe( 'Notes', function () {
 		it( 'should return the correct json object', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.get( '/note/' + id )
+					.get( '/notes/' + id )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -179,7 +179,7 @@ describe( 'Notes', function () {
 		it( 'should return an empty list for an unknown id', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.get( '/note/unknown_id' )
+					.get( '/notes/unknown_id' )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
@@ -226,7 +226,7 @@ describe( 'Notes', function () {
 						should.not.exist( err )
 						var newid = res.body.notes[ 0 ].id
 						agent
-							.del( '/note/' + newid )
+							.del( '/notes/' + newid )
 							.expect( 200 )
 						done()
 					})
@@ -244,7 +244,7 @@ describe( 'Notes', function () {
 						should.not.exist( err )
 						var newid = res.body.notes[ 0 ].id
 						agent
-							.del( '/note/' + newid )
+							.del( '/notes/' + newid )
 							.expect( 200 )
 						done()
 					})
@@ -262,7 +262,7 @@ describe( 'Notes', function () {
 						should.not.exist( err )
 						var newid = res.body.notes[ 0 ].id
 						agent
-							.del( '/note/' + newid )
+							.del( '/notes/' + newid )
 							.expect( 200 )
 						done()
 					})
@@ -313,7 +313,7 @@ describe( 'Notes', function () {
 						note.type.should.match( /flag.?|memo$/ )
 						var id = note.id
 						agent
-							.del( '/note/' + id )
+							.del( '/notes/' + id )
 							.expect( 200 )
 						done()
 					})
@@ -324,7 +324,7 @@ describe( 'Notes', function () {
 
 
 
-	describe( 'DELETE /note/:id', function () {
+	describe( 'DELETE /notes/:id', function () {
 		var agent, bid = 'XgLG868X'
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -334,7 +334,7 @@ describe( 'Notes', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.del( '/note/' + id )
+				.del( '/notes/' + id )
 				.expect( 401, done )
 		})
 
@@ -342,7 +342,7 @@ describe( 'Notes', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.del( '/note/' + id )
+					.del( '/notes/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -351,7 +351,7 @@ describe( 'Notes', function () {
 		it( 'should not be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.del( '/note/' + id )
+					.del( '/notes/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -360,7 +360,7 @@ describe( 'Notes', function () {
 		it( 'should not be accessible for members of rockini', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.del( '/note/' + id )
+					.del( '/notes/' + id )
 					.expect( 403, done )
 			})
 		})
@@ -375,7 +375,7 @@ describe( 'Notes', function () {
 						should.not.exist( err )
 						var id = res.body.notes[ 0 ].id
 						agent
-							.del( '/note/' + id )
+							.del( '/notes/' + id )
 							.expect( 200, done)
 					})
 			})
@@ -385,7 +385,7 @@ describe( 'Notes', function () {
 
 
 
-	describe( 'PUT /note/:id', function () {
+	describe( 'PUT /notes/:id', function () {
 		var agent, uid = 'GNbUQQgL', bid = 'XgLG868X'
 		beforeEach( function () {
 			agent = request.agent( url )
@@ -393,7 +393,7 @@ describe( 'Notes', function () {
 
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
-				.put( '/note/' + id )
+				.put( '/notes/' + id )
 				.send( { id: id, user: uid, bid: bid, type: 'memo', text: 'yay!' } )
 				.expect( 401, done )
 		})
@@ -402,7 +402,7 @@ describe( 'Notes', function () {
 		it( 'should not be accessible for someone', function ( done ) {
 			auth.loginAsSomeone( agent, function () {
 				agent
-					.put( '/note/' + id )
+					.put( '/notes/' + id )
 					.send( { id: id, user: uid, bid: bid, type: 'memo', text: 'yay!' } )
 					.expect( 403, done )
 			})
@@ -412,7 +412,7 @@ describe( 'Notes', function () {
 		it( 'should not be accessible for friends', function ( done ) {
 			auth.loginAsFriend( agent, function () {
 				agent
-					.put( '/note/' + id )
+					.put( '/notes/' + id )
 					.send( { id: id, user: uid, bid: bid, type: 'memo', text: 'yay!' } )
 					.expect( 403, done )
 			})
@@ -422,7 +422,7 @@ describe( 'Notes', function () {
 		it( 'should be accessible for the owner', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.put( '/note/' + id )
+					.put( '/notes/' + id )
 					.send( { id: id, user: uid, bid: bid, type: 'memo', text: 'yay ho!' } )
 					.expect( 200 )
 					.end( function ( err, res ) {
@@ -438,7 +438,7 @@ describe( 'Notes', function () {
 		it( 'should be impossible to alter the owner', function ( done ) {
 			auth.loginAsIni( agent, function () {
 				agent
-					.put( '/note/' + id )
+					.put( '/notes/' + id )
 					.send( { id: id, user: 'U6Jp1nEf', bid: bid, type: 'memo', text: 'yay!' } )
 					.expect( 403, done )
 			})
@@ -448,7 +448,7 @@ describe( 'Notes', function () {
 		it( 'should not be accessible for admins', function ( done ) {
 			auth.loginAsAdmin( agent, function () {
 				agent
-					.put( '/note/' + id )
+					.put( '/notes/' + id )
 					.send( { id: id, user: uid, bid: bid, type: 'memo', text: 'yay!' } )
 					.expect( 403, done )
 			})
