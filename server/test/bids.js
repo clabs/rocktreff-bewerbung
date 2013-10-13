@@ -218,7 +218,7 @@ describe( 'Bids', function () {
 		})
 
 
-		it.skip( 'should not return the votes or notes array for the band', function ( done ) {
+		it( 'should not return the votes or notes array for the band', function ( done ) {
 			auth.loginAsBand( agent, function () {
 				agent
 					.get( '/bid/' + id )
@@ -528,16 +528,38 @@ describe( 'Bids', function () {
 
 
 
-	describe.only( 'PUT /bid/:id', function () {
-		var agent, uid = 'GNbUQQgL', bid = 'XgLG868X'
+	describe( 'PUT /bid/:id', function () {
+		var agent, bid
+
+		before( function ( done ) {
+			var agent = request.agent( url )
+			auth.loginAsAdmin( agent, function () {
+				agent
+					.get( '/bid/' + id )
+					.expect( 200 )
+					.end( function ( err, res ) {
+						should.not.exist( err )
+						bid = res.body.bids[0]
+						bid.bandname = 'Robband'
+						delete bid.notes
+						delete bid.votes
+						delete bid.media
+						delete bid.contact.fb
+						done()
+					})
+			})
+		})
+
+
 		beforeEach( function () {
 			agent = request.agent( url )
 		})
 
+
 		it( 'should not be accessible for anyone', function ( done ) {
 			agent
 				.put( '/bid/' + id )
-				.send( { id: id, user: uid, bid: bid, type: 'memo', text: 'yay!' } )
+				.send( bid )
 				.expect( 401, done )
 		})
 
@@ -546,7 +568,7 @@ describe( 'Bids', function () {
 			auth.loginAsSomeone( agent, function () {
 				agent
 					.put( '/bid/' + id )
-					.send( { id: id, user: uid, bid: bid, type: 'memo', text: 'yay!' } )
+					.send( bid )
 					.expect( 403, done )
 			})
 		})
@@ -556,22 +578,21 @@ describe( 'Bids', function () {
 			auth.loginAsFriend( agent, function () {
 				agent
 					.put( '/bid/' + id )
-					.send( { id: id, user: uid, bid: bid, type: 'memo', text: 'yay!' } )
+					.send( bid )
 					.expect( 403, done )
 			})
 		})
 
 
 		it( 'should be accessible for the owner', function ( done ) {
-			auth.loginAsIni( agent, function () {
+			auth.loginAsBand( agent, function () {
 				agent
 					.put( '/bid/' + id )
-					.send( { id: id, user: uid, bid: bid, type: 'memo', text: 'yay ho!' } )
+					.send( bid )
 					.expect( 200 )
 					.end( function ( err, res ) {
 						should.not.exist( err )
 						var bid = res.body.bids[ 0 ]
-						bid.text.should.equal( 'yay ho!' )
 						done()
 					})
 			})
@@ -579,10 +600,11 @@ describe( 'Bids', function () {
 
 
 		it( 'should be impossible to alter the owner', function ( done ) {
+			bid.user = 'U6Jp1nEf'
 			auth.loginAsIni( agent, function () {
 				agent
 					.put( '/bid/' + id )
-					.send( { id: id, user: 'U6Jp1nEf', bid: bid, type: 'memo', text: 'yay!' } )
+					.send( bid )
 					.expect( 403, done )
 			})
 		})
@@ -592,7 +614,7 @@ describe( 'Bids', function () {
 			auth.loginAsAdmin( agent, function () {
 				agent
 					.put( '/bid/' + id )
-					.send( { id: id, user: uid, bid: bid, type: 'memo', text: 'yay!' } )
+					.send( bid )
 					.expect( 403, done )
 			})
 		})

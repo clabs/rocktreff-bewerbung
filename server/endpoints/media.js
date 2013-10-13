@@ -46,13 +46,16 @@ exports = module.exports = function ( app ) {
 		},
 
 		post: function ( req, res ) {
-			var json = req.body
-			json.url = json.url || ''
-			models.bid.get( json.bid )
+			models.bid.get( req.body.bid )
 				.then( function ( bid ) {
-					if ( !bid || (bid.user !== req.user.id && req.user.role !== 'admin') )
+					if ( !bid )
+						throw res.status( 406 ).send()
+					if ( bid.user !== req.user.id && req.user.role !== 'admin')
 						throw res.status( 403 ).send()
-					return models.media.create( json )
+					return json.create( req.body )
+				})
+				.then( function ( media ) {
+					return models.media.create( media )
 				})
 				.then( send( res ) )
 		},

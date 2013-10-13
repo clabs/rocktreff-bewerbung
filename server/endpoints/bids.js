@@ -20,6 +20,8 @@ exports = module.exports = function ( app ) {
 	var schema = require( '../models/schemas' )
 	var json = require( '../utils/json' )( schema.bid )
 	var send = json.send( 'bids' )
+	var stripVotes = json.omit( 'votes' )
+	var stripNotes = json.omit( 'notes' )
 	var empty = function ( res ) {
 		return function () {
 			send( res )( [] )
@@ -37,10 +39,9 @@ exports = module.exports = function ( app ) {
 
 	function injectVotes ( user ) {
 		return function ( bid ) {
-			if ( user.role === '' ) return bid
+			if ( user.role === '' ) return stripVotes( bid )
 			return models.vote.find( { bid: bid.id } )
 				.then( function ( votes ) {
-					console.log( { bid: bid.id } , votes )
 					return { votes: votes }
 				})
 				.then( json.merge( bid ) )
@@ -49,7 +50,7 @@ exports = module.exports = function ( app ) {
 
 	function injectNotes ( user ) {
 		return function ( bid ) {
-			if ( user.role === '' ) return bid
+			if ( user.role === '' ) return stripNotes( bid )
 			return models.note.find( { bid: bid.id, user: user.id } )
 				.then( function ( notes ) {
 					return { notes: notes }
@@ -99,7 +100,7 @@ exports = module.exports = function ( app ) {
 
 			if ( json.user !== req.user.id )
 				return res.status( 403 ).send()
-			if ( !models.bid.has( json.bid ) )
+			if ( !models.bid.has( id ) )
 				return res.status( 404 ).send()
 
 			models.bid.get( id )
@@ -132,7 +133,6 @@ exports = module.exports = function ( app ) {
 		list: function ( req, res ) {
 			var query = req.user.role === '' ?
 				{ user: req.user.id } : req.query
-			console.log( query )
 			models.bid.find( query )
 				.then( function ( bids ) {
 					if ( !( bids instanceof Array ) )

@@ -58,8 +58,8 @@ exports = module.exports = function ( app ) {
 
 
 			models.user.find( { email: req.body.email } )
-				.then( function ( user ) {
-					if ( user ) throw res.status( 409 ).send()
+				.then( function ( users ) {
+					if ( users.length > 0 ) throw res.status( 409 ).send()
 					return json.create( req.body )
 				})
 				.then( hashPassword )

@@ -66,6 +66,7 @@ exports = module.exports = function ( app, passport ) {
 		}
 	}
 
+
 	/**
 	 * Endpoint Definitions
 	 */
@@ -118,5 +119,5 @@ exports = module.exports = function ( app, passport ) {
 	app.post( '/bids', [ loginRequired, validateJSON( schema.bid ) ], BidViews.post )
 	app.get( '/bid/:id', loginRequired, BidViews.get )
 	app.del( '/bid/:id', adminRequired, BidViews.del )
-	app.put( '/bid/:id', loginRequired, BidViews.put )
+	app.put( '/bid/:id', [ loginRequired, validateJSON( schema.bid ) ], BidViews.put )
 }
