@@ -12,3 +12,5 @@ server/public/uploads/*
 *.sublime-project
 *.sublime-workspace
 *.pid
+
+/server/config.js
