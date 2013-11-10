@@ -16,16 +16,17 @@
 
 exports = module.exports = function ( app ) {
 
-	app.use( function ( req, res, next ) {
-		var origin = app.get( 'client-url' ) || '*'
-		res.header( 'Access-Control-Allow-Origin', origin )
-		res.header( 'Access-Control-Allow-Headers', 'Content-Type,X-Requested-With' )
-		res.header( 'Access-Control-Allow-Credentials', 'true' )
+	app.all( '*', function ( req, res, next ) {
+		if ( !req.get( 'Origin' ) ) return next()
+		var origin = req.headers.origin || app.get( 'client-url' ) || '*'
+		res.set( 'Access-Control-Allow-Credentials', 'true' )
+		res.set( 'Access-Control-Expose-Headers', 'ETag, Link, Set-Cookie' )
+		res.set( 'Access-Control-Max-Age', '86400' )
+		res.set( 'Access-Control-Allow-Headers', 'Authorization, Content-Type, If-Match, If-Modified-Since, If-None-Match, If-Unmodified-Since, X-Requested-With, X-Requested-By, X-Auth-Token' )
+		res.set( 'Access-Control-Allow-Methods', 'GET, POST, PATCH, PUT, DELETE' )
+		res.set( 'Access-Control-Allow-Origin', origin )
+		if ( 'OPTIONS' == req.method ) return res.send( 200 )
 		next()
-	})
-
-	app.options( '/*', function ( req, res ) {
-		res.send( 200 )
 	})
 
 }

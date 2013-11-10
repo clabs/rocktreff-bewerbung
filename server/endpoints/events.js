@@ -19,7 +19,7 @@ exports = module.exports = function ( app ) {
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
 	var json = require( '../utils/json' )( schema.event )
-	var send = json.send( 'events' )
+	var send = json.send( 'event' )
 	var empty = function ( res ) {
 		return function () {
 			send( res )( )
@@ -45,11 +45,11 @@ exports = module.exports = function ( app ) {
 		put: function ( req, res ) {
 			var id = req.params.id
 			var json = req.body
-			models.event.get( id )
-				.then( function ( event ) {
-					if ( !event ) throw res.status( 400 ).send()
-					return models.event.set( id, json )
-				})
+
+			if ( json.id !== id )
+				return res.status( 401 ).send()
+
+			models.event.save( json )
 				.then( send( res ), function ( err ) {
 					res.status( 400 ).send()
 				})

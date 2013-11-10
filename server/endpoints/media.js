@@ -16,6 +16,11 @@
 
 exports = module.exports = function ( app ) {
 
+	var fs = require( 'fs' )
+	var os = require( 'os' )
+	var exec = require( 'child_process' ).exec
+	var ffmpeg = require( 'fluent-ffmpeg' )
+	var Promise = require( 'promise' )
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
 	var json = require( '../utils/json' )( schema.media )
@@ -25,6 +30,102 @@ exports = module.exports = function ( app ) {
 			send( res )( [] )
 		}
 	}
+	var saveFile = function ( dataurl ) {
+		return function ( media ) {
+			var path = app.get( 'upload-directory' ) + '/' + media.id
+			if ( !dataurl ) return media
+			return new Promise( function ( fulfill, reject) {
+				var data = dataurl.replace( /^data:.*?;base64,/, '' )
+				fs.writeFile( path, data, 'base64', function ( err ) {
+					if ( err ) reject( err )
+					else fulfill( media )
+				})
+			})
+		}
+	}
+	var deleteFile = function ( media ) {
+		var path = app.get( 'upload-directory' ) + '/' + media.id
+		return new Promise( function ( fulfill, reject) {
+			fs.unlink( path, function ( err ) {
+				if ( err ) reject( err )
+				else fulfill( media )
+			})
+		})
+	}
+	var moveFile = function ( src, dest ) {
+		return function ( media ) {
+			return new Promise( function ( fulfill, reject ) {
+				var is = fs.createReadStream( src )
+				var os = fs.createWriteStream( dest )
+				is.pipe( os )
+				is.on( 'end', function () {
+					fs.unlinkSync( src )
+					fulfill( media )
+				})
+			})
+		}
+	}
+	var injectMediaURL = function () {
+		function addURL ( media ) {
+			if ( !media.url || media.url === '' )
+				media.url = 'http://'+app.get( 'host' )+':'+app.get( 'port' )+'/uploads/'+media.id
+			return media
+		}
+		return function ( media ) {
+			if ( media instanceof Array )
+				return media.map( function ( media ) {
+					return addURL( media )
+				})
+			return addURL( media )
+		}
+	}
+	var processMedia = function ( media ) {
+		if ( media.type === 'audio' )
+			return transcodeMP3( media )
+		else if ( media.type === 'picture' )
+			return resizeImage( media )
+		else if ( media.type === 'logo' )
+			return resizeImage( media )
+		else
+			return media
+	}
+	var transcodeMP3 = function ( media ) {
+		var path = app.get( 'upload-directory' ) + '/' + media.id
+		var tmp = os.tmpdir() + media.id
+		return new Promise( function ( fulfill, reject ) {
+			var proc = new ffmpeg({
+				source: path,
+				timeout: 30,
+				priority: 0,
+			})
+			.withAudioBitrate( '128k' )
+			.withAudioCodec( 'libmp3lame' )
+			.toFormat( 'mp3' )
+			.saveToFile( tmp, function ( _, stdout, err ) {
+				if ( err ) reject( err )
+				else fulfill( media )
+			})
+		})
+		.then( moveFile( tmp, path ) )
+		.then( function ( media ) {
+			media.filesize = fs.lstatSync( path ).size
+			media.mimetype = 'audio/mpeg'
+			return media
+		})
+	}
+
+	var resizeImage = function ( media ) {
+		var src = app.get( 'upload-directory' ) + '/' + media.id
+		var dst = src + '_small'
+		var cmd = 'convert '+src+' -resize "200^>" ' + dst
+		return new Promise( function ( fulfill, reject ) {
+			exec( cmd, function ( err, stdout, stderr ) {
+				if ( err ) reject( [ err, stderr ] )
+				else fulfill( media )
+			})
+		})
+	}
+
 
 	return {
 
@@ -42,10 +143,14 @@ exports = module.exports = function ( app ) {
 				.then( function () {
 					return models.media.get( id )
 				})
+				.then( injectMediaURL )
 				.then( send( res ) )
 		},
 
 		post: function ( req, res ) {
+			var data = req.body.data
+			delete req.body.data
+
 			models.bid.get( req.body.bid )
 				.then( function ( bid ) {
 					if ( !bid )
@@ -57,22 +162,33 @@ exports = module.exports = function ( app ) {
 				.then( function ( media ) {
 					return models.media.create( media )
 				})
+				.then( saveFile( data ) )
+				.then( processMedia )
+				.then( function ( media ) {
+					return models.media.set( media.id, media )
+				})
+				.then( injectMediaURL )
 				.then( send( res ) )
 		},
 
 
 		put: function ( req, res ) {
 			var id = req.params.id
-			var json = req.body
+			var data = req.body.data
+			delete req.body.data
 
-			if ( json.user !== req.user.id ) return res.status( 403 ).send()
-			if ( !models.bid.has( json.bid ) ) return res.status( 404 ).send()
+			if ( !models.bid.has( req.body.bid ) )
+				return res.status( 404 ).send()
+			if ( !models.media.has( id ) )
+				return res.status( 400 ).send()
 
-			models.media.get( id )
+			models.media.save( req.body )
+				.then( saveFile( data ) )
+				.then( processMedia )
 				.then( function ( media ) {
-					if ( !media ) throw res.status( 400 ).send()
-					return models.media.set( id, json )
+					return models.media.save( media )
 				})
+				.then( injectMediaURL )
 				.then( send( res ) )
 		},
 
@@ -89,6 +205,12 @@ exports = module.exports = function ( app ) {
 						throw res.status( 400 ).send()
 					if ( bid.user !== req.user.id && req.user.role !== 'admin' )
 						throw res.status( 403 ).send()
+					return models.media.get( id )
+				})
+				.then( deleteFile, function ( err ) {
+					res.send( 500, err )
+				})
+				.then( function () {
 					return models.media.del( id )
 				})
 				.then( send( res ) )
@@ -99,6 +221,7 @@ exports = module.exports = function ( app ) {
 			var query = req.user.role === '' ?
 				{ user: req.user.id } : req.query
 			models.media.find( query )
+				.then( injectMediaURL )
 				.then( send( res ), function ( err ) {
 					res.status( 500 ).send()
 				})

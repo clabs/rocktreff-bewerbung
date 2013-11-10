@@ -14,14 +14,14 @@
  */
 define([
 
-	'bb'
+	'bb',
+	'stellar'
 
 ], function ( BB ) {
 
 	'use strict';
 
 	BB.ApplicationView = Ember.ContainerView.extend({
-
 		/**
 		 * Override the default outlet connector and forward it
 		 * to the child views.
@@ -41,8 +41,22 @@ define([
 		]
 	})
 
-	BB.NewView = Ember.View.extend({
-		templateName: 'new'
+	BB.HomeView = Ember.View.extend({
+		classNames: [ 'home' ],
+		didInsertElement: function () {
+			this.$().stellar({
+				horizontalScrolling: false,
+				verticalOffset: 0,
+				parallaxBackgrounds: true,
+				parallaxElements: true,
+			})
+		}
 	})
+
+	BB.BidView = Ember.View.extend({
+		classNames: [ 'container bid' ]
+	})
+
+
 
 })

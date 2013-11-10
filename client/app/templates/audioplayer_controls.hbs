@@ -1,0 +1,24 @@
+<div {{bind-attr class="content::hidden :audioplayer"}}>
+	{{#if useWaveSurfer}}
+		<div class="audioplayer-playpause">
+			{{icon "play "}}{{icon "pause"}}
+		</div>
+		<div {{bind-attr class=":waveform isReady::hidden"}}></div>
+		<div class="trackname">
+			{{content.filename}}
+		</div>
+	{{else}}
+		<div class="btn-group">
+			<span class="audioplayer-playpause btn btn-primary btn-xs">
+				{{icon "play"}}{{icon "pause"}}
+			</span>
+			<span class="audioplayer-stop btn btn-primary btn-xs">
+				{{icon "stop"}}
+			</span>
+			<span class="btn btn-info btn-xs">{{position}}|{{duration}}</button>
+		</div>
+		<div>
+			<small>{{content.filename}}</small>
+		</div>
+	{{/if}}
+</div>

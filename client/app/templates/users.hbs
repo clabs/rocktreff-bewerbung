@@ -1,0 +1,35 @@
+<div class="container">
+	<div class="row">
+		<h3>Users</h3>
+		<ul class="list-unstyled">
+		{{#each model}}
+			<li>
+
+				{{#if picture}}
+					<img src="{{unbound picture}}" width="24">
+				{{else}}
+					{{gravatar email size="24"}}
+				{{/if}}
+
+				{{#link-to 'user.edit' this}}{{name}}{{email}}{{/link-to}}
+
+				{{#if isAdmin}} <span class="label label-info">admin</span> {{/if}}
+				{{#if isCrew}} <span class="label label-success">crew</span> {{/if}}
+
+				{{#unless isMe}}
+					{{#unless isAdmin}}
+					<span {{action promoteUser this}} href="#">{{icon "caret-up"}}</span>
+					{{/unless}}
+					{{#unless isNeither}}
+					<span {{action demoteUser this}} href="#">{{icon "caret-down"}}</span>
+					{{/unless}}
+				{{/unless}}
+
+				<br>
+				<small title="{{unbound created}}">{{fromNow created}} erstellt, </small>
+				<small>via {{provider}}</small>
+			</li>
+		{{/each}}
+		</ul>
+	</div>
+</div>

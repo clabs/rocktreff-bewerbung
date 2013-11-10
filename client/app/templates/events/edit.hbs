@@ -1,0 +1,23 @@
+<form role="form" {{action "save" model on="submit"}}>
+	<div class="form-group">
+		<label for="exampleInputEmail1">Event Name</label>
+		{{input value=model.name placeholder="ROCKTREFF xxxx"}}
+	</div>
+	<div class="form-group">
+		<label for="exampleInputPassword1">Bewerbungsfrist</label>
+		<div class="row">
+			<div class="col-lg-6">
+				<label>von</label>
+				{{input type="datetime-local" value=model.opening_date}}
+			</div>
+			<div class="col-lg-6">
+				<label>bis {{model.closing_date}}</label>
+				{{input type="datetime-local" value=model.closing_date}}
+			</div>
+		</div>
+	</div>
+	<div class="pull-right">
+		<button {{action "abort" model}} class="btn btn-default">Abbrechen</button>
+		<button type="submit" class="btn btn-primary">Speichern</button>
+	</div>
+</form>

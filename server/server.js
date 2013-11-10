@@ -24,24 +24,22 @@ var ENV = app.get( 'env' )
 
 // General app config stuff
 app.configure( function () {
+
 	app.disable( 'x-powered-by' )
 
-	app.set( 'client-url', '*' )
+	// load assets
+	require( './config' )( app )
 
-	// Password encryption
-	app.set( 'crypto-key', 'otETq4Tq' )
-
-	app.set( 'port', 1338 )
+	// load asset manager
+	require( './assets' )( app )
 
 	// Middlewares
+	app.use( express.limit( '100mb' ) )
 	app.use( express.logger( 'dev' ) )
 	app.use( express.compress() )
 	app.use( express.cookieParser() )
 	app.use( express.bodyParser() )
-	app.use( express.session({
-		secret: 'R0(|<7R3PhPhB4|\\|DB3\\/\\/3RBU|\\|9'
-	}))
-
+	app.use( express.session({ secret: 'keyboard cat' }) )
 	app.use( passport.initialize() )
 	app.use( passport.session() )
 

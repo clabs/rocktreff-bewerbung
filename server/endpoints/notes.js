@@ -19,7 +19,7 @@ exports = module.exports = function ( app ) {
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
 	var json = require( '../utils/json' )( schema.note )
-	var send = json.send( 'notes' )
+	var send = json.send( 'note' )
 	var empty = function ( res ) {
 		return function () {
 			send( res )( [] )
@@ -49,18 +49,16 @@ exports = module.exports = function ( app ) {
 		put: function ( req, res ) {
 			var id = req.params.id
 
-			if ( req.body.user !== req.user.id ) return res.status( 403 ).send()
-			if ( !models.bid.has( req.body.bid ) ) return res.status( 404 ).send()
+			if ( req.body.user !== req.user.id )
+				return res.status( 403 ).send()
+			if ( !models.bid.has( req.body.bid ) )
+				return res.status( 404 ).send()
+			if ( !models.note.has( id ) )
+				return res.status( 400 ).send()
+			if ( id !== req.body.id )
+				return res.status( 400 ).send()
 
-			models.note.get( id )
-				.then( function ( note ) {
-					if ( !note ) throw res.status( 400 ).send()
-					return note
-				})
-				.then( json.merge( req.body ) )
-				.then( function ( note ) {
-					return models.note.set( id, note )
-				})
+			models.note.save( req.body )
 				.then( send( res ) )
 		},
 

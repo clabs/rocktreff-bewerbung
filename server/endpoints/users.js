@@ -19,12 +19,13 @@ exports = module.exports = function ( app ) {
 	var crypto = require( 'crypto' )
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
+	var AccessToken = require( '../models/token' )
 	var json = require( '../utils/json' )( schema.user )
 	var stripPassword = json.omit( 'password' )
-	var send = json.send( 'users' )
+	var send = json.send( 'user' )
 	var hashPassword = function ( user ) {
 		// only hash the password if it's not already hashed …
-		if ( !/[a-f0-9]{64}/.test( user.password ) ) {
+		if ( user.password && !/[a-f0-9]{64}/.test( user.password ) ) {
 			var sha256 = require( 'crypto' ).createHash( 'sha256' )
 			user.password = sha256.update( user.password ) && sha256.digest( 'hex' )
 		}
@@ -33,6 +34,40 @@ exports = module.exports = function ( app ) {
 
 
 	return {
+
+		auth: function ( req, res ) {
+			models.user.get( req.user.id )
+				.then( function ( user ) {
+					return AccessToken.forUser( user )
+				})
+				.then( function ( token ) {
+					res.send({ token: token })
+				})
+		},
+
+
+		callback: function ( req, res ) {
+			models.user.get( req.user.id )
+				.then( function ( user ) {
+					return AccessToken.forUser( user )
+				})
+				.then( function ( token ) {
+					var html = '<!DOCTYPE html>' +
+						'<html>' +
+						'<head><title></title></head>' +
+						'<body bgcolor="#000">' +
+							'<script type="text/javascript">' +
+							'var token = JSON.stringify('+JSON.stringify( token ) +')'+
+							';window.opener.postMessage(token,"*")' +
+							';window.close()' +
+							'</script>' +
+						'</body>' +
+						'</html>'
+					res.set( 'Content-Type', 'text/html' )
+					res.send( html )
+				})
+		},
+
 
 		me: function ( req, res ) {
 			models.user.get( req.user.id )
@@ -44,6 +79,7 @@ exports = module.exports = function ( app ) {
 		get: function ( req, res ) {
 			var id = req.params.id
 			models.user.get( id )
+				.then( stripPassword )
 				.then( send( res ), function ( err ) {
 					res.status( 400 ).send()
 				})
@@ -83,7 +119,7 @@ exports = module.exports = function ( app ) {
 				.then( json.merge( req.body ) )
 				.then( hashPassword )
 				.then( function ( user ) {
-					return models.user.set( id, user )
+					return models.user.save( user )
 				})
 				.then( stripPassword )
 				.then( send( res ) )

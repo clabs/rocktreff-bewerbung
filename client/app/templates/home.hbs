@@ -1,37 +1,132 @@
-<!-- Jumbotron -->
-<div class="jumbotron">
-	<h1>Bandbewerbung</h1>
-	<p class="lead">
-		Cras justo odio, dapibus ac facilisis in, egestas eget quam. Fusce dapibus,
-		tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa
-		justo sit amet.
-	</p>
-	<p>{{#link-to 'new' classNames="btn btn-primary btn-large"}}Jetzt bewerben{{/link-to}}</p>
+<div class="image teaser" style="background-image:url('/images/home1.jpg')">
+	{{#if BB.currentEvent}}
+	<div class="container">
+		<h1>{{BB.currentEvent.name}}</h1>
+		<h3>4.-6. Juli 2014</h3>
+	</div>
+	{{/if}}
 </div>
 
-<div class="container">
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="col-lg-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-primary" href="#">View details »</a></p>
-        </div>
-        <div class="col-lg-4">
-          <h2>Heading</h2>
-          <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-          <p><a class="btn btn-primary" href="#">View details »</a></p>
-       </div>
-        <div class="col-lg-4">
-          <h2>Heading</h2>
-          <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa.</p>
-          <p><a class="btn btn-primary" href="#">View details »</a></p>
-        </div>
-      </div>
+<div class="jumbo">
+	<div class="container">
+	<div class="row">
+		<div class="col-lg-6">
+			<h1>Das Festival</h1>
+			<p>
+				Der Rocktreff ist seit 1984 eines der angesagtesten Festivals für
+				junge und auch schon erfahrene Bands aus Berlin und den anderen
+				Bundesländern. Das Festival wird durch Ehrenamtliche organisiert,
+				die wie Ihr aus Proberäumen kommen. Traditionell ist der Eintritt
+				frei.
+			</p>
+		</div>
+		<div class="col-lg-1"></div>
+		<div class="col-lg-5">
+			<ul class="list-unstyled">
+				<li>{{icon "group"}} mehr als 10.000 Besucher</li>
+				<li>{{icon "music"}} 16 Bands verschiedener Rockgenres</li>
+				<li>{{icon "eur"}} nicht-kommerziell</li>
+			</ul>
+		</div>
+	</div>
+	</div>
+</div>
 
-      <!-- Site footer -->
-      <div class="footer">
-        <p>© Company 2013</p>
-      </div>
+<div class="image" style="background-image:url('/images/home2.jpg')"></div>
 
-    </div>
+<div class="jumbo">
+	<div class="container">
+	<div class="row">
+		<div class="col-lg-6">
+			<h1>Fuer Euch</h1>
+			<p>
+				Auf dem Rocktreff sammeln Bands häufig die ersten Erfahrungen mit
+				einem großen Publikum. Ihr bekommt sämtliche produzierten Medien,
+				wie Fotos, Videos und Tonspuren, eures Auftritts zur Verfügung
+				gestellt.
+			</p>
+		</div>
+		<div class="col-lg-1"></div>
+		<div class="col-lg-5">
+			<ul class="list-unstyled">
+				<li>{{icon "certificate"}} professionelle Bühne und Organisation</li>
+				<li>{{icon "cutlery"}} Verpflegung am Spieltag</li>
+				<li>{{icon "eur"}} keine Kostenerstattung (Gagen, Benzingeld)</li>
+				<li>{{icon "heart"}} Verkauf von Band-Merchandising</li>
+			</ul>
+		</div>
+	</div>
+	</div>
+</div>
+
+<div class="image" style="background-image:url('/images/home3.jpg')"></div>
+
+<div class="jumbo">
+	<div class="container">
+	<div class="row">
+		<div class="col-lg-6">
+			<h1>Euer Profil</h1>
+			<p>
+				Wir suchen vor allem junge Rockbands aller Genres aus dem Bundesgebiet.
+				Dabei bevorzugen wir bei der Auswahl grundsätzlich Bands aus der Region. Besonderes freuen wir uns immer über Bewerbungen von Schülerbands.
+			</p>
+		</div>
+		<div class="col-lg-1"></div>
+		<div class="col-lg-5">
+			<ul class="list-unstyled">
+				<li>{{icon "music"}} regionale Amateurbands</li>
+				<li>{{icon "heart"}} Schülerbands</li>
+				<li>{{icon "thumbs-o-down"}} keine internationalen Bewerbungen</li>
+				<li>{{icon "thumbs-o-down"}} keine Agentur-Bewerbungen</li>
+			</ul>
+		</div>
+	</div>
+	</div>
+</div>
+
+<div class="image" style="background-image:url('/images/home4.jpg')"></div>
+
+
+<div class="jumbo" style="height:600px;">
+	<div class="container">
+	<div class="row">
+		<div class="col-lg-6">
+			<h1>Bewerbt Euch!</h1>
+			<p>
+				Ihr habt Lust auf dem Rocktreff zu spielen und habt keine Angst vor
+				einem großen Publikum, dann bewerbt Euch jetzt! Der Bewerbungsschluss
+				ist der {{icon "calendar"}} 28.02.2014.
+			</p>
+		</div>
+		<div class="col-lg-6" style="padding-top: 55px;">
+			{{#if BB.currentEvent}}
+				{{#link-to 'NewBid' class="btn btn-lnk btn-lg"}}
+					Jetzt zum {{BB.currentEvent.name}} bewerben!
+				{{/link-to}}
+			{{/if}}
+		</div>
+	</div>
+	<div class="row footer">
+		<div class="col-lg-6">
+			<div class="heading">Impressum</div>
+			Bezirksamt Tempelhof-Schöneberg von Berlin <br>
+			Abteilung Jugend, Ordnung, Bürgerdienste <br>
+			Büro des Bezirksstadtrates <br>
+			JOB VM <br>
+			Rathaus Friedenau <br>
+			Niedstraße 1-2 <br>
+			12159 Berlin <br>
+			Telefon: +49 30 90277 4804 <br>
+			Fax: +49 30 90277 4805 <br>
+			Mail: jugendamt (at) rocktreff (.) de <br>
+			Ggf. Inhaltlich Verantwortlicher gem. § 55 RStV:  Bezirksstadtrat Oliver Schworckin Kooperation mit dem CPYE e.V. und der ROCK-INI Tempelhof
+		</div>
+		<div class="col-lg-6">
+			<div class="heading">Veranstalter</div>
+			<img src="http://rocktreff.de/wp-content/themes/rocktreff/images/JATS_B_RGB_500p_neg.png" alt="Jugendamt">
+			<img src="http://rocktreff.de/wp-content/themes/rocktreff/images/footer_rockini.png" alt="Rockinitiative Tempelhof">
+			<img src="http://rocktreff.de/wp-content/themes/rocktreff/images/footer_cpye.png" alt="CPYE e.V.">
+		</div>
+	</div>
+	</div>
+</div>

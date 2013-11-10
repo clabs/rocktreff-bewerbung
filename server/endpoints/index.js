@@ -33,30 +33,42 @@ exports = module.exports = function ( app, passport ) {
 	/**
 	 * Middlewares
 	 */
-	var loginRequired = function ( req, res, next ) {
-		if ( req.user ) next()
-		else res.status( 401 ).send()
-	}
-	var adminRequired = function ( req, res, next ) {
-		var user = req.user
-		if ( user && user.role === 'admin' ) return next()
-		if ( user ) return res.status( 403 ).send()
-		return res.status( 401 ).send()
-	}
-	var adminOrUserRequired = function ( req, res, next ) {
-		var user = req.user
-		if ( !user ) return res.status( 401 ).send()
-		if ( user.role === 'admin' || user.id === req.params.id )
-			 return next()
-		return res.status( 403 ).send()
-	}
-	var friendIniOrAdminRequired = function ( req, res, next ) {
-		var user = req.user
-		if ( !user ) return res.status( 401 ).send()
-		if ( /friend|ini|admin/.test( user.role ) )
-			return next()
-		return res.status( 403 ).send()
-	}
+	var loginRequired = [
+		passport.authenticate( 'bearer', { session: false } ),
+		function ( req, res, next ) {
+			if ( req.user ) next()
+			else res.status( 401 ).send()
+		}
+	]
+	var adminRequired = [
+		passport.authenticate( 'bearer', { session: false } ),
+		function ( req, res, next ) {
+			var user = req.user
+			if ( user && user.role === 'admin' ) return next()
+			if ( user ) return res.status( 403 ).send()
+			return res.status( 401 ).send()
+		}
+	]
+	var adminOrUserRequired = [
+		passport.authenticate( 'bearer', { session: false } ),
+		function ( req, res, next ) {
+			var user = req.user
+			if ( !user ) return res.status( 401 ).send()
+			if ( user.role === 'admin' || user.id === req.params.id )
+				 return next()
+			return res.status( 403 ).send()
+		}
+	]
+	var CrewRequired = [
+		passport.authenticate( 'bearer', { session: false } ),
+		function ( req, res, next ) {
+			var user = req.user
+			if ( !user ) return res.status( 401 ).send()
+			if ( /crew|admin/.test( user.role ) )
+				return next()
+			return res.status( 403 ).send()
+		}
+	]
 	var validateJSON = function ( schema ) {
 		return function ( req, res, next ) {
 			if ( !req.is( 'json' ) ) return res.status( 400 )
@@ -70,11 +82,19 @@ exports = module.exports = function ( app, passport ) {
 	/**
 	 * Endpoint Definitions
 	 */
-	app.post( '/auth/local', passport.authenticate( 'local' ),
-		function ( req, res ) {
-			res.redirect( '/me' )
-		}
-	)
+	 // local
+	app.post( '/auth/local', passport.authenticate( 'local' ), UserViews.auth )
+	// facebook
+	app.get( '/auth/facebook/callback', passport.authenticate( 'facebook', { successRedirect: '/auth/callback', session: true } ) )
+	// google
+	app.get( '/auth/google/callback' )
+	// twitter
+	app.get( '/auth/twitter/callback', passport.authenticate( 'twitter', { successRedirect: '/auth/callback', session: true } ) )
+	// popup callback
+	app.get( '/auth/callback', UserViews.callback )
+
+
+
 	app.get( '/me', loginRequired, UserViews.me )
 	app.get( '/users', adminRequired, UserViews.list )
 	app.post( '/users', validateJSON( schema.user ), UserViews.post )
@@ -83,7 +103,7 @@ exports = module.exports = function ( app, passport ) {
 	app.put( '/users/:id', [ adminOrUserRequired, validateJSON( schema.user ) ], UserViews.put )
 
 
-	app.get( '/events', loginRequired, EventViews.list )
+	app.get( '/events', EventViews.list )
 	app.post( '/events', [ adminRequired, validateJSON( schema.event ) ], EventViews.post )
 	app.get( '/events/:id', loginRequired, EventViews.get )
 	app.del( '/events/:id', adminRequired, EventViews.del )
@@ -97,21 +117,22 @@ exports = module.exports = function ( app, passport ) {
 	app.put( '/regions/:id', [ adminRequired, validateJSON( schema.region ) ], RegionViews.put )
 
 	app.get( '/votes', adminRequired, VoteViews.list )
-	app.post( '/votes', [ friendIniOrAdminRequired, validateJSON( schema.vote ) ], VoteViews.post )
-	app.get( '/votes/:id', friendIniOrAdminRequired, VoteViews.get )
+	app.post( '/votes', [ CrewRequired, validateJSON( schema.vote ) ], VoteViews.post )
+	app.get( '/votes/:id', CrewRequired, VoteViews.get )
 	app.del( '/votes/:id', adminRequired, VoteViews.del )
-	app.put( '/votes/:id', [ friendIniOrAdminRequired, validateJSON( schema.vote ) ], VoteViews.put )
+	app.put( '/votes/:id', [ CrewRequired, validateJSON( schema.vote ) ], VoteViews.put )
 
 
 	app.get( '/notes', adminRequired, NoteViews.list )
-	app.post( '/notes', [ friendIniOrAdminRequired, validateJSON( schema.note ) ], NoteViews.post )
-	app.get( '/notes/:id', friendIniOrAdminRequired, NoteViews.get )
-	app.del( '/notes/:id', friendIniOrAdminRequired, NoteViews.del )
-	app.put( '/notes/:id', [ friendIniOrAdminRequired, validateJSON( schema.note ) ], NoteViews.put )
+	app.post( '/notes', [ CrewRequired, validateJSON( schema.note ) ], NoteViews.post )
+	app.get( '/notes/:id', CrewRequired, NoteViews.get )
+	app.del( '/notes/:id', CrewRequired, NoteViews.del )
+	app.put( '/notes/:id', [ CrewRequired, validateJSON( schema.note ) ], NoteViews.put )
 
 
 	app.get( '/media', adminRequired, MediaViews.list )
 	app.post( '/media', [ loginRequired, validateJSON( schema.media ) ], MediaViews.post )
+	app.put( '/media/:id', [ loginRequired, validateJSON( schema.media ) ], MediaViews.put )
 	app.get( '/media/:id', loginRequired, MediaViews.get )
 	app.del( '/media/:id', loginRequired, MediaViews.del )
 

@@ -41,17 +41,18 @@ describe( 'Authentication', function() {
 				.expect( 401, done )
 		})
 
-		it( 'should redirect to /me upon successful authentication', function ( done ) {
+		it( 'should return a token upon successful authentication', function ( done ) {
 			request( url )
 				.post( '/auth/local' )
 				.send({
 					email: 'admin@rocktreff.de',
 					password: 'foobar'
 				})
-				.expect( 302 )
+				.expect( 200 )
 				.end( function ( err, res ) {
 					should.not.exist( err )
-					res.headers.should.have.property( 'location', '/me' )
+					res.body.should.be.json
+					res.body.should.have.property( 'token' )
 					done()
 				})
 		})

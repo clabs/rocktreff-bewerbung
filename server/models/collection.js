@@ -28,30 +28,30 @@ exports = module.exports = function ( name ) {
 		find: function ( query ) {
 			if ( !query || _.isEmpty( query ) )
 				return this.all()
-			return new Promise( function ( resolve, reject ) {
+			return new Promise( function ( fulfill, reject ) {
 				collection.all( function ( err, items ) {
 					if ( err ) reject( err )
-					else resolve( _.filter( items || [], query ) )
+					else fulfill( _.filter( items || [], query ) )
 				})
 			})
 		},
 
 
 		all: function () {
-			return new Promise( function ( resolve, reject ) {
+			return new Promise( function ( fulfill, reject ) {
 				collection.all( function ( err, items ) {
 					if ( err ) reject( err )
-					else resolve( _.map( items || [] ) )
+					else fulfill( _.map( items || [] ) )
 				})
 			})
 		},
 
 
 		get: function ( id ) {
-			return new Promise( function ( resolve, reject ) {
+			return new Promise( function ( fulfill, reject ) {
 				collection.get( id, function ( err, item ) {
 					if ( err ) reject( err )
-					else resolve( item )
+					else fulfill( item )
 				})
 			})
 		},
@@ -60,10 +60,10 @@ exports = module.exports = function ( name ) {
 		set: function ( id, item ) {
 			if ( !item.id ) item.id = id
 			item.modified = ( new Date() ).toISOString()
-			return new Promise( function ( resolve, reject ) {
+			return new Promise( function ( fulfill, reject ) {
 				collection.set( id, item, function ( err ) {
-					if ( err ) reject( err )
-					else resolve( item )
+					if ( err ) return reject( err )
+					else fulfill( item )
 				})
 			})
 
@@ -71,25 +71,37 @@ exports = module.exports = function ( name ) {
 
 
 		create: function ( item ) {
-			do { item.id = guid() }
+			do { item.id = guid( 12 ) }
 			while ( collection.has( item.id ) )
 			item.created = ( new Date() ).toISOString()
-			return new Promise( function ( resolve, reject ) {
+			return new Promise( function ( fulfill, reject ) {
 				collection.set( item.id, item, function ( err ) {
 					if ( err ) reject( err )
-					else resolve( item )
+					else fulfill( item )
 				})
 			})
 
 		},
 
 
+		save: function ( obj ) {
+			var self = this
+			return this.get( obj.id )
+				.then( function ( item ) {
+					return _.merge( item, obj )
+				})
+				.then( function ( item ) {
+					return self.set( item.id, item )
+				})
+		},
+
+
 		del: function ( id ) {
-			return new Promise( function ( resolve, reject ) {
+			return new Promise( function ( fulfill, reject ) {
 				if ( !collection.has( id ) ) reject( new Error( 'unknown' ) )
 				collection.remove( id, function ( err ) {
 					if ( err ) reject( err )
-					else resolve()
+					else fulfill()
 				})
 			})
 

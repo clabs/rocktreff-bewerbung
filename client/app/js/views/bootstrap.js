@@ -14,10 +14,10 @@
  */
 define([
 
-	'bb',
+	'ember',
 	'wysiwyg'
 
-], function ( BB ) {
+], function ( Ember ) {
 
 	'use strict';
 

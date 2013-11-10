@@ -41,7 +41,7 @@ module.exports = function( grunt ) {
 			client: 'app',
 			dist: 'dist/client',
 			tmp: '.tmp',
-			port: 1337
+			port: 4711
 		},
 
 		less: {
@@ -52,7 +52,7 @@ module.exports = function( grunt ) {
 		handlebars: {
 			dev: {
 				files: {
-					'<%= bb.tmp %>/js/templates.js': [ '<%= bb.client %>/templates/**/*.hbs' ]
+					'<%= bb.tmp %>/js/templates.js': [ '<%= bb.client %>/templates/{,*/}*.hbs' ]
 				}
 			}
 		},
@@ -66,6 +66,7 @@ module.exports = function( grunt ) {
 				files: [
 					'<%= bb.client %>/*.html',
 					'{<%= bb.tmp %>,<%= bb.client %>}/js/**/*.js',
+					'{.tmp,<%= bb.client %>}/styles/**/*.css',
 					'!{<%= bb.tmp %>,<%= bb.client %>}/js/vendor/**/*.js',
 					'<%= bb.client %>/images/**/*.{png,jpg,jpeg,gif,webp}'
 				],

@@ -20,6 +20,7 @@ var Promise = require( 'promise' )
 
 function createFromSchema( schema ) {
 	var obj = {}
+	if ( !schema || !schema.properties ) return obj
 	var properties = schema.properties
 	for ( var key in properties ) {
 		if ( !properties.hasOwnProperty( key ) ) continue
@@ -73,7 +74,8 @@ module.exports = function ( template ) {
 		send: _.curry( function ( key, res, obj ) {
 			obj = obj || []
 			var json = {}
-			json[ key ] = obj instanceof Array ? obj : [ obj ]
+			var pluralize = obj instanceof Array
+			json[ pluralize ? key + 's' : key ] = obj
 			res.send( json )
 		})
 	}

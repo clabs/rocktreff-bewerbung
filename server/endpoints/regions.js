@@ -19,7 +19,7 @@ exports = module.exports = function ( app ) {
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
 	var json = require( '../utils/json' )( schema.region )
-	var send = json.send( 'regions' )
+	var send = json.send( 'region' )
 	var empty = function ( res ) {
 		return function () {
 			send( res )( [] )
@@ -44,11 +44,13 @@ exports = module.exports = function ( app ) {
 
 		put: function ( req, res ) {
 			var id = req.params.id
-			models.region.get( id )
-				.then( json.merge( req.body ) )
-				.then( function ( region ) {
-					return models.region.set( id, region )
-				})
+
+			if ( !models.region.has( id ) )
+				return res.status( 404 ).send()
+			if ( id !== req.body.id )
+				return res.status( 400 ).send()
+
+			models.region.save( req.body )
 				.then( send( res ) )
 		},
 

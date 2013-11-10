@@ -22,183 +22,111 @@ define([
 
 	'use strict';
 
-	BB.SocketAdapter = RL.Adapter.extend({
+	RL.Model.reopen({
 
-		/*
-		 * socket: socket object to backend service
-		 */
-		socket: Ember.computed( function () {
-			var options = this.get( 'socket_options' )
-			var host = this.get( 'host' )
-			var port = this.get( 'port' )
-			var uri = '%@:%@'.fmt( host, port )
-			return io.connect( uri, options )
-		}).property( 'host', 'port' ),
+		// defaults
+		id: RL.attr( 'string' ),
+		created: RL.attr( 'date', { readOnly: true } ),
+		modified: RL.attr( 'date', { readOnly: true } ),
 
-
-		// options go here
-		socket_options: { },
-
-		/*
-		 * serializer: default to a JSON serializer
-		 */
-		serializer: RL.JSONSerializer.create(),
-
-		/*
-		 * host: base url of backend service
-		 */
-		host: null,
-
-		/**
-		 * port: tcp port of backend service
-		 */
-		port: 80,
-
-		/*
-		 * namespace: endpoint path
-		 * example: 'api/v1'
-		 */
-		namespace: null,
-
-		/*
-		 * useContentTypeExtension: forces content type extensions on resource requests
-		 */
-		useContentTypeExtension: false,
-
-
-		/*
-		 * App.Post => 'posts',  App.PostGroup => 'post_groups'
-		 */
-		eventkey: function( model ) {
-			var name = model.constructor.toString().replace(/^.+\.(.+)$/, '$1')
-			return this.pluralize( Ember.String.decamelize( name ) )
-		},
-
-
-		/*
-		 * send: creates and executes a socket event wrapped in a promise
-		 */
-		send: function ( model, action ) {
-			var self = this
-			var serializer = this.serializer
-			var socket = this.get( 'socket' )
-			var data = model.serialize()
-			var name = this.eventkey( model )
-			var eventname = '%@:%@'.fmt( name, action )
-			return new Ember.RSVP.Promise( function ( resolve ) {
-				Ember.run.later(function () {
-					socket.emit( eventname, data )
-					socket.on( name, function ( data ) {
-						Ember.run( null, resolve, data )
-					})
-				}, 300)
-			})
-		},
-
-		/*
-		 * saveRecord: POSTs a new record, or PUTs an updated record to REST service
-		 */
-		saveRecord: function( record ) {
-			var isNew = record.get( 'isNew' )
-			var method
-			var promise
-			// if an existing model isn't dirty, no need to save
-			if ( !isNew && !record.get( 'isDirty' ) )
-				return new Ember.RSVP.Promise( function ( resolve ) { resolve( record ) } )
-			// update state
-			record.set( 'isSaving', true )
-			// return
-			return this.send( record, isNew ? 'create' : 'update' )
-				.then( function ( data ) {
-					if ( data ) record.deserialize( data )
-					record.onSaved( isNew )
-					return record
-				}, function ( error ) {
-					record.onError( error )
-					return error
-				})
-		},
-
-		deleteRecord: function( record ) {
-			return this.send( record, 'delete' )
-				.then( function () {
-					record.onDeleted()
-					return null
-				}, function ( error ) {
-					record.onError( error )
-					return error
-				})
-		},
-
-		reloadRecord: function( record ) {
-			var primaryKey = record.constructor.get( 'primaryKey' )
-			var key = record.get( primaryKey )
-			// Can't reload a record that hasn't been stored yet (no primary key)
-			if( Ember.isNone( key ) )
-				return new Ember.RSVP.Promise( function ( _, reject ) { reject() } )
-			record.set( 'isLoaded', false )
-			return this.send( record, read, key )
-				.then( function ( data ){
-					record.deserialize( data )
-					record.onLoaded()
-				}, function ( error ) {
-					record.onError( error )
-				})
-		},
-
-		find: function ( type ) {
-			return this.findQuery( type )
-		},
-
-		findAll: function( type ) {
-			return this.findQuery( type )
-		},
-
-		findQuery: function ( recordtype, query ) {
-			var type = recordtype.toString()
-			var resource = recordtype.create({ isNew: false })
-			var result = RL.RecordArray.createWithContent()
-			this.send( resource, 'read', query )
-				.then( function ( data ) {
-					result.deserializeMany( type, data )
-					result.onLoaded()
-				}, function ( error ) {
-					result.onError( error )
-				})
-			return result
-		},
-
-		findByKey: function( recordtype, key, query ) {
-			var result = recordtype.create({ isNew: false })
-			this.send( result, 'read', query, key )
-				.then( function ( data ) {
-					result.deserialize( data )
-					result.onLoaded()
-				}, function ( error ) {
-					result.onError( error )
-				})
-			return result
-		},
-
-		/*
-		 * fetch: wraps find method in a promise for async find support
-		 * Overridden to add currentRequest
-		 */
-		fetch: function( recordtype, params ) {
-			var self = this
-			return new Ember.RSVP.Promise( function ( resolve, reject ) {
-				self.find( recordtype, params )
-					.one( 'didLoad', function ( model ) { resolve( model ) } )
-					.one( 'becameError', function ( error ) { reject( error ) } )
-			})
-		},
-
-		/*
-		 * registerTransform: fowards custom tranform creation to serializer
-		 */
-		registerTransform: function( type, transform ) {
-			this.get( 'serializer' ).registerTransform( type, transform )
+		serialize: function( options ) {
+			options = options || { }
+			options.nonEmbedded = true
+			return RL.get( 'client.adapter.serializer' ).serialize( this, options )
 		}
+
+	})
+
+
+	BB.RESTAdapter = RL.RESTAdapter.extend({
+
+		url: 'http://localhost:1338',
+
+		tokenBinding: 'BB.auth.token.id',
+
+		requestQueue: Ember.ArrayProxy.extend({
+			content: Ember.A([]),
+			uploads: function () {
+				return this.get( 'content' ).filter( function ( req ) {
+					return /POST|PUT/i.test( req.type )
+				})
+			}.property( 'content.length' ),
+		}).create(),
+
+		// need to reconnect Binding for the token
+		init: function () {
+			var self = this
+			var token = localStorage.token && JSON.parse( localStorage.token )
+			if ( token ) this.set( 'token', token.id )
+			Ember.run.next( function () {
+				self.tokenBinding.connect( self )
+			})
+			this._super()
+		},
+
+
+		request: function( model, params, key ) {
+			var adapter = this, serializer = this.serializer
+			return new Ember.RSVP.Promise( function ( resolve, reject ) {
+				params = params || {}
+				params.dataType = serializer.dataType
+				params.contentType = serializer.contentType
+				if ( !params.url )
+					params.url = adapter.buildUrl( model, key )
+				if ( params.data && params.type !== 'GET' )
+					params.data = serializer.prepareData( params.data )
+				params.xhr = function () {
+					var xhr = new window.XMLHttpRequest()
+					//Upload progress
+					var request = XHRUpload.create({
+						type: params.type,
+						xhr: xhr
+					})
+					adapter.get( 'requestQueue.content' ).pushObject( request )
+					return xhr
+				}
+				params.beforeSend = function ( xhr ) {
+					if ( adapter.token )
+						xhr.setRequestHeader( 'Authorization', 'Bearer ' + adapter.token )
+				}
+				params.success = function ( data, textStatus, jqXHR ) {
+					Ember.run( null, resolve, data )
+				}
+				params.error = function ( jqXHR, textStatus, errorThrown ) {
+					var errors = adapter.parseAjaxErrors( jqXHR, textStatus, errorThrown )
+					Ember.run( null, reject, errors )
+				}
+				var ajax = Ember.$.ajax( params )
+				if ( model ) model.set( 'currentRequest', ajax )
+			})
+		}
+	})
+
+
+	var XHRUpload = Ember.Object.extend({
+
+		type: null,
+		xhr: null,
+		percent: 0,
+		loaded: false,
+
+		init: function () {
+			var xhr = this.get( 'xhr' )
+			xhr.upload.addEventListener( 'progress', this.progress.bind( this ), false )
+			xhr.addEventListener( 'load', this.load.bind( this ), false )
+		},
+
+		progress: function ( evt ) {
+			if ( !evt.lengthComputable ) return
+			var percent = Math.round( evt.loaded / evt.total )
+			this.set( 'percent', percent || 0 )
+		},
+
+		load: function ( evt ) {
+			BB.get( 'Client.adapter.requestQueue' ).removeObject( this )
+			this.destroy()
+		}
+
 	})
 
 

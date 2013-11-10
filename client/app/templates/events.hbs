@@ -1,0 +1,20 @@
+<div class="container">
+	<div class="row">
+		<div class="col-sm-6">
+			<h3>Events {{#link-to 'events.new'}}{{icon "plus"}}{{/link-to}}</h3>
+			<ul class="list-unstyled">
+			{{#each model}}
+				<li>
+					{{#link-to "EventEdit" this}}{{name}}{{/link-to}}<br>
+					<small>
+					started:{{fromNow opening_date}} | ends in: {{fromNow closing_date}}
+					</small>
+				</li>
+			{{/each}}
+			</ul>
+		</div>
+		<div class="col-sm-6">
+			{{outlet event}}
+		</div>
+	</div>
+</div>

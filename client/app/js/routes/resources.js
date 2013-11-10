@@ -22,20 +22,26 @@ define([
 
 	BB.Router.map( function () {
 
+		this.resource( 'bewerbungen' )
 
-		this.resource( 'bid', { path: '/bewerbung/:b_id' }, function () {
+		this.resource( 'bid', { path: '/bewerbung/:bid_id' } )
 
+		this.resource( 'users' )
+		this.resource( 'user', { path: '/user/:id' }, function () {
 			this.route( 'edit' )
-
-
-
 		})
 
-		// new routes
-		this.resource( 'new' )
+		this.resource( 'events', function () {
+			this.resource( 'EventEdit', { path: '/:event_id/edit' } )
+			this.route( 'new' )
+		})
 
-		//
+		this.resource( 'NewBid', { path: '/bewerben' } )
+
 		this.resource( 'home' )
-
+		this.resource( 'login' )
+		this.resource( 'signup' )
+		this.resource( 'no' )
+		this.resource( 'oops' )
 	})
 })

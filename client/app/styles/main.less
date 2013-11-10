@@ -5,32 +5,54 @@
 // BOOTSTRAP Kram
 @import "bootstrap.less";
 @import "../js/vendor/font-awesome/less/font-awesome.less";
-@FontAwesomePath:    "../js/vendor/font-awesome/font";
+@fa-font-path:                   "http://netdna.bootstrapcdn.com/font-awesome/4.0.1/fonts";
 @brand-primary:                  darken( @gelb, 10% );
-@input-bg:                       #444;
+@input-bg:                       rgba(0,0,0,0.5);
 @input-color:                    #ddd;
+@input-border:                   #666;
 @input-border-focus:             @gelb;
 @input-group-addon-bg:           @gelb;
 @input-group-addon-border-color: @gelb;
-@headings-color:                 #f00;
+@headings-color:                 #fff;
+@modal-content-bg:               #222;
+@modal-header-border-color:      darken( @gelb, 30% );
+@modal-content-border-color:     darken( @gelb, 20% );
 
+@font-face {
+	font-family: "321impact";
+	src: url(http://rocktreff.de/wp-content/themes/rocktreff/font/321impact.ttf);
+	src: local("321impact"), url(http://rocktreff.de/wp-content/themes/rocktreff/font/321impact.ttf) format('truetype');
+}
 
 .input-group-addon {
-	color: black;
+	color: #000;
 }
 
-.icon-light {
-	color: inherit;
-}
+.btn-facebook
+	{ .button-variant( #fff; #3B5998; #3B5998); }
+
+.btn-google
+	{ .button-variant( #fff; #dd4b39; #dd4b39); }
+
+.btn-twitter
+	{ .button-variant( #fff; #00acee; #00acee); }
 
 
 
 body {
+	height: 100%;
 	color: #999;
 	background-image: url( "../images/bgtextur.png" );
 	background-color: rgb(20, 20, 20);
 	margin-top: 51px;
 }
+
+
+.gelb {
+	color: @gelb;
+	font-family: Impact, Arial, sans-serif;
+}
+
 
 .navbar-brand {
 	padding-left: 163px;
@@ -47,16 +69,284 @@ body {
 	}
 }
 
-.jumbotron {
-	text-align: center;
-	background-color: transparent;
-	background-image: url( "../images/jumbo2.jpg" );
-	background-position-y: 20%;
-	background-size: 100% auto;
-	height: 400px;
-	color: white;
-	text-shadow: 1px 1px 3px #000;
+.navbar-inverse {
+	background: rgb(56,56,56);
+	background: -moz-linear-gradient(top,  rgba(56,56,56,1) 0%, rgba(52,52,52,1) 50%, rgba(46,46,46,1) 67%, rgba(37,37,37,1) 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(56,56,56,1)), color-stop(50%,rgba(52,52,52,1)), color-stop(67%,rgba(46,46,46,1)), color-stop(100%,rgba(37,37,37,1)));
+	background: -webkit-linear-gradient(top,  rgba(56,56,56,1) 0%,rgba(52,52,52,1) 50%,rgba(46,46,46,1) 67%,rgba(37,37,37,1) 100%);
+	background: -o-linear-gradient(top,  rgba(56,56,56,1) 0%,rgba(52,52,52,1) 50%,rgba(46,46,46,1) 67%,rgba(37,37,37,1) 100%);
+	background: -ms-linear-gradient(top,  rgba(56,56,56,1) 0%,rgba(52,52,52,1) 50%,rgba(46,46,46,1) 67%,rgba(37,37,37,1) 100%);
+	background: linear-gradient(to bottom,  rgba(56,56,56,1) 0%,rgba(52,52,52,1) 50%,rgba(46,46,46,1) 67%,rgba(37,37,37,1) 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#383838', endColorstr='#252525',GradientType=0 );
+}
+
+ul.nav > li > a {
+	padding-top: 14px;
+	height: 49px;
+	outline: none;
 }
 
 
-textarea{overflow:scroll; max-height:300px}
+.home {
+	position: relative;
+
+	.jumbo {
+		font-size: 1em;
+		min-height: 300px;
+		background-color: #000;
+		padding: 48px 0;
+
+		h1 {
+			font-family: "321impact", Impact, Arial, sans-serif;
+		}
+
+		.container {
+			max-width: 800px;
+		}
+
+		ul {
+			margin-top: 35px;
+		}
+
+		li {
+			color: #fff;
+			margin-bottom: 20px;
+			.fa { color: @gelb; }
+		}
+
+	}
+	.image {
+		box-shadow: 0 0 15px #000 inset;
+		box-sizing: border-box;
+		background-position: 50%;
+		background-size: cover;
+		background-repeat: no-repeat;
+		height: 450px;
+
+		&.teaser {
+
+			text-shadow: 0 0 30px #000;
+			h1 {
+				font-family: Impact, Arial, sans-serif;
+				font-size: 5em !important;
+				color: @gelb;
+			}
+			h3 {
+				font-family: "321impact", Impact, Arial, sans-serif;
+				font-size: 3em !important;
+				margin-top: 0px;
+			}
+			padding: 140px 0;
+		}
+	}
+
+	.footer {
+		padding-top:100px;
+		font-size: 11px;
+
+		.heading {
+			font-size: 1.3em;
+			color: @gelb;
+			text-align: left;
+			border-top: 1px solid @gelb;
+		}
+		img {
+			max-width: 170px;
+			margin-right: 10px;
+		}
+	}
+}
+
+
+.login {
+	background-image: url('/images/login.jpg');
+	height: 700px;
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding-top: 80px;
+
+	.form-control {
+		background-color: rgba(0,0,0,0.7);
+		font-size: 19px;
+		height: 48px;
+	}
+
+	.control-label {
+		color: white;
+		font-size: 19px;
+		text-shadow: 1px 1px 5px #000;
+
+	}
+
+	.container {
+		border-radius: 10px;
+		padding: 35px;
+		background-color: rgba(0,0,0,0.7);
+		max-width: 700px;
+		box-shadow: 0 0 15px #000;
+		color: #ccc;
+	}
+
+	h1 {
+		text-shadow: 0 0 20px #000;
+		position: absolute;
+		margin: -60px -10px;
+	}
+
+	.privacy {
+		margin: 0 15px;
+		height: 200px;
+		font-size: 0.8em;
+		overflow-x: hidden;
+		overflow-y: scroll;
+		border: 1px solid #666;
+		padding: 10px;
+		border-radius: 5px;
+	}
+}
+
+
+.bid {
+
+	h3 > .fa {
+		color: @gelb;
+	}
+
+	textarea {
+		height: 10em;
+	}
+
+	.delimiter {
+		margin-top: 30px;
+	}
+}
+
+.dropbox {
+
+	padding: 10px;
+	border-radius: 8px;
+
+	&.hover {
+		background-color: rgba(50,50,50,0.5);
+	}
+
+	.viewbox {
+		position: relative;
+		border-radius: 5px;
+		height: 150px;
+		//border: 1px solid #aaa;
+		background-color: rgba(0,0,0,0.2);
+		background-position: 50%;
+		background-size: cover;
+		box-shadow: 0 0 10px #000 inset;
+
+		span {
+			position: absolute;
+			bottom: 2px;
+			right: 2px;
+		}
+	}
+
+	.docbox {
+		position: relative;
+		li {
+			color: #fff;
+			a {
+				text-decoration: none;
+			}
+		}
+
+	}
+
+	.hidden {
+		position: absolute;
+		left: -999999px;
+	}
+
+	.picture_warning {
+		white-space: nowrap;
+		font-size: 1em;
+		color: red;
+		position: absolute;
+		margin: 14% 34%;
+		text-align: right;
+		padding: 10px;
+		border-radius: 10px;
+		background: rgba(0,0,0,0.8);
+	}
+}
+
+
+
+
+
+.xhrprogress {
+	z-index: 9999;
+	position: fixed;
+	//display: none;
+	top: 0;
+	left: 44%;
+	padding: 10px;
+	background-color: rgba(0,0,0,0.2);
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+}
+
+
+
+
+.audioplayer {
+	position: relative;
+	background-color: rgba(0,0,0,0.35);
+	box-shadow: 0 0 10px rgba(0,0,0,0.3) inset;
+	float: right;
+	height: 50px;
+	text-shadow: 1px 1px 3px #000;
+
+	&:before, &:after {
+		content: "";
+		height: 50px;
+		width: 3px;
+		position: absolute;
+		background-color: #252525;
+		border-left: 1px solid rgba(255, 255, 255, 0.12);
+		border-right: 1px solid rgba(255, 255, 255, 0.12);
+		top: 0;
+		margin-left: -1px;
+	}
+
+	> * {
+		height: 50px;
+		line-height: 50px;
+		position: relative;
+		float: left;
+		display: inline-block;
+		margin: 0 2px;
+	}
+
+	.audioplayer-playpause {
+		color: @gelb;
+	}
+
+	.waveform {
+		width: 80px;
+		padding-top: 10px;
+
+		> wave:first-of-type {
+			display: none !important;
+		}
+
+	}
+
+	.trackname {
+		display: none;
+		font-size: 0.9em;
+		overflow: hidden;
+		width: 80px;
+		color: #fff;
+	}
+}
+
+
+
+

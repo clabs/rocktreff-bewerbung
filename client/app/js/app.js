@@ -15,37 +15,93 @@
 define([
 
 	'bb',
-	'store/store',
-	'store/adapter'
+	'models/models',
+	'store/adapter',
 
 ], function ( BB ) {
 
 	'use strict';
 
-
+	var storage = window.localStorage
 
 	BB.reopen({
 
 		Client: RL.Client.create({
-			adapter: BB.SocketAdapter.create({
-				host: 'http://localhost',
-				port: 1338
-			})
+			adapter: BB.RESTAdapter.create()
 		}),
 
-		// reference to the current user
-		currentUser: null,
+		auth: Ember.Object.create({
+
+			user: null,
+
+			token: JSON.parse( storage.token || 'null' ),
+			setToken: function ( token ) {
+				this.set( 'token', token )
+				// persist to storage
+				storage.token = JSON.stringify( token )
+				// update user model
+				this.updateUser( token )
+			}.observes( 'token' ),
 
 
-		isReady: function () {
-			return !!(
-				this.get( 'currentUser' )
-			)
-		}.property( 'currentUser' ),
+			init: function () {
+				var token = this.get( 'token' )
+				this.updateUser( token )
+			},
+
+			updateUser: function ( token ) {
+				var self = this
+				Ember.run.later( function () {
+					// update user model
+					if ( token && token.user ) {
+						var user = BB.User.find( token.user )
+						self.set( 'user', user )
+					} else {
+						self.set( 'user', null )
+					}
+				}, 0 )
+			},
+
+
+			authenticate: function ( credentials ) {
+				var self = this
+				var adapter = BB.get( 'Client.adapter' )
+				return adapter.request( null, {
+					url: adapter.get( 'url' ) + '/auth/local',
+					type: 'POST',
+					data: credentials
+				}).then( function ( data ) {
+					self.setToken( data.token )
+				})
+			},
+
+
+			authenticateWithToken: function ( token ) {
+				var self = this
+				return new Ember.RSVP.Promise( function ( fulfill ) {
+					self.setToken( token )
+					fulfill( token )
+				})
+			},
+
+
+			logout: function () {
+				var self = this
+				return new Ember.RSVP.Promise( function ( fulfill ) {
+					self.setToken( null )
+					delete storage.token
+					fulfill( token )
+				})
+			}
+
+		}),
+
+		userExists: function () {
+			return !!this.get( 'auth.user' )
+		}.property( 'auth.user' ),
 
 
 		// a basic example for observing properties
-		title: '',
 		titleChanged: function () {
 			var title = ''
 			if ( this.get( 'title' ) )
@@ -60,5 +116,38 @@ define([
 		}.observes( 'title' )
 
 	})
+
+	Ember.run.later( function () {
+		BB.Event.fetch()
+		.then( function ( events ) {
+			BB.set( 'currentEvent', events.get( 'firstObject' ) )
+		})
+	}, 0 )
+
+
+
+	BB.Client.adapter.registerTransform( 'isodate', {
+		deserialize: function ( datestring ) {
+			return new Date( datestring )
+		},
+		serialize: function ( obj ) {
+			if ( typeof obj === 'string' )
+				return ( new Date( obj ) ).toISOString()
+			if ( typeof obj === 'date' )
+				return obj.toISOString()
+			else
+				return obj.toString()
+		}
+	})
+
+	BB.Client.adapter.registerTransform( 'object', {
+		deserialize: function ( string ) {
+			return JSON.parse( string || 'null' )
+		},
+		serialize: function ( obj ) {
+			return JSON.stringify( obj || null )
+		}
+	})
+
 
 })

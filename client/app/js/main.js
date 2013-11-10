@@ -25,9 +25,14 @@ requirejs.config({
 		handlebars:'vendor/handlebars/handlebars',
 		ember: 'vendor/ember/ember',
 		restless: 'vendor/ember-restless/dist/ember-restless+extras',
+		bootstrap: 'vendor/bootstrap/dist/js/bootstrap',
 		wysiwyg: 'vendor/bootstrap-wysiwyg/bootstrap-wysiwyg',
 		'jquery-hotkeys': 'vendor/jquery.hotkeys/jquery.hotkeys',
-		socketio: 'vendor/socket.io-client/dist/socket.io'
+		socketio: 'vendor/socket.io-client/dist/socket.io',
+		moment: 'vendor/moment/min/moment-with-langs.min',
+		audio5js: 'vendor/audio5js/audio5',
+		wavesurfer: 'vendor/wavesurfer.js/build/wavesurfer.min',
+		stellar: 'vendor/jquery.stellar/jquery.stellar'
 	},
 	shim:{
 		ember: {
@@ -40,10 +45,14 @@ requirejs.config({
 		},
 		wysiwyg: {
 			deps:[ 'jquery', 'jquery-hotkeys' ],
-			exports: '$.fn.wysiwyg'
-		}
+			exports: 'wysiwyg'
+		},
+		bootstrap: { deps: [ 'jquery' ] },
+		wavesurfer: { exports: 'WaveSurfer' },
+		stellar: { deps: [ 'jquery' ] }
 	},
-	waitSeconds: 15
+	waitSeconds: 15,
+	noGlobal: false
 })
 
 define( 'bb', [
@@ -52,9 +61,13 @@ define( 'bb', [
 	'restless',
 	'jquery',
 	'handlebars',
-	'templates'
+	'templates',
+	'bootstrap',
+	'views/bootstrap',
+	'utils/prototypes'
 
 ], function ( Ember ) {
+
 	var BB = Ember.Application.create({
 		// namespaces
 		Widgets: Ember.Namespace.create()
@@ -78,17 +91,21 @@ require([
 	'store/store',
 
 	// models
-	'models/user',
+	'models/models',
 
 	// helper
 	'helpers/handlebar_helpers',
 
 	// controllers
-	'controllers/new',
+	'controllers/login',
+	'controllers/bid',
+	'controllers/audioplayer',
+	'controllers/xhrprogress',
 
 	// views
 	'views/application',
-	'views/bootstrap',
+	'views/dropbox',
+	'views/audioplayer',
 
 	// routes
 	'routes/resources',

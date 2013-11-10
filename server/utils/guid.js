@@ -19,7 +19,7 @@ var crypto = require( 'crypto' )
 
 // Returns a base-62 (alphanumeric only) string
 // based on https://gist.github.com/aseemk/3095925
-module.exports = function () {
+module.exports = function ( length ) {
 	// We generate a random number in a space at least as big as 62^length,
 	// and if it's too big, we just retry. This is still statistically O(1)
 	// since repeated probabilities less than one converge to zero. Hat-tip to
@@ -27,7 +27,7 @@ module.exports = function () {
 	// The native randomBytes() returns an array of bytes, each of which is
 	// effectively a base-256 integer. We derive the number of bytes to
 	// generate based on that, but note that it can overflow after ~150:
-	var length = 8
+	length = length || 8
 	var maxNum = Math.pow( 62, length )
 	var numBytes = Math.ceil( Math.log( maxNum ) / Math.log( 256 ) )
 	var bytes, num, i

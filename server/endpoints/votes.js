@@ -19,7 +19,7 @@ exports = module.exports = function ( app ) {
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
 	var json = require( '../utils/json' )( schema.vote )
-	var send = json.send( 'votes' )
+	var send = json.send( 'vote' )
 	var empty = function ( res ) {
 		return function () {
 			send( res )( [] )
@@ -40,8 +40,10 @@ exports = module.exports = function ( app ) {
 		post: function ( req, res ) {
 			var body = req.body
 
-			if ( body.user !== req.user.id ) return res.status( 403 ).send()
-			if ( !models.bid.has( body.bid ) ) return res.status( 404 ).send()
+			if ( body.user !== req.user.id )
+				return res.status( 403 ).send()
+			if ( !models.bid.has( body.bid ) )
+				return res.status( 404 ).send()
 
 			models.vote.create( body ).then( send( res ) )
 		},
@@ -51,14 +53,12 @@ exports = module.exports = function ( app ) {
 			var id = req.params.id
 			var body = req.body
 
-			if ( body.user !== req.user.id ) return res.status( 403 ).send()
-			if ( !models.bid.has( body.bid ) ) return res.status( 404 ).send()
+			if ( body.user !== req.user.id )
+				return res.status( 403 ).send()
+			if ( !models.bid.has( body.bid ) )
+				return res.status( 404 ).send()
 
-			models.vote.get( id )
-				.then( json.merge( body ) )
-				.then( function ( vote ) {
-					return models.vote.set( id, vote )
-				})
+			models.vote.save( req.body )
 				.then( send( res ) )
 		},
 

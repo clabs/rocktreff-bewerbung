@@ -19,7 +19,8 @@ exports = module.exports = function ( app ) {
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
 	var json = require( '../utils/json' )( schema.bid )
-	var send = json.send( 'bids' )
+	var send = json.send( 'bid' )
+	var stripMedia = json.omit( 'media' )
 	var stripVotes = json.omit( 'votes' )
 	var stripNotes = json.omit( 'notes' )
 	var empty = function ( res ) {
@@ -28,11 +29,24 @@ exports = module.exports = function ( app ) {
 		}
 	}
 
+	var injectMediaURL = function ( media ) {
+		function addURL ( media ) {
+			if ( !media.url || media.url === '' )
+				media.url = 'http://'+app.get( 'host' )+':'+app.get( 'port' )+'/uploads/'+media.id
+			return media
+		}
+		if ( media instanceof Array )
+			return media.map( function ( media ) {
+				return addURL( media )
+			})
+		return addURL( media )
+	}
+
 
 	function injectMedia ( bid ) {
 		return models.media.find( { bid: bid.id } )
 			.then( function ( media ) {
-				return { media: media }
+				return { media: injectMediaURL( media ) }
 			})
 			.then( json.merge( bid ) )
 	}
@@ -102,11 +116,10 @@ exports = module.exports = function ( app ) {
 				return res.status( 403 ).send()
 			if ( !models.bid.has( id ) )
 				return res.status( 404 ).send()
+			if ( json.id !== id )
+				return res.status( 401 ).send()
 
-			models.bid.get( id )
-				.then( function ( bid ) {
-					return models.bid.set( id, json )
-				})
+			models.bid.save( json )
 				.then( injectMedia )
 				.then( injectVotes( req.user ) )
 				.then( injectNotes( req.user ) )
@@ -137,9 +150,15 @@ exports = module.exports = function ( app ) {
 				.then( function ( bids ) {
 					if ( !( bids instanceof Array ) )
 						bids = [ bids ]
-					return bids.map( json.merge({
-						media: [], votes:[], notes: []
-					}))
+					return bids
+				})
+				.then( function ( bids ) {
+					bids.forEach( function ( bid ) {
+						injectMedia( bid )
+							.then( injectVotes( req.user ) )
+							.then( injectNotes( req.user ) )
+					})
+					return bids
 				})
 				.then( send( res ), function ( err ) {
 					res.status( 500 ).send()
