@@ -55,11 +55,16 @@ define([
 	})
 
 
+	BB.Region = RL.Model.extend({
+		name: RL.attr( 'string' )
+	})
+
+
 	BB.Media = RL.Model.extend({
 		bid: RL.attr( 'string' ),
 		type: RL.attr( 'string' ),
 		url: RL.attr( 'string' ),
-		attributes: RL.attr( 'object' ),
+		attributes: RL.attr( 'object', { defaultValue: {} } ),
 		mimetype: RL.attr( 'string' ),
 		filename: RL.attr( 'string' ),
 		filesize: RL.attr( 'number' ),
@@ -98,14 +103,27 @@ define([
 		fb: RL.attr( 'string' ),
 		media: RL.hasMany( 'BB.Media', { readOnly: true } ),
 		votes: RL.hasMany( 'BB.Vote', { readOnly: true } ),
-		notes: RL.hasMany( 'BB.Note', { readOnly: true } )
+		notes: RL.hasMany( 'BB.Note', { readOnly: true } ),
+
+
+		picture: null,
+		logo: null,
+		documents: null,
+		audio: null,
+		mediaChanged: function () {
+			var media = this.get( 'media.content' )
+			if ( !media ) return
+			var picture = media.filterBy( 'type', 'picture' ).get( 'firstObject' )
+			var logo = media.filterBy( 'type', 'logo' ).get( 'firstObject' )
+			var docs = media.filterBy( 'type', 'document' )
+			var audio = media.filterBy( 'type', 'audio' )
+			this.set( 'picture', picture )
+			this.set( 'logo', logo )
+			this.set( 'documents', docs )
+			this.set( 'audio', audio )
+		}.observes( 'didLoad', 'media.content.@each.isLoaded', 'media.content.length', 'media.content.[]' ),
+
 	})
-
-
-	BB.RESTAdapter.configure( 'plurals', {
-		media: 'media'
-	})
-
 
 
 })

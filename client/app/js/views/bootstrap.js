@@ -14,8 +14,7 @@
  */
 define([
 
-	'ember',
-	'wysiwyg'
+	'ember'
 
 ], function ( Ember ) {
 
@@ -26,11 +25,11 @@ define([
 	})
 
 	Ember.TextArea.reopen({
-		classNames: [ 'form-control' ],
+		classNames: [ 'form-control' ]
+	})
 
-		didInsertElement: function () {
-			this.$().wysiwyg()
-		}
+	Ember.Select.reopen({
+		classNames: [ 'form-control' ]
 	})
 
 })

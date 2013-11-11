@@ -110,7 +110,7 @@ exports = module.exports = function ( app, passport ) {
 	app.put( '/events/:id', [ adminRequired, validateJSON( schema.event ) ], EventViews.put )
 
 
-	app.get( '/regions', loginRequired, RegionViews.list )
+	app.get( '/regions', RegionViews.list )
 	app.post( '/regions', [ adminRequired, validateJSON( schema.region ) ], RegionViews.post )
 	app.get( '/regions/:id', loginRequired, RegionViews.get )
 	app.del( '/regions/:id', adminRequired, RegionViews.del )

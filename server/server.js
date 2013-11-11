@@ -53,11 +53,11 @@ app.configure( function () {
 
 
 // Internal includes
+var mailer = require( './mailer' )( app )
 var models = require( './models/index' )( app )
 var strategies = require( './passport/index' )( app, passport )
 var middlewares = require( './middleware/index' )( app )
 var endpoints = require( './endpoints/index' )( app, passport )
-
 
 // yay ho!
 app.listen( app.get( 'port' ) )

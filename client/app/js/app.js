@@ -23,73 +23,78 @@ define([
 	'use strict';
 
 	var storage = window.localStorage
+	var HOSTNAME = 'http://localhost:1338'
 
 	BB.reopen({
 
+		token: null,
+
+		user: function () {
+			var token = this.get( 'token' )
+			// update user model
+			if ( token && token.user ) {
+				return BB.User.find( token.user )
+			} else {
+				return null
+			}
+		}.property( 'token' ),
+
+
+		observeToken: function () {
+			var token = this.get( 'token' )
+			// persist to storage
+			storage.token = JSON.stringify( token )
+			// update user model
+			this.updateUser( token )
+		}.observes( 'token' ),
+
+
+		updateUser: function ( token ) {
+			// update user model
+			if ( token && token.user ) {
+				try {
+					return BB.User.fetch( token.user )
+					.then( function ( user ) {
+						BB.set( 'user', user )
+					})
+				} catch ( e ) {}
+			} else {
+				BB.set( 'user', null )
+			}
+		},
+
 		Client: RL.Client.create({
-			adapter: BB.RESTAdapter.create()
+			adapter: BB.RESTAdapter.create({
+				url: HOSTNAME,
+				tokenBinding: 'BB.token.id',
+			})
 		}),
 
 		auth: Ember.Object.create({
 
-			user: null,
-
-			token: JSON.parse( storage.token || 'null' ),
-			setToken: function ( token ) {
-				this.set( 'token', token )
-				// persist to storage
-				storage.token = JSON.stringify( token )
-				// update user model
-				this.updateUser( token )
-			}.observes( 'token' ),
-
-
-			init: function () {
-				var token = this.get( 'token' )
-				this.updateUser( token )
-			},
-
-			updateUser: function ( token ) {
-				var self = this
-				Ember.run.later( function () {
-					// update user model
-					if ( token && token.user ) {
-						var user = BB.User.find( token.user )
-						self.set( 'user', user )
-					} else {
-						self.set( 'user', null )
-					}
-				}, 0 )
-			},
-
-
 			authenticate: function ( credentials ) {
-				var self = this
 				var adapter = BB.get( 'Client.adapter' )
 				return adapter.request( null, {
 					url: adapter.get( 'url' ) + '/auth/local',
 					type: 'POST',
 					data: credentials
 				}).then( function ( data ) {
-					self.setToken( data.token )
+					BB.set( 'token', data.token )
 				})
 			},
 
-
 			authenticateWithToken: function ( token ) {
-				var self = this
 				return new Ember.RSVP.Promise( function ( fulfill ) {
-					self.setToken( token )
+					BB.set( 'token', token )
 					fulfill( token )
 				})
 			},
 
-
 			logout: function () {
-				var self = this
 				return new Ember.RSVP.Promise( function ( fulfill ) {
-					self.setToken( null )
+					BB.set( 'token', null )
 					delete storage.token
+					BB.__container__.lookup( 'router:main' ).transitionTo( 'home' )
 					fulfill( token )
 				})
 			}
@@ -97,9 +102,43 @@ define([
 		}),
 
 		userExists: function () {
-			return !!this.get( 'auth.user' )
-		}.property( 'auth.user' ),
+			return !!this.get( 'user' )
+		}.property( 'user' ),
 
+
+		ready: function () {
+			// fetch current event
+			BB.Event.fetch()
+				.then( function ( events ) {
+					BB.set( 'currentEvent', events.get( 'firstObject' ) )
+				})
+			// fetch all regions
+			BB.Region.fetch()
+				.then( function ( regions ) {
+					BB.set( 'regions', regions )
+				})
+			// fetch all Bids
+			BB.Bid.fetch()
+				.then( function ( bids ) {
+					BB.set( 'bids', bids )
+				})
+			// update user
+			var user = this.get( 'user' )
+			if ( user && !user.saveRecord ) {
+				user = BB.User.create( user )
+				user.set( 'isNew', false )
+				this.set( 'user', user )
+			}
+		},
+
+		currentBid: function () {
+			var bids = this.get( 'bids' )
+			var id = this.get( 'currentEvent.id' )
+			if ( bids && id )
+				return bids.filterBy( 'event', id ).get( 'firstObject' )
+			else
+				return false
+		}.property( 'bids', 'currentEvent' ),
 
 		// a basic example for observing properties
 		titleChanged: function () {
@@ -117,12 +156,30 @@ define([
 
 	})
 
-	Ember.run.later( function () {
-		BB.Event.fetch()
-		.then( function ( events ) {
-			BB.set( 'currentEvent', events.get( 'firstObject' ) )
+
+
+	var token = JSON.parse( storage.token || 'null' )
+	if ( token ) {
+		Ember.$.ajax({
+			url: HOSTNAME + '/users/' + token.user,
+			type: 'GET',
+			beforeSend: function ( xhr ) {
+				xhr.setRequestHeader( 'Authorization', 'Bearer ' + token.id )
+			}
 		})
-	}, 0 )
+		.then( function ( data ) {
+			var user = data.user
+			BB.set( 'token', token )
+			BB.set( 'user', user )
+			BB.advanceReadiness()
+		}, function () {
+			BB.set( 'user', null )
+			BB.set( 'token', null )
+			BB.advanceReadiness()
+		})
+	} else {
+		BB.advanceReadiness()
+	}
 
 
 
@@ -141,13 +198,19 @@ define([
 	})
 
 	BB.Client.adapter.registerTransform( 'object', {
-		deserialize: function ( string ) {
-			return JSON.parse( string || 'null' )
+		deserialize: function ( obj ) {
+			return obj
 		},
 		serialize: function ( obj ) {
-			return JSON.stringify( obj || null )
+			return JSON.stringify( obj || "" )
 		}
 	})
+
+
+	BB.Client.adapter.configure( 'plurals', {
+		media: 'media'
+	})
+
 
 
 })

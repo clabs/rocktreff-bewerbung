@@ -59,14 +59,14 @@ define([
 		transitionBack: function () {
 			var self = this
 			var attemptedTransition = this.get( 'attemptedTransition' )
-			Ember.run.later( function () {
+			Ember.run.later( function () {
 				if ( attemptedTransition ) {
 					attemptedTransition.retry()
 					self.set( 'attemptedTransition', null )
 				} else {
-					self.transitionToRoute( 'index' )
+					BB.__container__.lookup( 'router:main' ).transitionTo( 'home' )
 				}
-			}, 100 )
+			}, 1000 )
 		},
 
 
@@ -113,19 +113,16 @@ define([
 		actions: {
 			auth: function ( strategy ) {
 				var self = this
-				var init = function ( token ) {
-					//self.setupUser( token )
-					Ember.run.next( function () {
-						self.transitionBack()
-					})
+				var transitionBack = function () {
+					self.transitionBack()
 				}
 				switch ( strategy ) {
 					case 'local':
-						return this.authLocal().then( init )
+						return this.authLocal().then( BB.setupUser ).then( transitionBack )
 					case 'facebook':
-						return this.authFacebook().then( init )
+						return this.authFacebook().then( BB.setupUser ).then( transitionBack )
 					case 'twitter':
-						return this.authTwitter().then( init )
+						return this.authTwitter().then( BB.setupUser ).then( transitionBack )
 					default:
 						return new Ember.RSVP.Promise( function ( _, reject ) {
 							reject( new Error( 'unknown auth strategy' ) )
@@ -135,6 +132,11 @@ define([
 		}
 
 	})
+
+
+
+
+
 
 
 	BB.SignupController = Ember.ObjectController.extend({

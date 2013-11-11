@@ -28,23 +28,18 @@ define([
 
 		needs: [ 'audioplayer' ],
 
-		picture: null,
-		logo: null,
-		documents: null,
-		audio: null,
+		phonevalid: function () {
+			var phone = this.get( 'content.phone' )
+			return /^[\d\(\)\/\-\s]{7,}$/.test( phone )
+		}.property( 'content.phone' ),
+
+		mailvalid: function () {
+			var mail = this.get( 'content.mail' )
+			return /^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$/.test( mail )
+		}.property( 'content.mail' ),
 
 
-		mediaChanged: function () {
-			var media = this.get( 'content.media' )
-			var picture = media.filterBy( 'type', 'picture' ).get( 'firstObject' )
-			var logo = media.filterBy( 'type', 'logo' ).get( 'firstObject' )
-			var docs = media.filterBy( 'type', 'document' )
-			var audio = media.filterBy( 'type', 'audio' )
-			this.set( 'picture', picture )
-			this.set( 'logo', logo )
-			this.set( 'documents', docs )
-			this.set( 'audio', audio )
-		}.observes( 'content.media.@each.isLoaded', 'content.media.length', 'content.media.[]' ),
+
 
 		autoSave: function () {
 			this.save()
@@ -76,6 +71,7 @@ define([
 				var properties = {
 					bid: bid.get( 'id' ),
 					type: file.mediatype,
+					attributs: file.attributes,
 					mimetype: file.type,
 					filename: file.name,
 					filesize: file.size,
@@ -94,6 +90,7 @@ define([
 				var properties = {
 					bid: bid.get( 'id' ),
 					type: file.mediatype,
+					attributs: file.attributes,
 					mimetype: file.type,
 					filename: file.name,
 					filesize: file.size,

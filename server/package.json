@@ -25,7 +25,8 @@
     "passport-http-bearer": "~1.0.1",
     "passport-twitter": "~1.0.2",
     "express-hijackresponse": "~0.1.2",
-    "fluent-ffmpeg": "~1.5.2"
+    "fluent-ffmpeg": "~1.5.2",
+    "nodemailer": "~0.5.5"
   },
   "engines": {
     "node": ">=0.8.0"

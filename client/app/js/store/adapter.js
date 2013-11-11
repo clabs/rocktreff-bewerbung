@@ -15,15 +15,13 @@
 define([
 
 	'bb',
-	'restless',
-	'socketio'
+	'restless'
 
-], function ( BB, RL, io ) {
+], function ( BB, RL ) {
 
 	'use strict';
 
 	RL.Model.reopen({
-
 		// defaults
 		id: RL.attr( 'string' ),
 		created: RL.attr( 'date', { readOnly: true } ),
@@ -34,15 +32,13 @@ define([
 			options.nonEmbedded = true
 			return RL.get( 'client.adapter.serializer' ).serialize( this, options )
 		}
-
 	})
 
 
 	BB.RESTAdapter = RL.RESTAdapter.extend({
 
-		url: 'http://localhost:1338',
-
-		tokenBinding: 'BB.auth.token.id',
+		url: null,
+		token: null,
 
 		requestQueue: Ember.ArrayProxy.extend({
 			content: Ember.A([]),
@@ -54,15 +50,15 @@ define([
 		}).create(),
 
 		// need to reconnect Binding for the token
-		init: function () {
-			var self = this
-			var token = localStorage.token && JSON.parse( localStorage.token )
-			if ( token ) this.set( 'token', token.id )
-			Ember.run.next( function () {
-				self.tokenBinding.connect( self )
-			})
-			this._super()
-		},
+		// init: function () {
+		// 	var self = this
+		// 	var token = localStorage.token && JSON.parse( localStorage.token )
+		// 	if ( token ) this.set( 'token', token.id )
+		// 	Ember.run.next( function () {
+		// 		self.tokenBinding.connect( self )
+		// 	})
+		// 	this._super()
+		// },
 
 
 		request: function( model, params, key ) {
@@ -86,8 +82,9 @@ define([
 					return xhr
 				}
 				params.beforeSend = function ( xhr ) {
-					if ( adapter.token )
-						xhr.setRequestHeader( 'Authorization', 'Bearer ' + adapter.token )
+					var token = BB.get( 'token.id' )
+					if ( token )
+						xhr.setRequestHeader( 'Authorization', 'Bearer ' + token )
 				}
 				params.success = function ( data, textStatus, jqXHR ) {
 					Ember.run( null, resolve, data )

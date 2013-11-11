@@ -118,15 +118,15 @@ define([
 
 	BB.PictureDropbox = BB.Dropbox.extend({
 
-		pixels: 1e6,
 		valid: null,
 
 		mediatype: 'picture',
 		mimetype: 'image/*',
 
 		update: function ( file ) {
+			var self = this
 			var mediatype = this.get( 'mediatype' )
-			var picture = this.get( 'controller.' + mediatype )
+			var picture = this.get( 'controller.content.' + mediatype )
 			var url = file ? window.URL.createObjectURL( file ) :
 				      picture ? picture.get( 'url' ) + '_small' :
 				      false
@@ -134,7 +134,7 @@ define([
 				var width = picture.get( 'attributes.width' )
 				var height = picture.get( 'attributes.height' )
 				this.set( 'valid', this.validate( width, height ) )
-				return new Ember.RVSP.Promise( function ( fulfill ) {
+				return new Ember.RSVP.Promise( function ( fulfill, reject ) {
 					if ( valid ) fulfill( file )
 					else reject( file )
 				})
@@ -148,6 +148,7 @@ define([
 							width: dimensions[ 0 ],
 							height: dimensions[ 1 ]
 						}
+						self.set( 'valid', self.validate( dimensions[ 0 ], dimensions[ 1 ] ) )
 						return file
 					})
 			}
@@ -161,8 +162,7 @@ define([
 		},
 
 		validate: function ( width, height ) {
-			var pixels = width * height
-			return pixels >= this.get( 'pixels' ) ? true : false
+			return Math.max( width, height ) >= 1200
 		},
 
 		validateURL: function ( url ) {
@@ -183,17 +183,23 @@ define([
 
 
 	BB.LogoDropbox = BB.PictureDropbox.extend({
-		mediatype: 'logo'
+		mediatype: 'logo',
+		mimetype: 'image/*'
 	})
 
 
 	BB.DocumentDropbox = BB.Dropbox.extend({
 
 		mediatype: 'document',
+		mimetype: 'application/*',
 
 		file: function ( file ) {
-			if ( !/^application\/pdf$/gi.test( file.type ) ) return
-			return true
+			return new Ember.RSVP.Promise( function ( fulfill, reject ) {
+				if ( !/^application\/.+$/gi.test( file.type ) )
+					fulfill( file)
+				else
+					reject( file )
+			})
 		}
 
 	})
@@ -202,6 +208,7 @@ define([
 	BB.AudioDropbox = BB.Dropbox.extend({
 
 		mediatype: 'audio',
+		mimetype: 'audio/*',
 
 		file: function ( file ) {
 			if ( !/^audio\/.*$/gi.test( file.type ) ) return

@@ -8,7 +8,7 @@
     "requirejs": "~2.1.9",
     "moment": "~2.4.0",
     "jquery": "~2.0.3",
-    "ember-restless": "~0.4.0",
+    "ember-restless": "~0.4.1",
     "bootstrap": "~3.0.1",
     "bootstrap-wysiwyg": "https://github.com/mindmup/bootstrap-wysiwyg.git",
     "jquery.hotkeys": "https://github.com/jeresig/jquery.hotkeys.git#~0.1.0",

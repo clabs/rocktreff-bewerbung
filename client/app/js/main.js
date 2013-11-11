@@ -88,7 +88,7 @@ require([
 	'app',
 
 	// store
-	'store/store',
+	'store/adapter',
 
 	// models
 	'models/models',
@@ -111,8 +111,4 @@ require([
 	'routes/resources',
 	'routes/index'
 
-], function ( BB ) {
-	// Yay-ho!
-	BB.advanceReadiness()
-	BB.set( 'title', 'hello world!' )
-})
+])

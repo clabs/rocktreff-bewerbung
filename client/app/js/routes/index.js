@@ -21,10 +21,16 @@ define([
 
 	'use strict';
 
-	BB.AuthenticatedRoute = Ember.Route.extend({
+	BB.Route = Ember.Route.extend({
+		enter: function () {
+			window.scrollTo( 0, 0 )
+		}
+	})
+
+	BB.AuthenticatedRoute = BB.Route.extend({
 
 		beforeModel: function ( transition ) {
-			if ( !BB.auth.user )
+			if ( !BB.user )
 				this.redirectToLogin( transition )
 		},
 
@@ -41,7 +47,8 @@ define([
 				else if ( err.status == 403 )
 					this.transitionTo( 'no' )
 				else {
-					this.transitionTo( 'oops' )
+					this.transitionTo( 'home' )
+					console.error( err )
 					throw err
 				}
 			}
@@ -49,14 +56,14 @@ define([
 	})
 
 
-	BB.IndexRoute = Ember.Route.extend({
+	BB.IndexRoute = BB.Route.extend({
 		redirect: function () {
 			this.transitionTo( 'home' )
 		}
 	})
 
 
-	BB.ApplicationRoute = Ember.Route.extend({
+	BB.ApplicationRoute = BB.Route.extend({
 
 		actions: {
 			logout: function () {
@@ -73,7 +80,7 @@ define([
 
 		model: function () {
 			return BB.Bid.create({
-				user: BB.get( 'auth.user.id' ),
+				user: BB.get( 'user.id' ),
 				event: BB.get( 'currentEvent.id' )
 			}).saveRecord()
 		},
@@ -84,11 +91,12 @@ define([
 					var self = this
 					BB.Bid
 						.fetch({
-							user: BB.get( 'auth.user.id' ),
+							user: BB.get( 'user.id' ),
 							event: BB.get( 'currentEvent.id' )
 						})
 						.then( function ( bids ) {
-							self.transitionTo( 'bid', bids.get( 'firstObject' ) )
+							var bid = bids.get( 'firstObject' )
+							self.transitionTo( 'bid', bid )
 						}, function ( err ) {
 							self._super( err, transition )
 						})
@@ -101,13 +109,7 @@ define([
 
 
 
-	BB.BidEditRoute = BB.AuthenticatedRoute({
-
-		model: function ( params ) {
-			return BB.Bid.fetch( params.bid_id )
-		}
-
-	})
+	BB.BidRoute = BB.AuthenticatedRoute.extend({})
 
 
 

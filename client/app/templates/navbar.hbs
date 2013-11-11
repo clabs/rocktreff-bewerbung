@@ -1,12 +1,12 @@
 <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
 	<div class="container">
 		<div class="navbar-header">
-			<a class="navbar-brand" href="#"></a>
+			{{#link-to 'home' classNames="navbar-brand"}}{{/link-to}}
 		</div>
 		<div>
 			{{#if BB.userExists}}
 				<ul class="nav navbar-nav">
-					{{#if BB.auth.user.isAdmin}}
+					{{#if BB.user.isAdmin}}
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration {{icon "caret-down"}}</a>
 						<ul class="dropdown-menu">
@@ -26,19 +26,19 @@
 			{{#if BB.userExists}}
 			<li>
 				<a href="#" data-toggle="dropdown">
-				{{#if BB.auth.user.picture}}
-					<img src="{{unbound BB.auth.user.picture}}" width="24">
+				{{#if BB.user.picture}}
+					<img src="{{unbound BB.user.picture}}" width="24">
 				{{else}}
-					{{gravatar BB.auth.user.email size="24"}}
+					{{gravatar BB.user.email size="24"}}
 				{{/if}}
-				{{BB.auth.user.email}}
+				{{BB.user.email}}
 				</a>
 				<ul class="dropdown-menu">
-					{{#if BB.auth.user.isNeither}}
-					<li>
-						{{#link-to 'bewerbungen'}}{{icon "pencil"}} Meine Bewerbungen{{/link-to}}
-					</li>
-					<li class="divider"></li>
+					{{#if BB.user.isNeither}}
+						{{#if BB.currentBid}}
+						<li>{{#link-to 'bid' BB.currentBid}} Meine aktuelle Bewerbung{{/link-to}}
+						<li class="divider"></li>
+						{{/if}}
 					{{/if}}
 					<li><a {{action logout}} href="#">{{icon "power-off"}} Abmelden</a></li>
 				</ul>

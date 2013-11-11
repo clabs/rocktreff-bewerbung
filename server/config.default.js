@@ -21,6 +21,13 @@ exports = module.exports = function( app ) {
 	app.set( 'client-url', '*' )
 	app.set( 'upload-directory', __dirname + '/public/uploads' )
 
+	// Mailer
+	app.set( 'email-user', 'bandbewerbung@rocktreff.de' )
+	app.set( 'email-pass', '' )
+	app.set( 'email-host', 'smtprelaypool.ispgateway.de' )
+	app.set( 'email-port', 465 )
+	app.set( 'email-usetls', true )
+
 	// Password encryption
 	app.set( 'crypto-key', '42ugiuewgffgfwzegfewif' )
 
