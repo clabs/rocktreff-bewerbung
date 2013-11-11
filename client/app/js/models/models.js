@@ -105,7 +105,7 @@ define([
 		votes: RL.hasMany( 'BB.Vote', { readOnly: true } ),
 		notes: RL.hasMany( 'BB.Note', { readOnly: true } ),
 
-
+		// computed lists & stuff
 		picture: null,
 		logo: null,
 		documents: null,
@@ -113,15 +113,13 @@ define([
 		mediaChanged: function () {
 			var media = this.get( 'media.content' )
 			if ( !media ) return
-			var picture = media.filterBy( 'type', 'picture' ).get( 'firstObject' )
-			var logo = media.filterBy( 'type', 'logo' ).get( 'firstObject' )
-			var docs = media.filterBy( 'type', 'document' )
-			var audio = media.filterBy( 'type', 'audio' )
-			this.set( 'picture', picture )
-			this.set( 'logo', logo )
-			this.set( 'documents', docs )
-			this.set( 'audio', audio )
-		}.observes( 'didLoad', 'media.content.@each.isLoaded', 'media.content.length', 'media.content.[]' ),
+			this.setProperties({
+				picture:   media.filterBy( 'type', 'picture' ).get( 'firstObject' ),
+				logo:      media.filterBy( 'type', 'logo' ).get( 'firstObject' ),
+				documents: media.filterBy( 'type', 'document' ),
+				audio:     media.filterBy( 'type', 'audio' )
+			})
+		}.observes( 'media.content.@each.isLoaded', 'media.content.length', 'media.content.[]' )
 
 	})
 

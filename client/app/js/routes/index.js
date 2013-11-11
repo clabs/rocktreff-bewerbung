@@ -109,7 +109,15 @@ define([
 
 
 
-	BB.BidRoute = BB.AuthenticatedRoute.extend({})
+	BB.BidRoute = BB.AuthenticatedRoute.extend({
+
+		setupController: function ( controller, model ) {
+			model.reloadRecord().then( function () {
+				model.mediaChanged()
+			})
+			this._super.apply( this, arguments )
+		}
+	})
 
 
 
