@@ -30,8 +30,8 @@ define([
 
 		tokenBinding: 'BB.RESTAdapter.accesstoken',
 		attemptedTransition: null,
-		email: 'rob@clabs.cc',
-		password: 'foobar',
+		email: '',
+		password: '',
 
 
 		reset: function () {

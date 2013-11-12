@@ -46,8 +46,13 @@ exports = module.exports = function ( app ) {
 	}
 
 	var greetings = function ( user ) {
-		var subject = ''
-		var text = ''
+		var subject = 'ROCKTREFF 2014 - Deine Anmeldung'
+		var text = 'Vielen Dank für Eure Anmeldung!\n\n' +
+		           'Bis zum 28.2.2014 habt Ihr Zeit Eure Bewerbung zu bearbeiten.' +
+		           'Dazu einfach wieder auf die Bewerbungsseite gehen und anmelden.\n\n' +
+		           'http://www.rocktreff.de/bewerben\n\n' +
+		           'Anfang März 2014 machen wir die Auswahl und melden uns kurz darauf bei Euch.\n\n' +
+		           'Gruß Euer ROCKTREFF-Team'
 		return send( user.email, subject, text )
 	}
 
