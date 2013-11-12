@@ -20,6 +20,22 @@ define([
 
 	'use strict';
 
+	var origChangeEvent
+
+
+	BB.FileInputView = Ember.View.extend( Ember.ViewTargetActionSupport, {
+		tagName: 'input',
+		classNames: [ 'hidden' ],
+		attributeBindings: [ 'type' ],
+		type: 'file',
+		change: function ( evt ) {
+			origChangeEvent = evt.originalEvent
+			this.triggerAction({
+				action: 'fileselected'
+			})
+		}
+	})
+
 	BB.Dropbox = Ember.View.extend({
 
 		value: null,
@@ -34,7 +50,7 @@ define([
 		validate: function () {},
 
 		layout: Ember.Handlebars.compile(
-			'<input class="hidden" type="file" {{action "fileselected" on="change" target=view}} >' +
+			'{{view BB.FileInputView target=view}}' +
 			'{{yield}}' +
 			'&nbsp;'
 		),
@@ -123,9 +139,9 @@ define([
 			selectfile: function () {
 				this.$().find( 'input[type^="file"]' ).trigger( 'click' )
 			},
-			fileselected: function ( event ) {
-				var element = window.event.srcElement
-				var file = element.files[ 0 ]
+			fileselected: function () {
+				var event = origChangeEvent.originalTarget || origChangeEvent.srcElement
+				var file = event.files[ 0 ]
 				this._handleFile( file )
 				return false
 			}
