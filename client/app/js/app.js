@@ -27,6 +27,8 @@ define([
 
 	BB.reopen({
 
+		hostname: HOSTNAME,
+
 		token: null,
 
 		user: function () {
@@ -38,6 +40,7 @@ define([
 				return null
 			}
 		}.property( 'token' ),
+
 
 
 		observeToken: function () {

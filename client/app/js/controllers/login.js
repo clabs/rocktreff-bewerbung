@@ -77,13 +77,13 @@ define([
 
 
 		authFacebook: function () {
-			var url = 'https://www.facebook.com/dialog/oauth?&response_type=code&redirect_uri=http%3A%2F%2Flocalhost%3A1338%2Fauth%2Ffacebook%2Fcallback&scope=email&client_id=528637637210887&type=web_server&display=popup'
+			var url = 'https://www.facebook.com/dialog/oauth?&response_type=code&redirect_uri=http%3A%2F%2Fbewerbung.rocktreff.de%3A4711%2Fauth%2Ffacebook%2Fcallback&scope=email&client_id=528637637210887&type=web_server&display=popup'
 			return this.oauth( url )
 		},
 
 
 		authTwitter: function () {
-			var url = 'http://localhost:1338/auth/twitter/callback'
+			var url = BB.get( 'hostname' ) + '/auth/twitter/callback'
 			return this.oauth( url )
 		},
 
