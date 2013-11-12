@@ -48,9 +48,52 @@ exports = module.exports = function ( app ) {
 					res.setHeader( 'Access-Control-Allow-Methods', 'GET' )
 					res.setHeader( 'Access-Control-Allow-Origin', '*' )
 					res.setHeader( 'Content-Type', media.mimetype )
-					res.status( 200 )
-					var fileStream = fs.createReadStream( filename )
-					fileStream.pipe( res )
+					var total = stats.size
+
+					if ( req.headers.range ) {
+						var range = req.headers.range
+						var parts = range.replace( /bytes=/, '' ).split( '-' )
+						var partialstart = parts[0]
+						var partialend = parts[1]
+
+						var start = parseInt( partialstart, 10 )
+						var end = partialend ? parseInt( partialend, 10 ) : total - 1
+						var chunksize = ( end - start ) + 1
+
+						var file = fs.createReadStream( filename, {
+							start: start,
+							end: end,
+							autoClose: false
+						})
+						file.on( 'open', function ( fd ) {
+							res.status( 206 )
+							res.setHeader( 'Content-Range', 'bytes ' + start + '-' + end + '/' + total )
+							res.setHeader( 'Accept-Ranges', 'bytes' )
+							res.setHeader( 'Content-Length', chunksize )
+							file.pipe( res )
+						})
+						file.on( 'close', function () {
+							file.destroy()
+						})
+						file.on( 'error', function ( msg ) {
+							console.log( 'error on readstream', msg )
+						})
+
+					} else {
+
+						var file = fs.createReadStream( filename, { autoClose:false } )
+						file.on( 'open', function () {
+							res.status( 200 )
+							res.setHeader( 'Content-Length', total )
+							file.pipe( res )
+						})
+						file.on( 'close', function () {
+							file.destroy()
+						})
+						file.on( 'error', function ( msg ) {
+							console.log( 'error on readstream', msg )
+						})
+					}
 				},
 				function ( err ) {
 					console.log( err )

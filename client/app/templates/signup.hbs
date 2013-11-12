@@ -1,45 +1,43 @@
 <div class="login">
 	<div class="container" style="max-width:750px">
 		<h1 class="gelb">Anmelden</h1>
-			<div class="row">
-				<form class="form-horizontal" role="form" {{action 'signup' on="sumbit"}}>
-					<div class="form-group">
-						<div {{bind-attr class=":col-lg-6 email_valid:has-success email_invalid:has-error" }}>
-							{{input value=email type="email" placeholder="Email"}}
-						</div>
-						<div class="col-lg-6">
-							{{input value=password type="password" placeholder="Passwort"}}
-						</div>
+		<div class="row">
+			<form class="form-horizontal" role="form" {{action 'signup' on="sumbit"}}>
+				<div class="form-group">
+					<div {{bind-attr class=":col-lg-6 email_valid:has-success email_invalid:has-error" }}>
+						{{input value=email type="email" placeholder="Email"}}
 					</div>
-					<div class="form-group">
-						<div class="col-lg-6"></div>
-						<div {{bind-attr class=":col-lg-6  password_valid:has-success:has-error" }}>
-							{{input value=password_repeat type="password" placeholder="wiederholen"}}
-						</div>
+					<div class="col-lg-6">
+						{{input value=password type="password" placeholder="Passwort"}}
 					</div>
-					<div {{bind-attr class=":form-group privacy_checked:has-success:has-error"}}>
-						<p>
-							Datenschutz: Wir speichern bis auf die Email-Adresse und einen Hash vom Passwort keine
-							weiteren Daten von Dir. Diese Daten dienen ausschließlich dazu, dass Du
-							Dich anmelden kannst.
-						<p/>
-						<div class="checkbox">
-							<label>
-								{{view Ember.Checkbox checkedBinding="privacy_checked"}} Hab ich verstanden!
-							</label>
-						</div>
+				</div>
+				<div class="form-group">
+					<div class="col-lg-6"></div>
+					<div {{bind-attr class=":col-lg-6  password_valid:has-success:has-error" }}>
+						{{input value=password_repeat type="password" placeholder="wiederholen"}}
 					</div>
-					<div class="form-group">
-						<div class="col-lg-12" style="text-align:right">
-							{{#link-to 'login' classNames="btn btn-default"}} {{icon "times"}} Abbrechen {{/link-to}}
-							<button {{action 'signup'}} class="btn btn-primary" {{bindAttr disabled="incomplete"}}>
-								{{icon "pencil"}} Anmelden
-							</button>
-						</div>
+				</div>
+				<div {{bind-attr class=":form-group privacy_checked:has-success:has-error"}}>
+					<p>
+						Datenschutz: Wir speichern bis auf die Email-Adresse und einen Hash vom Passwort keine
+						weiteren Daten von Dir. Diese Daten dienen ausschließlich dazu, dass Du
+						Dich anmelden kannst.
+					<p/>
+					<div class="checkbox">
+						<label>
+							{{view Ember.Checkbox checkedBinding="privacy_checked"}} Hab ich verstanden!
+						</label>
 					</div>
-				</form>
-			</div>
-
+				</div>
+				<div class="form-group">
+					<div class="col-lg-12" style="text-align:right">
+						{{#link-to 'login' classNames="btn btn-default"}} {{icon "times"}} Abbrechen {{/link-to}}
+						<button {{action 'signup'}} class="btn btn-primary" {{bindAttr disabled="incomplete"}}>
+							{{icon "pencil"}} Anmelden
+						</button>
+					</div>
+				</div>
+			</form>
 		</div>
 	</div>
 </div>

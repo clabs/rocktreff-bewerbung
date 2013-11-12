@@ -78,7 +78,7 @@ exports = module.exports = function( app, passport ) {
 			var name = profile.displayName
 			var email = profile.emails[0].value
 			var request = require( 'request' )
-			var imgurl =  'https://graph.facebook.com/'+ profile.username +'/picture?redirect=false&type=square&access_token='+accessToken
+			var imgurl = 'https://graph.facebook.com/'+ profile.username +'/picture?redirect=false&type=square&access_token='+accessToken
 			var updateFacebookPicture = function ( user ) {
 				return new Promise( function ( fullfill, reject ) {
 					request
@@ -99,6 +99,10 @@ exports = module.exports = function( app, passport ) {
 						email: email,
 						provider: 'facebook',
 						role: ''
+					})
+					.then( function ( user ) {
+						app.get( 'mailer' ).greetings( user )
+						return user
 					})
 				})
 				.then( updateFacebookPicture )

@@ -30,21 +30,30 @@ exports = module.exports = function ( app ) {
 		}
 	})
 
-	app.set( 'mailer', {
-		send: function ( to, subject, text ) {
-			var mailOptions = {
-				from: app.get( 'email-from' ),
-				to: to,
-				subject: subject,
-				text: text
-			}
-			return new Promise( function ( fulfill, reject ) {
-				smtpTransport.sendMail( mailOptions, function ( err, res ) {
-					if ( err ) reject( err )
-					else fulfill( res )
-				})
-			})
+	var send = function ( to, subject, text ) {
+		var mailOptions = {
+			from: app.get( 'email-from' ),
+			to: to,
+			subject: subject,
+			text: text
 		}
+		return new Promise( function ( fulfill, reject ) {
+			smtpTransport.sendMail( mailOptions, function ( err, res ) {
+				if ( err ) reject( err )
+				else fulfill( res )
+			})
+		})
+	}
+
+	var greetings = function ( user ) {
+		var subject = ''
+		var text = ''
+		return send( user.email, subject, text )
+	}
+
+	app.set( 'mailer', {
+		send: send,
+		greetings: greetings
 	})
 
 }

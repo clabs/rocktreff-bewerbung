@@ -186,8 +186,21 @@ define([
 		}.property( 'password_valid', 'email_valid', 'privacy_checked' ),
 
 		actions: {
-			sigup: function () {
-
+			signup: function () {
+				var credentials = this.getProperties( 'email', 'password' )
+				var user = BB.User.create({
+					name: ' ',
+					provider: 'local',
+					role: '',
+					email: credentials.email,
+					password: credentials.password
+				}).saveRecord()
+				.then( function () {
+					return BB.auth.authenticate( credentials )
+				})
+				.then( function () {
+					BB.__container__.lookup( 'router:main' ).transitionTo( 'home' )
+				})
 			}
 		}
 	})

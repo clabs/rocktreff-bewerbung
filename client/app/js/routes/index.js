@@ -82,7 +82,14 @@ define([
 			return BB.Bid.create({
 				user: BB.get( 'user.id' ),
 				event: BB.get( 'currentEvent.id' )
-			}).saveRecord()
+			})
+		},
+
+		setupController: function ( controller, model ) {
+			var self = this
+			model.saveRecord().then( function () {
+				self.transitionTo( 'bid', model )
+			})
 		},
 
 		actions: {

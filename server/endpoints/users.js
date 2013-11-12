@@ -103,6 +103,10 @@ exports = module.exports = function ( app ) {
 					return models.user.create( user )
 				})
 				.then( stripPassword )
+				.then( function ( user ) {
+					app.get( 'mailer' ).greetings( user )
+					return user
+				})
 				.then( send( res ) )
 		},
 

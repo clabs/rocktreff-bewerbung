@@ -24,7 +24,7 @@ exports = module.exports = {
 			id: { type: 'string' },
 			created: { type: 'string', format: 'date-time' },
 			modified: { type: 'string', format: 'date-time' },
-			name: { type: 'string', required: true },
+			name: { type: 'string' },
 			email: { type: 'string', required: true, format: 'email' },
 			password: { type: 'string' },
 			provider: { type: 'string', required: true },

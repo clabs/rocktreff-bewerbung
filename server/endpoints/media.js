@@ -81,7 +81,7 @@ exports = module.exports = function ( app ) {
 	}
 	var processMedia = function ( media ) {
 		if ( media.type === 'audio' )
-			return transcodeMP3( media )
+			return media //transcodeMP3( media )
 		else if ( media.type === 'picture' )
 			return getImageMeta( media )
 					.then( resizeImage )
@@ -92,27 +92,23 @@ exports = module.exports = function ( app ) {
 			return media
 	}
 	var transcodeMP3 = function ( media ) {
-		var path = app.get( 'upload-directory' ) + '/' + media.id
-		var tmp = os.tmpdir() + media.id
+		var src = app.get( 'upload-directory' ) + '/' + media.id
+		var tmp = src + '_tmp'
+		var cmd = 'lame --silent --mp3input -b 128k '+src+' '+tmp
 		return new Promise( function ( fulfill, reject ) {
-			var proc = new ffmpeg({
-				source: path,
-				timeout: 30,
-				priority: 0,
-			})
-			.withAudioBitrate( '128k' )
-			.withAudioCodec( 'libmp3lame' )
-			.toFormat( 'mp3' )
-			.saveToFile( tmp, function ( _, stdout, err ) {
-				if ( err ) reject( err )
-				else fulfill( media )
+			exec( cmd, function ( err, stdout, stderr ) {
+				fulfill( media )
 			})
 		})
-		.then( moveFile( tmp, path ) )
+		.then( moveFile( tmp, path ), function () {
+			console.log( arguments )
+		})
 		.then( function ( media ) {
-			media.filesize = fs.lstatSync( path ).size
+			media.filesize = fs.lstatSync( src ).size
 			media.mimetype = 'audio/mpeg'
 			return media
+		}, function () {
+			console.log( arguments )
 		})
 	}
 

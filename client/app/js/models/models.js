@@ -23,7 +23,8 @@ define([
 
 	BB.User = RL.Model.extend({
 
-		bandname: RL.attr( 'string' ),
+		name: RL.attr( 'string', { defaultValue: '' } ),
+		password: RL.attr( 'string' ),
 		email: RL.attr( 'string' ),
 		provider: RL.attr( 'string' ),
 		role: RL.attr( 'string' ),
