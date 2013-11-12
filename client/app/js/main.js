@@ -31,10 +31,9 @@ requirejs.config({
 		socketio: 'vendor/socket.io-client/dist/socket.io',
 		moment: 'vendor/moment/min/moment-with-langs.min',
 		audio5js: 'vendor/audio5js/audio5',
-		wavesurfer: 'vendor/wavesurfer.js/build/wavesurfer.min',
-		stellar: 'vendor/jquery.stellar/jquery.stellar'
+		wavesurfer: 'vendor/wavesurfer.js/build/wavesurfer.min'
 	},
-	shim:{
+	shim: {
 		ember: {
 			deps:[ 'jquery', 'handlebars' ],
 			exports: 'Ember'
@@ -48,8 +47,7 @@ requirejs.config({
 			exports: 'wysiwyg'
 		},
 		bootstrap: { deps: [ 'jquery' ] },
-		wavesurfer: { exports: 'WaveSurfer' },
-		stellar: { deps: [ 'jquery' ] }
+		wavesurfer: { exports: 'WaveSurfer' }
 	},
 	waitSeconds: 15,
 	noGlobal: false

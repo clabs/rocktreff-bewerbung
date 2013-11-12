@@ -14,3 +14,7 @@ server/public/uploads/*
 *.pid
 
 /server/config.js
+
+/client/dist/
+
+/client/app/js/templates.js

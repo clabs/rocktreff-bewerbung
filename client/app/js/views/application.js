@@ -14,8 +14,7 @@
  */
 define([
 
-	'bb',
-	'stellar'
+	'bb'
 
 ], function ( BB ) {
 
@@ -42,15 +41,7 @@ define([
 	})
 
 	BB.HomeView = Ember.View.extend({
-		classNames: [ 'home' ],
-		didInsertElement: function () {
-			this.$().stellar({
-				horizontalScrolling: false,
-				verticalOffset: 0,
-				parallaxBackgrounds: true,
-				parallaxElements: true,
-			})
-		}
+		classNames: [ 'home' ]
 	})
 
 	BB.BidView = Ember.View.extend({

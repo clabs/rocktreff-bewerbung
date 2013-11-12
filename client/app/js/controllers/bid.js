@@ -34,12 +34,14 @@ define([
 
 		phonevalid: function () {
 			var phone = this.get( 'content.phone' )
-			return /^[\d\(\)\/\-\s]{7,}$/.test( phone )
+			var regexp = /^[\d\(\)\/\-\s]{7,}$/
+			return regexp.test( phone )
 		}.property( 'content.phone' ),
 
 		mailvalid: function () {
 			var mail = this.get( 'content.mail' )
-			return /^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$/.test( mail )
+			var regexp = /^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$/
+			return regexp.test( mail )
 		}.property( 'content.mail' ),
 
 		musicComplete: function () {
@@ -52,12 +54,14 @@ define([
 
 		urlvalid: function () {
 			var url = this.get( 'content.url' )
-			return /^https?:\/\/.+$/.test( url ) || url === ''
+			var regexp = /^https?:\/\/.+$/
+			return regexp.test( url ) || url === ''
 		}.property( 'content.url' ),
 
 		fbvalid: function () {
 			var url = this.get( 'content.fb' )
-			return /^https?:\/\/www\.facebook\.com\/.+$/.test( url ) || url === ''
+			var regexp = /^https?:\/\/www\.facebook\.com\/.+$/
+			return regexp.test( url ) || url === ''
 		}.property( 'content.fb' ),
 
 		hasURL: function () {

@@ -18,11 +18,11 @@ define([
 	'utils/md5',
 	'moment'
 
-],function ( Ember, md5, Moment ) {
+],function ( Ember, md5, moment ) {
 
 	'use strict';
 
-	Moment.lang( 'de' )
+	moment.lang( 'de' )
 
 	Ember.Handlebars.registerHelper( 'icon', function ( type ) {
 		var string = '<i class="fa fa-%@"></i>'.fmt( type )

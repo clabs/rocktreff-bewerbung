@@ -40,7 +40,6 @@ exports = module.exports = function ( app ) {
 			}
 			return new Promise( function ( fulfill, reject ) {
 				smtpTransport.sendMail( mailOptions, function ( err, res ) {
-					console.log( arguments )
 					if ( err ) reject( err )
 					else fulfill( res )
 				})

@@ -48,7 +48,7 @@ define([
 			content: Ember.A([]),
 			uploads: function () {
 				return this.get( 'content' ).filter( function ( req ) {
-					return /POST|PUT/i.test( req.type )
+					return (/POST|PUT/i).test( req.type )
 				})
 			}.property( 'content.length' )
 		}).create(),

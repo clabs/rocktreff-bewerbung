@@ -17,6 +17,8 @@ define([
 
 ], function () {
 
+	'use strict';
+
 	Function.prototype.debounce = function ( wait, immediate ) {
 		var f = this
 		var timeout

@@ -42,9 +42,9 @@ define([
 
 		actions: {
 			error: function ( err, transition ) {
-				if ( err.status == 401 )
+				if ( err.status === 401 )
 					this.redirectToLogin ( transition )
-				else if ( err.status == 403 )
+				else if ( err.status === 403 )
 					this.transitionTo( 'no' )
 				else {
 					this.transitionTo( 'home' )

@@ -13,7 +13,6 @@
 	"browser": true,
 	"strict": true,
 	"asi": true,
-	"es5": true,
 	"plusplus": true,
 	"sub": true,
 	"smarttabs": true,
@@ -27,11 +26,11 @@
 
 	"predef": [
 		"Ember",
+		"RL",
 		"require",
 		"define",
 		"requirejs",
 		"jQuery",
-		"$",
-		"moment"
+		"$"
 	]
 }

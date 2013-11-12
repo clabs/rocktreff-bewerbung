@@ -39,20 +39,36 @@ module.exports = function( grunt ) {
 		// configurable paths
 		bb: {
 			client: 'app',
-			dist: 'dist/client',
+			dist: 'dist',
+			release: '<%=bb.dist %>/release-' + ( +(new Date()) ),
+			requirejs: '<%= bb.dist %>/.require_tmp',
 			tmp: '.tmp',
 			port: 4711
 		},
 
 		less: {
-			'<%= bb.tmp %>/styles/main.css': '<%= bb.client %>/styles/{,*/}*.{scss,less}'
+			server: {
+				files: [
+					{ src: '<%= bb.client %>/styles/main.less', dest: '.tmp/styles/main.css' }
+				]
+			},
+			release: {
+				files: [
+					{ src: '<%= bb.client %>/styles/main.less', dest: '<%= bb.release %>/styles/main.css' }
+				]
+			}
 		},
 
 		// compile handlebars templates
 		handlebars: {
-			dev: {
+			server: {
 				files: {
 					'<%= bb.tmp %>/js/templates.js': [ '<%= bb.client %>/templates/{,*/}*.hbs' ]
+				}
+			},
+			release: {
+				files: {
+					'<%= bb.client %>/js/templates.js': [ '<%= bb.client %>/templates/{,*/}*.hbs' ]
 				}
 			}
 		},
@@ -62,7 +78,7 @@ module.exports = function( grunt ) {
 		},
 
 		watch: {
-			client: {
+			server: {
 				files: [
 					'<%= bb.client %>/*.html',
 					'{<%= bb.tmp %>,<%= bb.client %>}/js/**/*.js',
@@ -74,11 +90,11 @@ module.exports = function( grunt ) {
 			},
 			less: {
 				files: [ '<%= bb.client %>/styles/{,*/}*.{scss,less}' ],
-				tasks: [ 'less' ]
+				tasks: [ 'less:server' ]
 			},
 			handlebars: {
 				files: [ '<%= bb.client %>/templates/**/*.hbs' ],
-				tasks: [ 'handlebars' ]
+				tasks: [ 'handlebars:server' ]
 			}
 		},
 
@@ -87,7 +103,7 @@ module.exports = function( grunt ) {
 				port: '<%= bb.port %>',
 				hostname: '0.0.0.0'
 			},
-			dev: {
+			server: {
 				options: {
 					middleware: function ( connect ) {
 						return [
@@ -108,7 +124,7 @@ module.exports = function( grunt ) {
 					}
 				}
 			},
-			dist: {
+			release: {
 				options: {
 					middleware: function ( connect ) {
 						return [
@@ -120,20 +136,33 @@ module.exports = function( grunt ) {
 		},
 
 		open: {
-			frontend: {
+			server: {
 				path: 'http://localhost:<%= connect.options.port %>'
 			}
 		},
 
 		clean: {
-			options: { force: true },
-			dist: [ '<%= bb.tmp %>', '<%= bb.dist %>/*' ],
-			frontend: '<%= bb.tmp %>'
+			dist: [ '.tmp', '<%= bb.dist %>/*', '!<%= bb.dist %>/release-*' ],
+			release: [ '<%= bb.release %>' ],
+			requirejs: [ '<%= bb.requirejs %>' ],
+			templates: [ '<%= bb.client %>/templates.js' ],
+			server: '.tmp'
+		},
+
+		replace: {
+			requirejs: {
+				src: '<%= bb.release %>/index.html',
+				overwrite: true,
+				replacements: [{
+					from: '<script src="js/vendor/requirejs/require.js" data-main="js/main"></script>',
+					to: '<script src="./require.js" data-main="main"></script>'
+				}]
+			}
 		},
 
 		jshint: {
 			options: {
-				jshintrc: '.jshintrc'
+				jshintrc: '../.jshintrc'
 			},
 			all: [
 				'Gruntfile.js',
@@ -143,96 +172,92 @@ module.exports = function( grunt ) {
 			],
 			core: [
 				'<%= bb.client %>/js/**/*.js',
-				'!<%= bb.client %>/js/vendor/*.js',
+				'!<%= bb.client %>/js/vendor/**/*.js',
 			]
 		},
 
-		mocha: {
-			all: {
-				options: {
-					run: true,
-					urls: ['http://localhost:<%= connect.options.port %>/index.html']
-				}
-			}
-		},
-
 		requirejs: {
-			dist: {
+			release: {
+				// Options: https://github.com/jrburke/r.js/blob/master/build/example.build.js
 				options: {
+					appDir: './app/',
 					baseUrl: './js',
+					dir: '<%= bb.requirejs %>',
+					removeCombined: true,
+					optimize: 'uglify',
+					normalizeDirDefines: 'all',
+					cssImportIgnore: null,
+					inlineText: true,
+					useStrict: false,
+					skipModuleInsertion: false,
+					optimizeAllPluginResources: false,
+					logLevel: 9,
 					preserveLicenseComments: true,
-					useStrict: true,
-					wrap: true,
-					dir: '<%= bb.dist %>/js',
-					optimize: 'uglify2',
-					// use almond in production
-					// https://github.com/asciidisco/grunt-requirejs/blob/master/docs/almondIntegration.md
-					almond: true
+					findNestedDependencies: true,
+					modules: [{
+						name: 'main'
+					}],
+					paths: {
+						jquery:'vendor/jquery/jquery',
+						handlebars:'vendor/handlebars/handlebars',
+						ember: 'vendor/ember/ember',
+						restless: 'vendor/ember-restless/dist/ember-restless+extras',
+						bootstrap: 'vendor/bootstrap/dist/js/bootstrap',
+						wysiwyg: 'vendor/bootstrap-wysiwyg/bootstrap-wysiwyg',
+						'jquery-hotkeys': 'vendor/jquery.hotkeys/jquery.hotkeys',
+						socketio: 'vendor/socket.io-client/dist/socket.io',
+						moment: 'vendor/moment/min/moment-with-langs.min',
+						audio5js: 'vendor/audio5js/audio5',
+						wavesurfer: 'vendor/wavesurfer.js/build/wavesurfer.min'
+					},
+					shim: {
+						ember: {
+							deps:[ 'jquery', 'handlebars' ],
+							exports: 'Ember'
+						},
+						restless: {
+							deps:[ 'ember' ],
+							exports: 'RL'
+						},
+						wysiwyg: {
+							deps:[ 'jquery', 'jquery-hotkeys' ],
+							exports: 'wysiwyg'
+						},
+						bootstrap: { deps: [ 'jquery' ] },
+						wavesurfer: { exports: 'WaveSurfer' }
+					}
 				}
 			}
 		},
 
-		useminPrepare: {
-			html: '<%= bb.client %>/index.html',
-			options: {
-				dest: '<%= bb.dist %>'
-			}
-		},
-
-		usemin: {
-			html: ['<%= bb.dist %>/{,*/}*.html'],
-			css: ['<%= bb.dist %>/styles/{,*/}*.css'],
-			options: {
-				dirs: ['<%= bb.dist %>']
-			}
-		},
-
-		cssmin: {
-			dist: {
-				files: {
-					'<%= bb.dist %>/styles/main.css': [
-						'<%= bb.tmp %>/styles/{,*/}*.css',
-						'<%= bb.client %>/styles/{,*/}*.css'
-					]
-				}
-			}
-		},
-
-		htmlmin: {
-			dist: {
-				options: {
-					/*removeCommentsFromCDATA: true,
-					// https://github.com/yeoman/grunt-usemin/issues/44
-					//collapseWhitespace: true,
-					collapseBooleanAttributes: true,
-					removeAttributeQuotes: true,
-					removeRedundantAttributes: true,
-					useShortDoctype: true,
-					removeEmptyAttributes: true,
-					removeOptionalTags: true*/
-					force: true
-				},
+		imagemin: {
+			release: {
 				files: [{
 					expand: true,
-					cwd: '<%= bb.client %>',
-					src: '*.html',
-					dest: '<%= bb.dist %>'
+					cwd: '<%= bb.client %>/images',
+					src: '{,*/}*.{png,jpg,jpeg}',
+					dest: '<%= bb.release %>/images'
 				}]
 			}
 		},
+
 
 		copy: {
-			dist: {
-				files: [{
-					expand: true,
-					dot: true,
-					cwd: '<%= bb.client %>',
-					dest: '<%= bb.dist %>',
-					src: [
-						'*.{ico,txt}',
-						'.htaccess'
-					]
-				}]
+			release: {
+				files: [
+					// copy index.html
+					{ expand: true, cwd: '<%= bb.client %>', src: 'index.html', dest: '<%= bb.release %>' },
+					// copy favicon
+					{ expand: true, cwd: '<%= bb.client %>', src: '*.ico', dest: '<%= bb.release %>' },
+					// copy swf
+					{ expand: true, cwd: '<%= bb.client %>', flatten: true, src: 'swf/**', dest: '<%= bb.release %>/swf' }
+				]
+			},
+			requirejs: {
+				files: [
+					{ expand: true, cwd: '<%= bb.requirejs %>', flatten: true, src: 'js/main.js', dest: '<%= bb.release %>' },
+					{ expand: true, cwd: '<%= bb.requirejs %>', flatten: true, src: 'js/vendor/requirejs/require.js', dest: '<%= bb.release %>' }
+				]
 			}
 		}
 
@@ -257,10 +282,12 @@ module.exports = function( grunt ) {
 					var src = grunt.file.read( filepath )
 								.replace( /\n|\n\r|\r\n/g , '\\n' )
 								.replace( /'/g, '\\\'' )
-					compiled.push( 'Ember.TEMPLATES[\''+ filename +'\']=Ember.Handlebars.compile(\''+ src +'\' );' )
+					compiled.push( 't[\''+ filename +'\']=c(\''+ src +'\' );' )
 				})
 			})
-			output = 'define(["ember"],function(Ember){\n'+compiled.join( '\n' )+'\n})'
+			output = 'define([\'ember\'],function(e){ \'use strict\';\n'+
+			         'var t=e.TEMPLATES,h=e.Handlebars,c=h.compile.bind(h);\n' +
+			         compiled.join( '\n' )+'\n})'
 			grunt.file.write( file.dest, output )
 			grunt.log.write( '\u001b[32mcreated\u001b[39m ' + file.dest + '\n' )
 		})
@@ -270,41 +297,32 @@ module.exports = function( grunt ) {
 
 
 	grunt.registerTask( 'server', [
-		'clean:frontend',
-		'less',
-		'handlebars',
+		'clean:server',
+		'less:server',
+		'handlebars:server',
 		'livereload-start',
-		'connect:dev',
-		'open:frontend',
+		'connect:server',
+		'open:server',
 		'watch'
 	])
 
 
-	grunt.registerTask( 'test', [
-		'clean:dev',
-		'less',
-		'handlebars',
-		'connect:test',
-		'mocha'
-	])
-
 	grunt.registerTask( 'build', [
+		'jshint:core',
 		'clean:dist',
-		'less:dist',
-		'handlebars',
-		'useminPrepare',
+		'clean:release',
+		'handlebars:release',
 		'requirejs',
-		'htmlmin',
-		'concat',
-		'cssmin',
-		'uglify',
-		'copy',
-		'usemin'
+		'copy:release',
+		'copy:requirejs',
+		'clean:templates',
+		'less:release',
+		'imagemin',
+		'replace:requirejs',
+		'clean:requirejs'
 	])
 
 	grunt.registerTask( 'default', [
-		'jshint',
-		'test',
 		'build'
 	])
 

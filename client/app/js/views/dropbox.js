@@ -175,7 +175,7 @@ define([
 		},
 
 		file: function ( file ) {
-			return /^image\/.+$/gi.test( file.type )
+			return (/^image\/.+$/gi).test( file.type )
 		},
 
 		validate: function ( width, height ) {
@@ -203,7 +203,7 @@ define([
 		mimetype: '*',
 
 		file: function ( file ) {
-			return /^.+?\/.+$/gi.test( file.type )
+			return (/^.+?\/.+$/gi).test( file.type )
 		}
 
 	})
@@ -215,7 +215,7 @@ define([
 		mimetype: 'audio/*',
 
 		file: function ( file ) {
-			return /^audio\/.*$/gi.test( file.type )
+			return (/^audio\/.*$/gi).test( file.type )
 		}
 
 	})

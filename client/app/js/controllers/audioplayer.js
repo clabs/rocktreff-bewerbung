@@ -30,10 +30,10 @@ define([
 		isReady: false,
 		isPlaying: false,
 
-		useWaveSurfer: false /*function () {
+		useWaveSurfer: false, /*function () {
 			var a = document.createElement( 'audio' )
 			return !!( a.canPlayType && a.canPlayType( 'audio/mpeg;' ).replace( /no/, '' ) )
-		}.property()*/,
+		}.property()*/
 
 		player: function () {
 			var controller = this
@@ -51,7 +51,7 @@ define([
 					swf_path: './swf/audio5js.swf',
 					throw_errors: true,
 					ready: function ( player ) {
-						var player = this
+						player = this
 						this.on( 'timeupdate', function ( position, duration ) {
 							controller.setProperties({
 								duration: duration,
@@ -90,7 +90,8 @@ define([
 			stop: function () {
 				var player = this.get( 'player' )
 				player.pause()
-				player.seekTo && player.seekTo( 0 ) || player.seek( 0 )
+				if ( player.seekTo ) player.seekTo( 0 )
+				else player.seek( 0 )
 			}
 		}
 

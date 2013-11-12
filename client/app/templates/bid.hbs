@@ -174,7 +174,7 @@
 <div class="spacer"></div>
 
 <div class="container">
-	{{#view BB.AudioDropbox}}
+	{{#view BB.AudioDropbox tagName="form"}}
 	<div class="col-md-3">
 		<h4 {{bind-attr class="musicComplete:has-success:has-error"}}>
 			{{icon "headphones"}} Musik</h4>
@@ -206,7 +206,8 @@
 	{{/view}}
 	<div class="col-md-4">
 		<h4 {{bind-attr class="content.youtube.length:has-success"}}>
-			{{icon "video-camera"}} Videos</h4>
+			{{icon "video-camera"}} Videos
+		</h4>
 		<p>
 			Habt ihr Videos online, die ihr uns zeigen wollt?
 			Dann hast Du hier die Möglichkeit Links hinzuzufügen.
