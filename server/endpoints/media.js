@@ -67,7 +67,7 @@ exports = module.exports = function ( app ) {
 	}
 	var injectMediaURL = function () {
 		function addURL ( media ) {
-			if ( !media.url || media.url === '' )
+			if ( media.type !== 'youtube' )
 				media.url = 'http://'+app.get( 'host' )+':'+app.get( 'port' )+'/uploads/'+media.id
 			return media
 		}
@@ -83,9 +83,11 @@ exports = module.exports = function ( app ) {
 		if ( media.type === 'audio' )
 			return transcodeMP3( media )
 		else if ( media.type === 'picture' )
-			return resizeImage( media )
+			return getImageMeta( media )
+					.then( resizeImage )
 		else if ( media.type === 'logo' )
-			return resizeImage( media )
+			return getImageMeta( media )
+					.then( resizeImage )
 		else
 			return media
 	}
@@ -111,6 +113,20 @@ exports = module.exports = function ( app ) {
 			media.filesize = fs.lstatSync( path ).size
 			media.mimetype = 'audio/mpeg'
 			return media
+		})
+	}
+
+	var getImageMeta = function ( media ) {
+		var src = app.get( 'upload-directory' ) + '/' + media.id
+		var cmd = 'convert '+src+' -identify '+src//+' | cut -d " " -f3'
+		return new Promise( function ( fulfill, reject ) {
+			exec( cmd, function ( err, stdout, stderr ) {
+				if ( err ) reject( err )
+				else {
+					media.meta = stdout.replace( /^.*? |\\n/, '' )
+					fulfill( media )
+				}
+			})
 		})
 	}
 
@@ -211,6 +227,9 @@ exports = module.exports = function ( app ) {
 					res.send( 500, err )
 				})
 				.then( function () {
+					return models.media.del( id )
+				}, function ( err ) {
+					// delete at least the record
 					return models.media.del( id )
 				})
 				.then( send( res ) )

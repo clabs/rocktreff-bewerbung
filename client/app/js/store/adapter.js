@@ -31,7 +31,11 @@ define([
 			options = options || { }
 			options.nonEmbedded = true
 			return RL.get( 'client.adapter.serializer' ).serialize( this, options )
-		}
+		},
+
+		isClean: function () {
+			return !this.get( 'isDirty' )
+		}.property( 'isDirty' )
 	})
 
 
@@ -46,20 +50,8 @@ define([
 				return this.get( 'content' ).filter( function ( req ) {
 					return /POST|PUT/i.test( req.type )
 				})
-			}.property( 'content.length' ),
+			}.property( 'content.length' )
 		}).create(),
-
-		// need to reconnect Binding for the token
-		// init: function () {
-		// 	var self = this
-		// 	var token = localStorage.token && JSON.parse( localStorage.token )
-		// 	if ( token ) this.set( 'token', token.id )
-		// 	Ember.run.next( function () {
-		// 		self.tokenBinding.connect( self )
-		// 	})
-		// 	this._super()
-		// },
-
 
 		request: function( model, params, key ) {
 			var adapter = this, serializer = this.serializer
@@ -69,12 +61,19 @@ define([
 				params.contentType = serializer.contentType
 				if ( !params.url )
 					params.url = adapter.buildUrl( model, key )
-				if ( params.data && params.type !== 'GET' )
-					params.data = serializer.prepareData( params.data )
+				if ( params.data ) {
+					if ( params.type === 'POST' || params.type === 'PUT' )
+						params.data = serializer.prepareData( params.data )
+					else if ( params.type === 'DELETE' )
+						params.data = undefined
+				}
 				params.xhr = function () {
 					var xhr = new window.XMLHttpRequest()
+					var isUpload = ( params.type === 'POST' || params.type === 'PUT' ) &&
+								params.data.length > 1e4
 					//Upload progress
 					var request = XHRUpload.create({
+						upload: isUpload,
 						type: params.type,
 						xhr: xhr
 					})
@@ -102,10 +101,22 @@ define([
 
 	var XHRUpload = Ember.Object.extend({
 
+		upload: false,
 		type: null,
 		xhr: null,
 		percent: 0,
 		loaded: false,
+
+		percentStyle: function () {
+			var percent = this.get( 'percent' )
+			return 'width: '+ percent + '%'
+		}.property( 'percent' ),
+
+		msg: function () {
+			var isUpload = this.get( 'upload' )
+			var percent = this.get( 'percent' )
+			return percent >= 100 && isUpload ? 'Bearbeite …' : ''
+		}.property( 'percent' ),
 
 		init: function () {
 			var xhr = this.get( 'xhr' )
@@ -115,7 +126,8 @@ define([
 
 		progress: function ( evt ) {
 			if ( !evt.lengthComputable ) return
-			var percent = Math.round( evt.loaded / evt.total )
+			var percent = Math.round( evt.loaded / evt.total ) * 100
+			console.log( percent )
 			this.set( 'percent', percent || 0 )
 		},
 

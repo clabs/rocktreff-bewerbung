@@ -54,9 +54,21 @@ define([
 	})
 
 	BB.BidView = Ember.View.extend({
-		classNames: [ 'container bid' ]
+		classNames: [ 'bid' ]
 	})
 
+	BB.XhrprogressView = Ember.View.extend({
+		classNames: [ 'xhrprogress' ],
+
+		uploadsCompleted: function () {
+			if ( this.get( 'state' ) !== 'inDOM' ) return
+			if ( this.get( 'controller.content.length' ) > 0 )
+				this.$().fadeIn( 600 )
+			else
+				this.$().fadeOut( 200 )
+		}.observes( 'controller.content.length' )
+
+	})
 
 
 })

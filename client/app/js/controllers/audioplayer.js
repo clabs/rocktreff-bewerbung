@@ -28,11 +28,12 @@ define([
 
 		content: null,
 		isReady: false,
+		isPlaying: false,
 
-		useWaveSurfer: function () {
+		useWaveSurfer: false /*function () {
 			var a = document.createElement( 'audio' )
 			return !!( a.canPlayType && a.canPlayType( 'audio/mpeg;' ).replace( /no/, '' ) )
-		}.property(),
+		}.property()*/,
 
 		player: function () {
 			var controller = this
@@ -47,7 +48,7 @@ define([
 			}
 			else {
 				return new Audio5js({
-					swf_path: '/swf/audio5js.swf',
+					swf_path: './swf/audio5js.swf',
 					throw_errors: true,
 					ready: function ( player ) {
 						var player = this
@@ -83,6 +84,8 @@ define([
 			playpause: function () {
 				var player = this.get( 'player' )
 				player.playPause()
+				var playing = player.playing // || !(player.backend && player.backend.paused )
+				this.set( 'playing', playing )
 			},
 			stop: function () {
 				var player = this.get( 'player' )

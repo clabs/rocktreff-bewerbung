@@ -14,11 +14,9 @@
  */
 define([
 
-	'bb',
-	'audio5js',
-	'wavesurfer'
+	'bb'
 
-], function ( BB, Audio5js, WaveSurfer ) {
+], function ( BB ) {
 
 	'use strict';
 
@@ -28,12 +26,5 @@ define([
 	})
 
 
-
-	BB.XhrprogressView = Ember.ContainerView.extend({
-		uploadCompleted: function () {
-			var $ = this.$()
-			if ( $ ) $.fadeIn( 600 ).delay( 2000 ).fadeOut( 600 )
-		}.observes( 'controller.content.length' )
-	})
 
 })

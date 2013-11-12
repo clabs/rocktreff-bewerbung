@@ -197,15 +197,6 @@ define([
 		}
 	})
 
-	BB.Client.adapter.registerTransform( 'object', {
-		deserialize: function ( obj ) {
-			return obj
-		},
-		serialize: function ( obj ) {
-			return JSON.stringify( obj || "" )
-		}
-	})
-
 
 	BB.Client.adapter.configure( 'plurals', {
 		media: 'media'

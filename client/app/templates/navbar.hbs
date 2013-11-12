@@ -1,6 +1,7 @@
-<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<nav class="navbar navbar-fixed-top navbar-inverse">
+	{{render "xhrprogress"}}
 	<div class="container">
-		<div class="navbar-header">
+		<div>
 			{{#link-to 'home' classNames="navbar-brand"}}{{/link-to}}
 		</div>
 		<div>
@@ -48,16 +49,6 @@
 				{{#link-to "login"}}{{icon "sign-in"}} Anmelden{{/link-to}}
 			</li>
 			{{/if}}
-
-
-				<li class="dropdown">
-
-
-
-				</li>
-
-			</ul>
-
-
+		</ul>
 	</div>
 </nav>

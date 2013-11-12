@@ -35,7 +35,8 @@ define([
 
 		layout: Ember.Handlebars.compile(
 			'<input class="hidden" type="file" {{action "fileselected" on="change" target=view}} >' +
-			'{{yield}}'
+			'{{yield}}' +
+			'&nbsp;'
 		),
 
 		readAsDataURL: function ( file ) {
@@ -58,23 +59,40 @@ define([
 			node.className = node.className.replace( ' hover', '' )
 		},
 
-		drop: function ( event ) {
-			event.preventDefault()
+		_file: function ( file ) {
 			var self = this
-			var node = this.$()[0]
-			var file = event.dataTransfer.files[0]
+			return new Ember.RSVP.Promise( function ( fulfill, reject ) {
+				if ( self.file( file ) ) fulfill( file )
+				else reject( file )
+			})
+		},
+
+		_handleFile: function ( file ) {
+			var self = this
 			file.mediatype = this.get( 'mediatype' )
-			this.file( file )
+			return this._file( file )
 				// read as data url
-				.then( this.readAsDataURL, function ( err ) {
-					console.error( 'something went wrong', err )
+				.then( this.readAsDataURL, function ( file ) {
+					console.error( 'given file does not match rules', file )
 				})
 				.then( function ( url ) {
 					file.data = url
 					var mediatype = self.get( 'mediatype' )
 					self.get( 'controller' ).send( mediatype, file )
+					return file
+				}, function ( file ) {
+					console.error( 'could not read file as data url', file )
 				})
+				.then( function ( file ) {
+					return self.update( file )
+				})
+		},
 
+		drop: function ( event ) {
+			event.preventDefault()
+			var node = this.$()[0]
+			var file = event.dataTransfer.files[0]
+			this._handleFile( file )
 			this._removeHoverClass()
 			return false
 		},
@@ -108,8 +126,8 @@ define([
 			fileselected: function ( event ) {
 				var element = window.event.srcElement
 				var file = element.files[ 0 ]
-				file.mediatype = this.get( 'mediatype' )
-				this.file( file )
+				this._handleFile( file )
+				return false
 			}
 		}
 
@@ -130,35 +148,34 @@ define([
 			var url = file ? window.URL.createObjectURL( file ) :
 				      picture ? picture.get( 'url' ) + '_small' :
 				      false
-			if ( picture && picture.get( 'arributes' ) ) {
-				var width = picture.get( 'attributes.width' )
-				var height = picture.get( 'attributes.height' )
-				this.set( 'valid', this.validate( width, height ) )
-				return new Ember.RSVP.Promise( function ( fulfill, reject ) {
-					if ( valid ) fulfill( file )
-					else reject( file )
-				})
-			}
-			else if ( url ) {
+			return new Ember.RSVP.Promise( function ( fulfill, reject ) {
+				if ( file && url ) {
+					// update image dimensions
+					var img = new Image()
+					img.onload = function () {
+						self.set( 'valid', self.validate( this.width, this.height ) )
+						fulfill( file )
+					}
+					img.src = url
+				}
+				else if ( picture && picture.get( 'meta' ) ) {
+					var meta = picture.get( 'meta' )
+					// get dimensions
+					var dim = meta.split( ' ' )[ 1 ].split( 'x' ).map( parseFloat )
+					self.set( 'valid', self.validate( dim[0], dim[1] ) )
+					fulfill( file )
+				}
+				else reject( file )
+			})
+			.then( function ( file ) {
 				// set background-image property
-				this.$().find( '.viewbox' ).css( 'background-image', 'url('+ url +')' )
-				return this.validateURL( url )
-					.then( function ( dimensions ) {
-						file.attributes = {
-							width: dimensions[ 0 ],
-							height: dimensions[ 1 ]
-						}
-						self.set( 'valid', self.validate( dimensions[ 0 ], dimensions[ 1 ] ) )
-						return file
-					})
-			}
+				self.$().find( '.viewbox' ).css( 'background-image', 'url('+ url +')' )
+				return file
+			})
 		},
 
 		file: function ( file ) {
-			var self = this
-			// if it isn't an image, jsut return
-			if ( !/^image\/.+$/gi.test( file.type ) ) return
-			return this.update( file )
+			return /^image\/.+$/gi.test( file.type )
 		},
 
 		validate: function ( width, height ) {
@@ -167,15 +184,7 @@ define([
 
 		validateURL: function ( url ) {
 			var self = this
-			return new Ember.RSVP.Promise( function ( fulfill, reject ) {
-				// update image dimensions
-				var img = new Image()
-				img.onload = function () {
-					self.set( 'valid', self.validate( this.width, this.height ) )
-					fulfill( [ this.width, this.height ] )
-				}
-				img.src = url
-			})
+
 		}
 
 	})
@@ -191,15 +200,10 @@ define([
 	BB.DocumentDropbox = BB.Dropbox.extend({
 
 		mediatype: 'document',
-		mimetype: 'application/*',
+		mimetype: '*',
 
 		file: function ( file ) {
-			return new Ember.RSVP.Promise( function ( fulfill, reject ) {
-				if ( !/^application\/.+$/gi.test( file.type ) )
-					fulfill( file)
-				else
-					reject( file )
-			})
+			return /^.+?\/.+$/gi.test( file.type )
 		}
 
 	})
@@ -211,8 +215,7 @@ define([
 		mimetype: 'audio/*',
 
 		file: function ( file ) {
-			if ( !/^audio\/.*$/gi.test( file.type ) ) return
-			return true
+			return /^audio\/.*$/gi.test( file.type )
 		}
 
 	})

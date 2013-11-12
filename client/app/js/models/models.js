@@ -64,7 +64,7 @@ define([
 		bid: RL.attr( 'string' ),
 		type: RL.attr( 'string' ),
 		url: RL.attr( 'string' ),
-		attributes: RL.attr( 'object', { defaultValue: {} } ),
+		meta: RL.attr( 'string' ),
 		mimetype: RL.attr( 'string' ),
 		filename: RL.attr( 'string' ),
 		filesize: RL.attr( 'number' ),
@@ -93,7 +93,7 @@ define([
 		region: RL.attr( 'string' ),
 		bandname: RL.attr( 'string' ),
 		style: RL.attr( 'string' ),
-		student: RL.attr( 'string' ),
+		student: RL.attr( 'boolean' ),
 		managed: RL.attr( 'boolean' ),
 		letter: RL.attr( 'string' ),
 		contact: RL.attr( 'string' ),
@@ -110,14 +110,16 @@ define([
 		logo: null,
 		documents: null,
 		audio: null,
+		youtube: null,
 		mediaChanged: function () {
 			var media = this.get( 'media.content' )
 			if ( !media ) return
 			this.setProperties({
 				picture:   media.filterBy( 'type', 'picture' ).get( 'firstObject' ),
 				logo:      media.filterBy( 'type', 'logo' ).get( 'firstObject' ),
-				documents: media.filterBy( 'type', 'document' ),
-				audio:     media.filterBy( 'type', 'audio' )
+				documents: media.filterBy( 'type', 'document' ) || Ember.A(),
+				audio:     media.filterBy( 'type', 'audio' ) || Ember.A(),
+				youtube:   media.filterBy( 'type', 'youtube' ) || Ember.A()
 			})
 		}.observes( 'media.content.@each.isLoaded', 'media.content.length', 'media.content.[]' )
 

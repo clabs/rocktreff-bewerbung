@@ -15,7 +15,6 @@
 define([
 
 	'bb',
-
 	'models/models'
 
 ], function ( BB ) {
@@ -28,6 +27,11 @@ define([
 
 		needs: [ 'audioplayer' ],
 
+
+		youtubelink: '',
+
+
+
 		phonevalid: function () {
 			var phone = this.get( 'content.phone' )
 			return /^[\d\(\)\/\-\s]{7,}$/.test( phone )
@@ -38,7 +42,31 @@ define([
 			return /^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$/.test( mail )
 		}.property( 'content.mail' ),
 
+		musicComplete: function () {
+			return this.get( 'content.audio.length' ) >= 3
+		}.property( 'content.audio.length' ),
 
+		docComplete: function () {
+			return this.get( 'content.documents.length' ) >= 1
+		}.property( 'content.documents.length' ),
+
+		urlvalid: function () {
+			var url = this.get( 'content.url' )
+			return /^https?:\/\/.+$/.test( url ) || url === ''
+		}.property( 'content.url' ),
+
+		fbvalid: function () {
+			var url = this.get( 'content.fb' )
+			return /^https?:\/\/www\.facebook\.com\/.+$/.test( url ) || url === ''
+		}.property( 'content.fb' ),
+
+		hasURL: function () {
+			var urlvalid = this.get( 'urlvalid' )
+			var fbvalid = this.get( 'fbvalid' )
+			var url = this.get( 'content.url' )
+			var fb = this.get( 'content.fb' )
+			return ( urlvalid && url !== '' ) || ( fbvalid && fb !== '' )
+		}.property( 'urlvalid', 'fbvalid', 'content.fb', 'content.url' ),
 
 
 		autoSave: function () {
@@ -50,6 +78,9 @@ define([
 		},
 
 		actions: {
+			open: function ( url ) {
+				window.open( url, '_blank' )
+			},
 			saveBid: function () {
 				this.save()
 			},
@@ -65,16 +96,16 @@ define([
 				var bid = this.get( 'content' )
 				var mediaitem = this.get( item )
 				if ( !mediaitem ) {
-					this.send( 'mediacreate', file, item )
+					this.send( 'mediacreate', file )
 					return
 				}
 				var properties = {
 					bid: bid.get( 'id' ),
 					type: file.mediatype,
-					attributs: file.attributes,
 					mimetype: file.type,
 					filename: file.name,
 					filesize: file.size,
+					url: file.url,
 					data: file.data
 				}
 				mediaitem.setProperties( properties )
@@ -85,15 +116,15 @@ define([
 					})
 
 			},
-			mediacreate: function ( file, item ) {
+			mediacreate: function ( file ) {
 				var bid = this.get( 'content' )
 				var properties = {
 					bid: bid.get( 'id' ),
 					type: file.mediatype,
-					attributs: file.attributes,
 					mimetype: file.type,
 					filename: file.name,
 					filesize: file.size,
+					url: file.url,
 					data: file.data
 				}
 				var mediaitem = BB.Media.create( properties )
@@ -116,6 +147,17 @@ define([
 			},
 			audio: function ( file ) {
 				this.send( 'mediacreate', file, 'audio' )
+			},
+			link: function () {
+				var file = {
+					url: this.get( 'youtubelink' ),
+					mediatype: 'youtube',
+					type: '',
+					name: '',
+					size: 0
+				}
+				this.send( 'mediacreate', file )
+				this.set( 'youtubelink', '' )
 			},
 			playaudio: function ( media ) {
 				this.get( 'controllers.audioplayer' ).load( media )
