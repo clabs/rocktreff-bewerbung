@@ -30,6 +30,10 @@ define([
 		role: RL.attr( 'string' ),
 		picture: RL.attr( 'string', { readOnly: true } ),
 
+		displayName: function () {
+			return this.get( 'name' ).trim() || this.get( 'email' )
+		}.property( 'name', 'email' ),
+
 		isMe: function () {
 			return this.get( 'id' ) === BB.get( 'user.id' )
 		}.property( 'BB.user.id' ),
@@ -44,7 +48,11 @@ define([
 
 		isNeither: function () {
 			return this.get( 'role' ) === ''
-		}.property( 'role' )
+		}.property( 'role' ),
+
+		viaFacebook: function () {
+			return this.get( 'provider' ) === 'facebook'
+		}.property( 'provider' )
 
 	})
 

@@ -1,0 +1,18 @@
+<div class="row">
+	<div class="container">
+		<h2>Bewerbungen</h2>
+		<ul>
+		{{#each content}}
+		<li>
+			{{#link-to 'bid' this}}
+				{{#if bandname}}
+					{{bandname}}
+				{{else}}
+					…
+				{{/if}}
+			{{/link-to}}
+		</li>
+		{{/each}}
+		</ul>
+	</div>
+</div>

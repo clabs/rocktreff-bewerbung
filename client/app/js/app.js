@@ -121,6 +121,7 @@ define([
 					BB.set( 'regions', regions )
 				})
 			// fetch all Bids
+			if ( BB.user )
 			BB.Bid.fetch()
 				.then( function ( bids ) {
 					BB.set( 'bids', bids )
@@ -141,7 +142,7 @@ define([
 				return bids.filterBy( 'event', id ).get( 'firstObject' )
 			else
 				return false
-		}.property( 'bids', 'currentEvent' ),
+		}.property( 'bids', 'currentEvent', 'user' ),
 
 		// a basic example for observing properties
 		titleChanged: function () {

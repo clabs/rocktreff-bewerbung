@@ -11,7 +11,7 @@
 					{{gravatar email size="24"}}
 				{{/if}}
 
-				{{#link-to 'user.edit' this}}{{name}}{{email}}{{/link-to}}
+				{{#link-to 'user.edit' this}}{{displayName}}{{/link-to}}
 
 				{{#if isAdmin}} <span class="label label-info">admin</span> {{/if}}
 				{{#if isCrew}} <span class="label label-success">crew</span> {{/if}}
@@ -27,7 +27,15 @@
 
 				<br>
 				<small title="{{unbound created}}">{{fromNow created}} erstellt, </small>
-				<small>via {{provider}}</small>
+				<small>via
+					{{#if viaFacebook}}
+						<span class="label btn-facebook btn-sm">
+							{{icon "facebook"}} {{provider}}
+						</span>
+					{{else}}
+						{{provider}}
+					{{/if}}
+				</small>
 			</li>
 		{{/each}}
 		</ul>

@@ -82,14 +82,7 @@ define([
 			return BB.Bid.create({
 				user: BB.get( 'user.id' ),
 				event: BB.get( 'currentEvent.id' )
-			})
-		},
-
-		setupController: function ( controller, model ) {
-			var self = this
-			model.saveRecord().then( function () {
-				self.transitionTo( 'bid', model )
-			})
+			}).saveRecord()
 		},
 
 		actions: {
@@ -126,6 +119,13 @@ define([
 		}
 	})
 
+
+	BB.BidsRoute = BB.AuthenticatedRoute.extend({
+
+		model: function () {
+			return BB.Bid.findAll()
+		}
+	})
 
 
 	BB.EventsRoute = BB.AuthenticatedRoute.extend({

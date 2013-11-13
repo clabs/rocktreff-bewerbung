@@ -22,9 +22,11 @@ define([
 
 	BB.Router.map( function () {
 
-		this.resource( 'bewerbungen' )
 
 		this.resource( 'bid', { path: '/bewerbung/:bid_id' } )
+		this.resource( 'bids', { path: '/bewerbungen' } )
+		this.resource( 'NewBid', { path: '/bewerben' } )
+
 
 		this.resource( 'users' )
 		this.resource( 'user', { path: '/user/:id' }, function () {
@@ -36,7 +38,6 @@ define([
 			this.route( 'new' )
 		})
 
-		this.resource( 'NewBid', { path: '/bewerben' } )
 
 		this.resource( 'home' )
 		this.resource( 'login' )

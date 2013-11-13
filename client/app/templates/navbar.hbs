@@ -7,6 +7,19 @@
 		<div>
 			{{#if BB.userExists}}
 				<ul class="nav navbar-nav">
+					{{#if BB.user.isNeither}}
+					<li>
+						{{#if BB.currentBid}}
+							{{#link-to 'bid' BB.currentBid}} Meine Bewerbung{{/link-to}}
+						{{else}}
+							{{#link-to 'NewBid'}} Meine Bewerbung{{/link-to}}
+						{{/if}}
+					</li>
+					{{else}}
+					<li>
+						{{#link-to 'bids'}}Bewerbungen{{/link-to}}
+					</li>
+					{{/if}}
 					{{#if BB.user.isAdmin}}
 					<li class="dropdown">
 						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration {{icon "caret-down"}}</a>
@@ -32,7 +45,7 @@
 				{{else}}
 					{{gravatar BB.user.email size="24"}}
 				{{/if}}
-				{{BB.user.email}}
+				{{BB.user.displayName}} {{icon "caret-down"}}
 				</a>
 				<ul class="dropdown-menu">
 					{{#if BB.user.isNeither}}

@@ -189,7 +189,7 @@ define([
 			signup: function () {
 				var credentials = this.getProperties( 'email', 'password' )
 				var user = BB.User.create({
-					name: ' ',
+					name: '',
 					provider: 'local',
 					role: '',
 					email: credentials.email,
