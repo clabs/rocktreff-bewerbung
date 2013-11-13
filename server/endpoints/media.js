@@ -19,7 +19,6 @@ exports = module.exports = function ( app ) {
 	var fs = require( 'fs' )
 	var os = require( 'os' )
 	var exec = require( 'child_process' ).exec
-	var ffmpeg = require( 'fluent-ffmpeg' )
 	var Promise = require( 'promise' )
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
@@ -68,7 +67,7 @@ exports = module.exports = function ( app ) {
 	var injectMediaURL = function () {
 		function addURL ( media ) {
 			if ( media.type !== 'youtube' )
-				media.url = 'http://'+app.get( 'host' )+':'+app.get( 'port' )+'/uploads/'+media.id
+				media.url = app.get( 'hostname' )+'/uploads/'+media.id
 			return media
 		}
 		return function ( media ) {
@@ -81,31 +80,34 @@ exports = module.exports = function ( app ) {
 	}
 	var processMedia = function ( media ) {
 		if ( media.type === 'audio' )
-			return media //transcodeMP3( media )
+			return transcodeMP3( media )
 		else if ( media.type === 'picture' )
 			return getImageMeta( media )
-					.then( resizeImage )
+					.then( createThumb )
 		else if ( media.type === 'logo' )
 			return getImageMeta( media )
-					.then( resizeImage )
+					.then( createThumb )
 		else
 			return media
 	}
 	var transcodeMP3 = function ( media ) {
 		var src = app.get( 'upload-directory' ) + '/' + media.id
 		var tmp = src + '_tmp'
-		var cmd = 'lame --silent --mp3input -b 128k '+src+' '+tmp
+		var cmd = 'ffmpeg -i '+src+' -c:a libmp3lame -b:a 128k -f mp3 '+tmp
 		return new Promise( function ( fulfill, reject ) {
 			exec( cmd, function ( err, stdout, stderr ) {
-				fulfill( media )
+				if ( err ) reject( err )
+				else {
+					media.filesize = fs.lstatSync( tmp ).size
+					media.mimetype = 'audio/mpeg'
+					fulfill( media )
+				}
 			})
 		})
-		.then( moveFile( tmp, path ), function () {
+		.then( moveFile( tmp, src ), function () {
 			console.log( arguments )
 		})
 		.then( function ( media ) {
-			media.filesize = fs.lstatSync( src ).size
-			media.mimetype = 'audio/mpeg'
 			return media
 		}, function () {
 			console.log( arguments )
@@ -114,7 +116,7 @@ exports = module.exports = function ( app ) {
 
 	var getImageMeta = function ( media ) {
 		var src = app.get( 'upload-directory' ) + '/' + media.id
-		var cmd = 'convert '+src+' -identify '+src//+' | cut -d " " -f3'
+		var cmd = 'convert '+src+' -identify '+src
 		return new Promise( function ( fulfill, reject ) {
 			exec( cmd, function ( err, stdout, stderr ) {
 				if ( err ) reject( err )
@@ -126,7 +128,7 @@ exports = module.exports = function ( app ) {
 		})
 	}
 
-	var resizeImage = function ( media ) {
+	var createThumb = function ( media ) {
 		var src = app.get( 'upload-directory' ) + '/' + media.id
 		var dst = src + '_small'
 		var cmd = 'convert '+src+' -resize "200^>" ' + dst

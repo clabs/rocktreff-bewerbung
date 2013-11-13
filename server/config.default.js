@@ -18,6 +18,7 @@ exports = module.exports = function( app ) {
 
 	app.set( 'host', 'localhost' )
 	app.set( 'port', 1338 )
+	app.set( 'hostname', 'https://api.rocktreff.de' )
 	app.set( 'client-url', '*' )
 	app.set( 'upload-directory', __dirname + '/public/uploads' )
 

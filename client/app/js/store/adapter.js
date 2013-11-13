@@ -126,7 +126,7 @@ define([
 
 		progress: function ( evt ) {
 			if ( !evt.lengthComputable ) return
-			var percent = Math.round( evt.loaded / evt.total ) * 100
+			var percent = evt.loaded / evt.total * 100
 			console.log( percent )
 			this.set( 'percent', percent || 0 )
 		},

@@ -228,10 +228,10 @@ define([
 	BB.AudioDropbox = BB.Dropbox.extend({
 
 		mediatype: 'audio',
-		mimetype: 'audio/mp3',
+		mimetype: 'audio/*',
 
 		file: function ( file ) {
-			return (/^audio\/mp3$/gi).test( file.type )
+			return (/^audio\/.+$/gi).test( file.type )
 		}
 
 	})

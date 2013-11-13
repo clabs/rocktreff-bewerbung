@@ -77,7 +77,7 @@ define([
 
 
 		authFacebook: function () {
-			var url = 'https://www.facebook.com/dialog/oauth?&response_type=code&redirect_uri=http%3A%2F%2Fbewerbung.rocktreff.de%3A4711%2Fauth%2Ffacebook%2Fcallback&scope=email&client_id=528637637210887&type=web_server&display=popup'
+			var url = 'https://www.facebook.com/dialog/oauth?&response_type=code&redirect_uri=https%3A%2F%2Fapi.rocktreff.de%2Fauth%2Ffacebook%2Fcallback&scope=email&client_id=528637637210887&type=web_server&display=popup'
 			return this.oauth( url )
 		},
 

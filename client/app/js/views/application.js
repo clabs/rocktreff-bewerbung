@@ -21,6 +21,7 @@ define([
 	'use strict';
 
 	BB.ApplicationView = Ember.ContainerView.extend({
+		classNames: [ 'viewport' ],
 		/**
 		 * Override the default outlet connector and forward it
 		 * to the child views.
@@ -35,6 +36,7 @@ define([
 				templateName: 'navbar'
 			}),
 			Ember.View.extend({
+				classNames: [ 'viewport' ],
 				templateName: 'index'
 			})
 		]

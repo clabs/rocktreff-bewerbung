@@ -23,7 +23,7 @@ define([
 	'use strict';
 
 	var storage = window.localStorage
-	var HOSTNAME = 'http://bewerbung.rocktreff.de:4711'
+	var HOSTNAME = 'https://api.rocktreff.de'
 
 	BB.reopen({
 
