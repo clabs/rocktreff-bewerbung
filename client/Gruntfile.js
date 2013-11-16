@@ -248,7 +248,9 @@ module.exports = function( grunt ) {
 					// copy index.html
 					{ expand: true, cwd: '<%= bb.client %>', src: 'index.html', dest: '<%= bb.release %>' },
 					// copy favicon
-					{ expand: true, cwd: '<%= bb.client %>', src: '*.ico', dest: '<%= bb.release %>' },
+					{ expand: true, cwd: '<%= bb.client %>', src: 'favicon.ico', dest: '<%= bb.release %>' },
+					// copy htaccess
+					{ expand: true, cwd: '<%= bb.client %>', src: '.htaccess', dest: '<%= bb.release %>' },
 					// copy swf
 					{ expand: true, cwd: '<%= bb.client %>', flatten: true, src: 'swf/**', dest: '<%= bb.release %>/swf' }
 				]
