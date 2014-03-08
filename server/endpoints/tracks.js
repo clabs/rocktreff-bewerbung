@@ -18,28 +18,26 @@ exports = module.exports = function ( app ) {
 
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
-	var json = require( '../utils/json' )( schema.region )
+	var json = require( '../utils/json' )( schema.track )
 	var restful = require( '../utils/restful' )
-	var send = restful.send( 'region' )
+	var send = restful.send( 'track' )
 	var empty = function ( res ) {
 		return function () {
-			send( res )( [] )
+			send( res )( )
 		}
 	}
 
 	return {
 
-
 		get: function ( req, res ) {
 			var id = req.params.id
-			models.region.get( id )
+			models.track.get( id )
 				.then( send( res ), empty( res ) )
 		},
 
-
 		post: function ( req, res ) {
-			var json = req.body
-			models.region.create( json ).then( send( res ) )
+			models.track.create( req.body )
+				.then( send( res ) )
 		},
 
 
@@ -47,19 +45,16 @@ exports = module.exports = function ( app ) {
 			var id = req.params.id
 			req.body.id = id
 
-			if ( !models.region.has( id ) )
-				return res.status( 404 ).send()
-			if ( id !== req.body.id )
-				return res.status( 400 ).send()
-
-			models.region.save( req.body )
-				.then( send( res ) )
+			models.track.save( req.body )
+				.then( send( res ), function ( err ) {
+					res.status( 400 ).send()
+				})
 		},
 
 
 		del: function ( req, res ) {
 			var id = req.params.id
-			models.region.del( id )
+			models.track.del( id )
 				.then( send( res ), function ( err ) {
 					res.status( 400 ).send()
 				})
@@ -68,12 +63,13 @@ exports = module.exports = function ( app ) {
 
 		list: function ( req, res ) {
 			var query = req.query
-			models.region.find( query )
+			models.track.find( query )
 				.then( send( res ), function ( err ) {
 					res.status( 500 ).send()
 				})
 		}
 
-
 	}
+
+
 }

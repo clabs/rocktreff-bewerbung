@@ -19,7 +19,8 @@ exports = module.exports = function ( app ) {
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
 	var json = require( '../utils/json' )( schema.vote )
-	var send = json.send( 'vote' )
+	var restful = require( '../utils/restful' )
+	var send = restful.send( 'vote' )
 	var empty = function ( res ) {
 		return function () {
 			send( res )( [] )
@@ -52,6 +53,7 @@ exports = module.exports = function ( app ) {
 		put: function ( req, res ) {
 			var id = req.params.id
 			var body = req.body
+			req.body.id = id
 
 			if ( body.user !== req.user.id )
 				return res.status( 403 ).send()
@@ -59,7 +61,9 @@ exports = module.exports = function ( app ) {
 				return res.status( 404 ).send()
 
 			models.vote.save( req.body )
-				.then( send( res ) )
+				.then( send( res ), function ( err ) {
+					res.send( 500, err.toString() )
+				})
 		},
 
 

@@ -24,10 +24,12 @@ exports = module.exports = function ( app, passport ) {
 	var NoteViews = require( './notes' )( app )
 	var MediaViews = require( './media' )( app )
 	var BidViews = require( './bids' )( app )
+	var TrackViews = require( './tracks' )( app )
 
 
 	var schema = require( '../models/schemas' )
 	var validate = require( 'jsonschema' ).validate
+	var restful = require( '../utils/restful' )
 
 
 	/**
@@ -69,12 +71,24 @@ exports = module.exports = function ( app, passport ) {
 			return res.status( 403 ).send()
 		}
 	]
-	var validateJSON = function ( schema ) {
+	var validateJSON = function ( type ) {
 		return function ( req, res, next ) {
 			if ( !req.is( 'json' ) ) return res.status( 400 )
-			var v = validate( req.body, schema )
-			if ( v.errors.length > 0) res.status( 422 ).send( v.errors )
-			else next()
+			var items = restful.extractItemsByType( type, req.body )
+			if ( items ) {
+				var errors = []
+				items.forEach( function ( item ) {
+					var v = validate( item, schema[ type ] )
+					if ( v.errors.length > 0)
+						errors.push( v.errors )
+				})
+				if ( errors.length > 0 ) {
+					console.log( errors )
+					res.status( 422 ).send( errors )
+				}
+				else next()
+			}
+			next()
 		}
 	}
 
@@ -104,41 +118,46 @@ exports = module.exports = function ( app, passport ) {
 
 
 	app.get( '/events', EventViews.list )
-	app.post( '/events', [ adminRequired, validateJSON( schema.event ) ], EventViews.post )
+	app.post( '/events', [ adminRequired, validateJSON( 'event' ) ], EventViews.post )
 	app.get( '/events/:id', loginRequired, EventViews.get )
 	app.del( '/events/:id', adminRequired, EventViews.del )
-	app.put( '/events/:id', [ adminRequired, validateJSON( schema.event ) ], EventViews.put )
+	app.put( '/events/:id', [ adminRequired, validateJSON( 'event' ) ], EventViews.put )
 
+	app.get( '/tracks', CrewRequired, TrackViews.list )
+	app.post( '/tracks', [ adminRequired, validateJSON( 'track' ) ], TrackViews.post )
+	app.get( '/tracks/:id', CrewRequired, TrackViews.get )
+	app.del( '/tracks/:id', adminRequired, TrackViews.del )
+	app.put( '/tracks/:id', [ adminRequired, validateJSON( 'track' ) ], TrackViews.put )
 
 	app.get( '/regions', RegionViews.list )
-	app.post( '/regions', [ adminRequired, validateJSON( schema.region ) ], RegionViews.post )
-	app.get( '/regions/:id', loginRequired, RegionViews.get )
+	app.post( '/regions', [ adminRequired, validateJSON( 'region' ) ], RegionViews.post )
+	app.get( '/regions/:id', RegionViews.get )
 	app.del( '/regions/:id', adminRequired, RegionViews.del )
-	app.put( '/regions/:id', [ adminRequired, validateJSON( schema.region ) ], RegionViews.put )
+	app.put( '/regions/:id', [ adminRequired, validateJSON( 'region' ) ], RegionViews.put )
 
 	app.get( '/votes', adminRequired, VoteViews.list )
-	app.post( '/votes', [ CrewRequired, validateJSON( schema.vote ) ], VoteViews.post )
+	app.post( '/votes', [ CrewRequired, validateJSON( 'vote' ) ], VoteViews.post )
 	app.get( '/votes/:id', CrewRequired, VoteViews.get )
 	app.del( '/votes/:id', adminRequired, VoteViews.del )
-	app.put( '/votes/:id', [ CrewRequired, validateJSON( schema.vote ) ], VoteViews.put )
+	app.put( '/votes/:id', [ CrewRequired, validateJSON( 'vote' ) ], VoteViews.put )
 
 
 	app.get( '/notes', adminRequired, NoteViews.list )
-	app.post( '/notes', [ CrewRequired, validateJSON( schema.note ) ], NoteViews.post )
+	app.post( '/notes', [ CrewRequired, validateJSON( 'note' ) ], NoteViews.post )
 	app.get( '/notes/:id', CrewRequired, NoteViews.get )
 	app.del( '/notes/:id', CrewRequired, NoteViews.del )
-	app.put( '/notes/:id', [ CrewRequired, validateJSON( schema.note ) ], NoteViews.put )
+	app.put( '/notes/:id', [ CrewRequired, validateJSON( 'note' ) ], NoteViews.put )
 
 
-	app.get( '/media', adminRequired, MediaViews.list )
-	app.post( '/media', [ loginRequired, validateJSON( schema.media ) ], MediaViews.post )
-	app.put( '/media/:id', [ loginRequired, validateJSON( schema.media ) ], MediaViews.put )
+	app.get( '/media', CrewRequired, MediaViews.list )
+	app.post( '/media', [ loginRequired, validateJSON( 'media' ) ], MediaViews.post )
+	app.put( '/media/:id', [ loginRequired, validateJSON( 'media' ) ], MediaViews.put )
 	app.get( '/media/:id', loginRequired, MediaViews.get )
 	app.del( '/media/:id', loginRequired, MediaViews.del )
 
 	app.get( '/bids', loginRequired, BidViews.list )
-	app.post( '/bids', [ loginRequired, validateJSON( schema.bid ) ], BidViews.post )
+	app.post( '/bids', [ loginRequired, validateJSON( 'bid' ) ], BidViews.post )
 	app.get( '/bids/:id', loginRequired, BidViews.get )
 	app.del( '/bids/:id', adminRequired, BidViews.del )
-	app.put( '/bids/:id', [ loginRequired, validateJSON( schema.bid ) ], BidViews.put )
+	app.put( '/bids/:id', [ loginRequired, validateJSON( 'bid' ) ], BidViews.put )
 }

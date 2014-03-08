@@ -19,7 +19,8 @@ exports = module.exports = function ( app ) {
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
 	var json = require( '../utils/json' )( schema.note )
-	var send = json.send( 'note' )
+	var restful = require( '../utils/restful' )
+	var send = restful.send( 'note' )
 	var empty = function ( res ) {
 		return function () {
 			send( res )( [] )
@@ -48,6 +49,7 @@ exports = module.exports = function ( app ) {
 
 		put: function ( req, res ) {
 			var id = req.params.id
+			req.body.id = id
 
 			if ( req.body.user !== req.user.id )
 				return res.status( 403 ).send()

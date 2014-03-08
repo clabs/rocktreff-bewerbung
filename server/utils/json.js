@@ -68,15 +68,7 @@ module.exports = function ( template ) {
 
 		merge: _.curry( function ( src, obj ) {
 			return _.merge( obj, src )
-		}),
-
-
-		send: _.curry( function ( key, res, obj ) {
-			obj = obj || []
-			var json = {}
-			var pluralize = obj instanceof Array
-			json[ pluralize ? key + 's' : key ] = obj
-			res.send( json )
 		})
+
 	}
 }

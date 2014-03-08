@@ -14,76 +14,77 @@
  */
 'use strict';
 
-// External includes
-var express = require( 'express' )
-var passport = require ( 'passport' )
+	// External includes
+	var express = require( 'express' )
+	var passport = require ( 'passport' )
 
-// Instantiate app
-var app = express()
-var ENV = app.get( 'env' )
+	// Instantiate app
+	var app = express()
+	var ENV = app.get( 'env' )
 
-// General app config stuff
-app.configure( function () {
+	// General app config stuff
+	app.configure( function () {
 
-	app.disable( 'x-powered-by' )
+		app.disable( 'x-powered-by' )
 
-	// load assets
-	require( './config' )( app )
+		// load assets
+		require( './config' )( app )
 
-	// load asset manager
-	require( './assets' )( app )
+		// load asset manager
+		require( './assets' )( app )
 
-	// Middlewares
-	app.use( express.limit( '100mb' ) )
-	app.use( express.logger( 'dev' ) )
-	app.use( express.compress() )
-	app.use( express.cookieParser() )
-	app.use( express.bodyParser() )
-	app.use( express.session({ secret: 'keyboard cat' }) )
-	app.use( passport.initialize() )
-	app.use( passport.session() )
+		// Middlewares
+		app.use( express.limit( '100mb' ) )
+		app.use( express.logger( 'dev' ) )
+		app.use( express.compress() )
+		app.use( express.cookieParser() )
+		app.use( express.bodyParser() )
+		if ( 'production' !== ENV )
+			app.use( express.session({ secret: 'keyboard cat' }) )
+		app.use( passport.initialize() )
+		app.use( passport.session() )
 
-	// Development only
-	if ( 'development' === ENV )
-	app.use( express.errorHandler({
-		dumpExceptions: true,
-		showStack: true
-	}))
-})
+		// Development only
+		if ( 'development' === ENV )
+		app.use( express.errorHandler({
+			dumpExceptions: true,
+			showStack: true
+		}))
+	})
 
 
-// Internal includes
-var mailer = require( './mailer' )( app )
-var models = require( './models/index' )( app )
-var strategies = require( './passport/index' )( app, passport )
-var middlewares = require( './middleware/index' )( app )
-var endpoints = require( './endpoints/index' )( app, passport )
+	// Internal includes
+	var mailer = require( './mailer' )( app )
+	var models = require( './models/index' )( app )
+	var strategies = require( './passport/index' )( app, passport )
+	var middlewares = require( './middleware/index' )( app )
+	var endpoints = require( './endpoints/index' )( app, passport )
 
-// yay ho!
-app.listen( app.get( 'port' ) )
+	// yay ho!
+	app.listen( app.get( 'port' ) )
 
-var PID_FILE  = './server.pid'
-var fs = require( 'fs' )
+	var PID_FILE  = './server.pid'
+	var fs = require( 'fs' )
 
-// set process title
-process.title = 'rocktreff-api-server ('+ ENV +')'
-// write .pid file
-fs.writeFileSync( PID_FILE, process.pid + '\n' )
-// cleanup
-process.on( 'SIGINT', function () {
-	process.stdout.write( '\nHave a nice day! ... (^_^)/\"\n' )
-	fs.unlinkSync( PID_FILE )
-	process.exit( 0 )
-})
+	// set process title
+	process.title = 'rocktreff-api-server ('+ ENV +')'
+	// write .pid file
+	fs.writeFileSync( PID_FILE, process.pid + '\n' )
+	// cleanup
+	process.on( 'SIGINT', function () {
+		process.stdout.write( '\nHave a nice day! ... (^_^)/\"\n' )
+		fs.unlinkSync( PID_FILE )
+		process.exit( 0 )
+	})
 
-// nerdy stuff
-process.stdout.write( '\u001B[2J\u001B[0;0f' +
-	' ______ _____ _____  _   _____________ _________________  ____________\n' +
-	' | ___ \\  _  /  __ \\| | / /_   _| ___ \\  ___|  ___|  ___| | ___ \\ ___ \\\n' +
-	' | |_/ / | | | /  \\/| |/ /  | | | |_/ / |__ | |_  | |_    | |_/ / |_/ /\n' +
-	' |    /| | | | |    |    \\  | | |    /|  __||  _| |  _|   | ___ \\ ___ \\\n' +
-	' | |\\ \\\\ \\_/ / \\__/\\| |\\  \\ | | | |\\ \\| |___| |   | |     | |_/ / |_/ /\n' +
-	' \\_| \\_|\\___/ \\____/\\_| \\_/ \\_/ \\_| \\_\\____/\\_|   \\_|     \\____/\\____/\n' +
-	'\n' +
-	'\u001b[32mStarting api server on port '+ app.get( 'port' ) +' in '+ ENV +' mode.\u001b[39m\n'
-)
+	// nerdy stuff
+	process.stdout.write( '\u001B[2J\u001B[0;0f' +
+		' ______ _____ _____  _   _____________ _________________  ____________\n' +
+		' | ___ \\  _  /  __ \\| | / /_   _| ___ \\  ___|  ___|  ___| | ___ \\ ___ \\\n' +
+		' | |_/ / | | | /  \\/| |/ /  | | | |_/ / |__ | |_  | |_    | |_/ / |_/ /\n' +
+		' |    /| | | | |    |    \\  | | |    /|  __||  _| |  _|   | ___ \\ ___ \\\n' +
+		' | |\\ \\\\ \\_/ / \\__/\\| |\\  \\ | | | |\\ \\| |___| |   | |     | |_/ / |_/ /\n' +
+		' \\_| \\_|\\___/ \\____/\\_| \\_/ \\_/ \\_| \\_\\____/\\_|   \\_|     \\____/\\____/\n' +
+		'\n' +
+		'\u001b[32mStarting api server on port '+ app.get( 'port' ) +' in '+ ENV +' mode.\u001b[39m\n'
+	)

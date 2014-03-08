@@ -33,6 +33,7 @@ exports = module.exports = function( app, passport ) {
 		function ( email, password, done ) {
 			User.find( { email: email } )
 				.then( function ( user ) {
+					console.log( 'LocalStrategy', email, password )
 					user = user[ 0 ]
 					var sha256 = crypto.createHash( 'sha256' )
 					var hash = sha256.update( password ) && sha256.digest( 'hex' )

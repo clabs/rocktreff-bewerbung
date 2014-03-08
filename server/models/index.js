@@ -26,7 +26,8 @@ exports = module.exports = function ( app ) {
 		vote: collection( 'votes' ),
 		note: collection( 'notes' ),
 		region: collection( 'regions' ),
-		event: collection( 'events' )
+		event: collection( 'events' ),
+		track: collection( 'tracks' )
 	})
 
 }

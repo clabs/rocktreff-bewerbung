@@ -22,7 +22,8 @@ exports = module.exports = function ( app ) {
 	var AccessToken = require( '../models/token' )
 	var json = require( '../utils/json' )( schema.user )
 	var stripPassword = json.omit( 'password' )
-	var send = json.send( 'user' )
+	var restful = require( '../utils/restful' )
+	var send = restful.send( 'user' )
 	var hashPassword = function ( user ) {
 		// only hash the password if it's not already hashed …
 		if ( user.password && !/[a-f0-9]{64}/.test( user.password ) ) {
@@ -113,6 +114,7 @@ exports = module.exports = function ( app ) {
 
 		put: function ( req, res ) {
 			var id = req.params.id
+			req.body.id = id
 			if ( id !== req.user.id || req.body.role !== '' )
 				if ( !req.user || req.user.role !== 'admin' )
 					return res.status( 403 ).send()

@@ -41,6 +41,7 @@ exports = module.exports = {
 			modified: { type: 'string', format: 'date-time' },
 			user: { type: 'string', required: true },
 			event: { type: 'string', required: true },
+			category: { type: 'string' },
 			region: { type: 'string' },
 			bandname: { type: 'string' },
 			student: { type: 'boolean' },
@@ -85,10 +86,22 @@ exports = module.exports = {
 			modified: { type: 'string', format: 'date-time' },
 			name: { type: 'string', required: true },
 			opening_date: { type: 'string', required: true, format: 'date-time' },
-			closing_date: { type: 'string', required: true, format: 'date-time' }
+			closing_date: { type: 'string', required: true, format: 'date-time' },
+			tracks: { type: 'array', items: { type: 'string' } }
 		}
 	},
 
+	track: {
+		id: '/Track',
+		properties: {
+			id: { type: 'string' },
+			created: { type: 'string', format: 'date-time' },
+			modified: { type: 'string', format: 'date-time' },
+			name: { type: 'string', required: true },
+			event: { type: 'string', required: true },
+			visible: { type: 'boolean', required: true }
+		}
+	},
 
 	vote: {
 		id: '/Vote',

@@ -23,7 +23,8 @@ exports = module.exports = function ( app ) {
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
 	var json = require( '../utils/json' )( schema.media )
-	var send = json.send( 'media' )
+	var restful = require( '../utils/restful' )
+	var send = restful.send( 'media' )
 	var empty = function ( res ) {
 		return function () {
 			send( res )( [] )
@@ -64,19 +65,17 @@ exports = module.exports = function ( app ) {
 			})
 		}
 	}
-	var injectMediaURL = function () {
+	var injectMediaURL = function ( media ) {
 		function addURL ( media ) {
 			if ( media.type !== 'youtube' )
 				media.url = app.get( 'hostname' )+'/uploads/'+media.id
 			return media
 		}
-		return function ( media ) {
-			if ( media instanceof Array )
-				return media.map( function ( media ) {
-					return addURL( media )
-				})
-			return addURL( media )
-		}
+		if ( media instanceof Array )
+			return media.map( function ( media ) {
+				return addURL( media )
+			})
+		return addURL( media )
 	}
 	var processMedia = function ( media ) {
 		if ( media.type === 'audio' )
@@ -188,6 +187,7 @@ exports = module.exports = function ( app ) {
 
 		put: function ( req, res ) {
 			var id = req.params.id
+			req.body.id = id
 			var data = req.body.data
 			delete req.body.data
 

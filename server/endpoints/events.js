@@ -16,23 +16,38 @@
 
 exports = module.exports = function ( app ) {
 
+	var _ = require( 'lodash' )
+	var Promise = require( 'promise' )
 	var models = app.get( 'models' )
 	var schema = require( '../models/schemas' )
 	var json = require( '../utils/json' )( schema.event )
-	var send = json.send( 'event' )
+	var restful = require( '../utils/restful' )
+	var send = restful.send( 'event' )
 	var empty = function ( res ) {
 		return function () {
 			send( res )( )
 		}
 	}
 
+	var injectTracks = _.curry( function ( res, event ) {
+		return models.track.find( { event: event.id } )
+			.then( function ( tracks ) {
+				restful.sideload( res, 'track', tracks )
+				return tracks
+			})
+			.then( function ( tracks ) {
+				return { tracks: _.map( tracks, function ( item ) { return item.id }) }
+			})
+			.then( json.merge( event ) )
+	})
+
 	return {
 
 		get: function ( req, res ) {
 			var id = req.params.id
 			models.event.get( id )
-				.then( null, empty( res ) )
-				.then( send( res ) )
+				.then( injectTracks( res ) )
+				.then( send( res ), empty( res ) )
 		},
 
 		post: function ( req, res ) {
@@ -44,12 +59,10 @@ exports = module.exports = function ( app ) {
 
 		put: function ( req, res ) {
 			var id = req.params.id
-			var json = req.body
+			req.body.id = id
 
-			if ( json.id !== id )
-				return res.status( 401 ).send()
-
-			models.event.save( json )
+			models.event.save( req.body )
+				.then( injectTracks( res ) )
 				.then( send( res ), function ( err ) {
 					res.status( 400 ).send()
 				})
@@ -68,8 +81,19 @@ exports = module.exports = function ( app ) {
 		list: function ( req, res ) {
 			var query = req.query
 			models.event.find( query )
+				.then( function ( events ) {
+						if ( !( events instanceof Array ) )
+							events = [ events ]
+						return events
+					})
+					.then( function ( events ) {
+						return Promise.all( events.map( function ( event ) {
+							return Promise.from( event )
+								.then( injectTracks( res ) )
+						}))
+					})
 				.then( send( res ), function ( err ) {
-					res.status( 500 ).send()
+					res.status( 500 ).send( err.toString() )
 				})
 		}
 
