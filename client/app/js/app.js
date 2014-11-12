@@ -16,135 +16,39 @@ define([
 
 	'bb',
 	'models/models',
-	'store/adapter',
+	'store/ds_adapter',
 
 ], function ( BB ) {
 
 	'use strict';
 
-	var storage = window.localStorage
+	Ember.deprecate = function () {}
+
 	var HOSTNAME = 'https://api.rocktreff.de'
 
 	BB.reopen({
 
-		hostname: HOSTNAME,
-
-		token: null,
-
-		user: function () {
-			var token = this.get( 'token' )
-			// update user model
-			if ( token && token.user ) {
-				return BB.User.find( token.user )
-			} else {
-				return null
-			}
-		}.property( 'token' ),
-
-
-
-		observeToken: function () {
-			var token = this.get( 'token' )
-			// persist to storage
-			storage.token = JSON.stringify( token )
-			// update user model
-			this.updateUser( token )
-		}.observes( 'token' ),
-
-
-		updateUser: function ( token ) {
-			// update user model
-			if ( token && token.user ) {
-				try {
-					return BB.User.fetch( token.user )
-					.then( function ( user ) {
-						BB.set( 'user', user )
-					})
-				} catch ( e ) {}
-			} else {
-				BB.set( 'user', null )
-			}
-		},
-
-		Client: RL.Client.create({
-			adapter: BB.RESTAdapter.create({
-				url: HOSTNAME,
-				tokenBinding: 'BB.token.id',
-			})
+		ApplicationAdapter: BB.RESTAdapter.extend({
+			host: HOSTNAME
 		}),
 
-		auth: Ember.Object.create({
+		ApplicationSerializer: BB.RESTSerializer.extend(),
 
-			authenticate: function ( credentials ) {
-				var adapter = BB.get( 'Client.adapter' )
-				return adapter.request( null, {
-					url: adapter.get( 'url' ) + '/auth/local',
-					type: 'POST',
-					data: credentials
-				}).then( function ( data ) {
-					BB.set( 'token', data.token )
-				})
-			},
-
-			authenticateWithToken: function ( token ) {
-				return new Ember.RSVP.Promise( function ( fulfill ) {
-					BB.set( 'token', token )
-					fulfill( token )
-				})
-			},
-
-			logout: function () {
-				return new Ember.RSVP.Promise( function ( fulfill ) {
-					BB.set( 'token', null )
-					delete storage.token
-					BB.__container__.lookup( 'router:main' ).transitionTo( 'home' )
-					fulfill( token )
-				})
-			}
-
+		Auth: window.RT.Auth.extend({
+			host: HOSTNAME,
+			facebook_redirect_uri: HOSTNAME + '/auth/facebook/callback',
+			facebook_client_id: 528637637210887
 		}),
 
-		userExists: function () {
-			return !!this.get( 'user' )
-		}.property( 'user' ),
-
-
-		ready: function () {
-			// fetch current event
-			BB.Event.fetch()
-				.then( function ( events ) {
-					BB.set( 'currentEvent', events.get( 'firstObject' ) )
-				})
-			// fetch all regions
-			BB.Region.fetch()
-				.then( function ( regions ) {
-					BB.set( 'regions', regions )
-				})
-			// fetch all Bids
-			if ( BB.user )
-			BB.Bid.fetch()
-				.then( function ( bids ) {
-					BB.set( 'bids', bids )
-				})
-			// update user
-			var user = this.get( 'user' )
-			if ( user && !user.saveRecord ) {
-				user = BB.User.create( user )
-				user.set( 'isNew', false )
-				this.set( 'user', user )
+		events: null,
+		currentEvent: function () {
+			var events = this.get( 'events' )
+			if ( events ) {
+				return events.objectAt( 0 )
 			}
-		},
+		}.property( 'events' ),
 
-		currentBid: function () {
-			var bids = this.get( 'bids' )
-			var id = this.get( 'currentEvent.id' )
-			if ( bids && id )
-				return bids.filterBy( 'event', id ).get( 'firstObject' )
-			else
-				return false
-		}.property( 'bids', 'currentEvent', 'user' ),
-
-		// a basic example for observing properties
+		title: '',
 		titleChanged: function () {
 			var title = ''
 			if ( this.get( 'title' ) )
@@ -161,51 +65,11 @@ define([
 	})
 
 
-
-	var token = JSON.parse( storage.token || 'null' )
-	if ( token ) {
-		Ember.$.ajax({
-			url: HOSTNAME + '/users/' + token.user,
-			type: 'GET',
-			beforeSend: function ( xhr ) {
-				xhr.setRequestHeader( 'Authorization', 'Bearer ' + token.id )
-			}
-		})
-		.then( function ( data ) {
-			var user = data.user
-			BB.set( 'token', token )
-			BB.set( 'user', user )
-			BB.advanceReadiness()
-		}, function () {
-			BB.set( 'user', null )
-			BB.set( 'token', null )
-			BB.advanceReadiness()
-		})
-	} else {
-		BB.advanceReadiness()
-	}
-
-
-
-	BB.Client.adapter.registerTransform( 'isodate', {
-		deserialize: function ( datestring ) {
-			return new Date( datestring )
-		},
-		serialize: function ( obj ) {
-			if ( typeof obj === 'string' )
-				return ( new Date( obj ) ).toISOString()
-			if ( typeof obj === 'date' )
-				return obj.toISOString()
-			else
-				return obj.toString()
-		}
+	document.body.addEventListener( 'touchmove', function ( ev ) {
+		//ev.preventDefault()
 	})
 
 
-	BB.Client.adapter.configure( 'plurals', {
-		media: 'media'
-	})
-
-
+	BB.advanceReadiness()
 
 })

@@ -107,7 +107,7 @@ exports = module.exports = function ( app, passport ) {
 	// popup callback
 	app.get( '/auth/callback', UserViews.callback )
 
-
+	app.get( '/', function ( req, res ) { res.send( 'Nothing to see here, move along!' ) } )
 
 	app.get( '/me', loginRequired, UserViews.me )
 	app.get( '/users', adminRequired, UserViews.list )

@@ -94,7 +94,7 @@ module.exports = function( grunt ) {
 			},
 			handlebars: {
 				files: [ '<%= bb.client %>/templates/**/*.hbs' ],
-				tasks: [ 'handlebars:server' ]
+				tasks: [ 'handlebars:server', 'livereload' ]
 			}
 		},
 
@@ -201,31 +201,17 @@ module.exports = function( grunt ) {
 						jquery:'vendor/jquery/jquery',
 						handlebars:'vendor/handlebars/handlebars',
 						ember: 'vendor/ember/ember',
-						restless: 'vendor/ember-restless/dist/ember-restless+extras',
+						data: 'vendor/ember-data/ember-data',
 						bootstrap: 'vendor/bootstrap/dist/js/bootstrap',
-						wysiwyg: 'vendor/bootstrap-wysiwyg/bootstrap-wysiwyg',
-						'jquery-hotkeys': 'vendor/jquery.hotkeys/jquery.hotkeys',
-						socketio: 'vendor/socket.io-client/dist/socket.io',
 						moment: 'vendor/moment/min/moment-with-langs.min',
 						audio5js: 'vendor/audio5js/audio5',
-						wavesurfer: 'vendor/wavesurfer.js/build/wavesurfer.min'
+						hammer: 'vendor/hammerjs/hammer.min'
 					},
 					shim: {
-						ember: {
-							deps:[ 'jquery', 'handlebars' ],
-							exports: 'Ember'
-						},
-						restless: {
-							deps:[ 'ember' ],
-							exports: 'RL'
-						},
-						wysiwyg: {
-							deps:[ 'jquery', 'jquery-hotkeys' ],
-							exports: 'wysiwyg'
-						},
-						bootstrap: { deps: [ 'jquery' ] },
-						wavesurfer: { exports: 'WaveSurfer' }
-					}
+						ember: { deps:[ 'jquery', 'handlebars' ], exports: 'Ember' },
+						data: { deps:[ 'ember' ] },
+						bootstrap: { deps: [ 'jquery' ] }
+					},
 				}
 			}
 		},
@@ -288,8 +274,8 @@ module.exports = function( grunt ) {
 				})
 			})
 			output = 'define([\'ember\'],function(e){ \'use strict\';\n'+
-			         'var t=e.TEMPLATES,h=e.Handlebars,c=h.compile.bind(h);\n' +
-			         compiled.join( '\n' )+'\n})'
+					 'var t=e.TEMPLATES,h=e.Handlebars,c=h.compile.bind(h);\n' +
+					 compiled.join( '\n' )+'\n})'
 			grunt.file.write( file.dest, output )
 			grunt.log.write( '\u001b[32mcreated\u001b[39m ' + file.dest + '\n' )
 		})

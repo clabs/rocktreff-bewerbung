@@ -1,0 +1,8 @@
+<span class="rating">
+	<span {{bind-attr class=":star controller.ratingIsFive:selected"}} {{action "rate" 5}}></span>
+	<span {{bind-attr class=":star controller.ratingIsFour:selected"}} {{action "rate" 4}}></span>
+	<span {{bind-attr class=":star controller.ratingIsThree:selected"}} {{action "rate" 3}}></span>
+	<span {{bind-attr class=":star controller.ratingIsTwo:selected"}} {{action "rate" 2}}></span>
+	<span {{bind-attr class=":star controller.ratingIsOne:selected"}} {{action "rate" 1}}></span>
+	<span {{bind-attr class=":thumb controller.ratingIsNone:selected"}} {{action "rate" 0}}></span>
+</span>

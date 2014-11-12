@@ -1,0 +1,9 @@
+<div class="container">
+	<h1>Export</h1>
+		"Bandname";"Region";"Track";"Score";"Schülerband";"Kontakt";"Mail";"Telefon"
+	{{#each content}}
+	<div style="white-space:no-wrap">
+		"{{unbound bandname}}";"{{region.name}}";"{{track.name}}";{{score}};"{{unbound student}}";"{{unbound contact}}";"{{unbound mail}}";"{{unbound phone}}"
+	</div>
+	{{/each}}
+</div>

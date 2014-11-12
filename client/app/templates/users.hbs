@@ -1,21 +1,16 @@
-<div class="container users">
-	<div class="row">
-		<h3>Users</h3>
+<div class="row">
+	<div class="container users">
+		<h3>Users <span class="badge">{{content.length}}</span></h3>
+		<p>
+			{{input valueBinding="searchstring" placeholder="User suchen"}}
+		</p>
 		<ul class="list-inline">
-		{{#each model}}
+		{{#group}}
+			{{#each filteredUsers groupedRows=true}}
 			<li>
-
-				{{#if picture}}
-					<img src="{{unbound picture}}" width="24">
-				{{else}}
-					{{gravatar email size="24"}}
-				{{/if}}
-
-				{{#link-to 'user.edit' this}}{{displayName}}{{/link-to}}
-
+				{{#link-to 'user.edit' this}}{{unbound displayName}}{{/link-to}}
 				{{#if isAdmin}} <span class="label label-danger">admin</span> {{/if}}
 				{{#if isCrew}} <span class="label label-success">crew</span> {{/if}}
-
 				{{#unless isMe}}
 					{{#unless isAdmin}}
 					<span {{action promoteUser this}} href="#">{{icon "caret-up"}}</span>
@@ -24,22 +19,15 @@
 					<span {{action demoteUser this}} href="#">{{icon "caret-down"}}</span>
 					{{/unless}}
 				{{/unless}}
-
 				<br>
-				<small title="{{unbound created}}">{{fromNow created}} erstellt</small>
 				<small>
-					{{#if viaFacebook}}
-						<span class="label btn-facebook btn-sm">
-							{{icon "facebook"}} {{provider}}
-						</span>
-					{{else}}
-						<span class="label btn- btn-sm">
-							{{provider}}
-						</span>
-					{{/if}}
+					<span class="label btn-sm">
+						{{unbound provider}}
+					</span>
 				</small>
 			</li>
-		{{/each}}
+			{{/each}}
+		{{/group}}
 		</ul>
 	</div>
 </div>

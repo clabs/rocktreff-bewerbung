@@ -14,61 +14,56 @@
  */
 'use strict';
 
-/**
- * Runtime configuration for requirejs goes in here.
- * Things related to the build/distribution will be
- * configured in the Gruntfile.js
- */
 requirejs.config({
 	paths: {
 		jquery:'vendor/jquery/jquery',
 		handlebars:'vendor/handlebars/handlebars',
 		ember: 'vendor/ember/ember',
-		restless: 'vendor/ember-restless/dist/ember-restless+extras',
-		bootstrap: 'vendor/bootstrap/dist/js/bootstrap',
-		wysiwyg: 'vendor/bootstrap-wysiwyg/bootstrap-wysiwyg',
-		'jquery-hotkeys': 'vendor/jquery.hotkeys/jquery.hotkeys',
-		socketio: 'vendor/socket.io-client/dist/socket.io',
+		data: 'vendor/ember-data/ember-data',
+		bootstrap: 'vendor/bootstrap/dist/js/bootstrap.min',
 		moment: 'vendor/moment/min/moment-with-langs.min',
 		audio5js: 'vendor/audio5js/audio5',
-		wavesurfer: 'vendor/wavesurfer.js/build/wavesurfer.min'
+		hammer: 'vendor/hammerjs/hammer.min'
 	},
 	shim: {
-		ember: {
-			deps:[ 'jquery', 'handlebars' ],
-			exports: 'Ember'
-		},
-		restless: {
-			deps:[ 'ember' ],
-			exports: 'RL'
-		},
-		wysiwyg: {
-			deps:[ 'jquery', 'jquery-hotkeys' ],
-			exports: 'wysiwyg'
-		},
-		bootstrap: { deps: [ 'jquery' ] },
-		wavesurfer: { exports: 'WaveSurfer' }
+		ember: { deps:[ 'jquery', 'handlebars' ], exports: 'Ember' },
+		data: { deps:[ 'ember' ] },
+		bootstrap: { deps: [ 'jquery' ] }
 	},
 	waitSeconds: 15,
 	noGlobal: false
 })
 
+window.HOSTNAME = 'https://api.rocktreff.de'
+
 define( 'bb', [
 
 	'ember',
-	'restless',
+	'data',
+	'auth',
 	'jquery',
 	'handlebars',
 	'templates',
 	'bootstrap',
 	'views/bootstrap',
-	'utils/prototypes'
+	'utils/prototypes',
+	'utils/ember'
 
 ], function ( Ember ) {
 
 	var BB = Ember.Application.create({
+		host: window.HOSTNAME,
 		// namespaces
-		Widgets: Ember.Namespace.create()
+		Widgets: Ember.Namespace.create(),
+		LOG_ACTIVE_GENERATION: false,
+		// activate logging of automatically generated routes and controllers
+		LOG_STACKTRACE_ON_DEPRECATION: false,
+		// activate logging of deprecated method or property usage
+		LOG_TRANSITIONS: false,
+		// activate basic logging of successful transitions
+		LOG_TRANSITIONS_INTERNAL: false,
+		// DOM element or jQuery-compatible selector string where your app will be rendered
+		LOG_VIEW_LOOKUPS: false,
 	})
 	// defer initialization until all modules are loaded
 	BB.deferReadiness()
@@ -86,7 +81,7 @@ require([
 	'app',
 
 	// store
-	'store/adapter',
+	'store/ds_adapter',
 
 	// models
 	'models/models',
@@ -95,6 +90,7 @@ require([
 	'helpers/handlebar_helpers',
 
 	// controllers
+	'controllers/controller',
 	'controllers/login',
 	'controllers/bid',
 	'controllers/audioplayer',
@@ -104,6 +100,7 @@ require([
 	'views/application',
 	'views/dropbox',
 	'views/audioplayer',
+	'views/components',
 
 	// routes
 	'routes/resources',

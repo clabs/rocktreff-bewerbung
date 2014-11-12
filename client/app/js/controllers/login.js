@@ -24,16 +24,10 @@ define([
 	'use strict';
 
 
-
 	BB.LoginController = Ember.ObjectController.extend({
 
-
-		tokenBinding: 'BB.RESTAdapter.accesstoken',
-		attemptedTransition: null,
 		email: '',
 		password: '',
-
-
 		reset: function () {
 			this.setProperties({
 				email: null,
@@ -41,21 +35,8 @@ define([
 			})
 		},
 
-		init: function () {
-			this.tokenChanged()
-			this._super()
-		},
 
-
-		tokenChanged: function ( token ) {
-			token = !token ? this.get( 'token' ) : token.token || token
-			if ( token ) {
-				var user = BB.User.find( token.user )
-				BB.set( 'user', user )
-			}
-		}.observes( 'token' ),
-
-
+		attemptedTransition: null,
 		transitionBack: function () {
 			var self = this
 			var attemptedTransition = this.get( 'attemptedTransition' )
@@ -70,64 +51,20 @@ define([
 		},
 
 
-		authLocal: function () {
-			var credentials = this.getProperties( 'email', 'password' )
-			return BB.auth.authenticate( credentials )
-		},
-
-
-		authFacebook: function () {
-			var url = 'https://www.facebook.com/dialog/oauth?&response_type=code&redirect_uri=https%3A%2F%2Fapi.rocktreff.de%2Fauth%2Ffacebook%2Fcallback&scope=email&client_id=528637637210887&type=web_server&display=popup'
-			return this.oauth( url )
-		},
-
-
-		authTwitter: function () {
-			var url = BB.get( 'hostname' ) + '/auth/twitter/callback'
-			return this.oauth( url )
-		},
-
-
-		oauth: function ( url ) {
-			return new Ember.RSVP.Promise( function ( fulfill, reject ) {
-				var adapter = BB.Client.get( 'adapter' )
-				var origin = adapter.get( 'url' )
-				window.addEventListener( 'message', function receiveToken ( event ) {
-					if ( event.origin !== origin ) return
-					try {
-						var token = JSON.parse( event.data )
-						BB.auth.authenticateWithToken( token ).then( function () {
-							fulfill( token )
-						})
-					} catch ( e ) {
-						reject( e )
-					} finally {
-						window.removeEventListener( 'message', receiveToken )
-					}
-				}, false )
-				window.open( url, 'authwindow', 'centerscreen=true,width=445,height=480,menubar=no' )
-			})
-		},
-
 
 		actions: {
 			auth: function ( strategy ) {
-				var self = this
-				var transitionBack = function () {
-					self.transitionBack()
-				}
-				switch ( strategy ) {
-					case 'local':
-						return this.authLocal().then( BB.setupUser ).then( transitionBack )
-					case 'facebook':
-						return this.authFacebook().then( BB.setupUser ).then( transitionBack )
-					case 'twitter':
-						return this.authTwitter().then( BB.setupUser ).then( transitionBack )
-					default:
-						return new Ember.RSVP.Promise( function ( _, reject ) {
-							reject( new Error( 'unknown auth strategy' ) )
-						})
-				}
+				var auth = this.get( 'auth' )
+				var credentials = this.getProperties( 'email', 'password' )
+				var transitionBack = this.transitionBack.bind( this )
+				if ( strategy === 'local' )
+					return auth.authenticateViaLocal( credentials ).then( transitionBack )
+				else if ( strategy === 'facebook' )
+					return auth.authenticateViaFacebook().then( transitionBack )
+				else
+					return new Ember.RSVP.Promise( function ( _, reject ) {
+						reject( new Ember.Error( 'unknown auth strategy' ) )
+					})
 			}
 		}
 
@@ -144,6 +81,7 @@ define([
 		password: null,
 		password_repeat: null,
 		privacy_checked: false,
+		servermsg: null,
 
 		init: function () {
 			this.reset()
@@ -183,26 +121,8 @@ define([
 			return !this.get( 'password_valid' ) ||
 			       !this.get( 'email_valid' ) ||
 			       !this.get( 'privacy_checked' )
-		}.property( 'password_valid', 'email_valid', 'privacy_checked' ),
+		}.property( 'password_valid', 'email_valid', 'privacy_checked' )
 
-		actions: {
-			signup: function () {
-				var credentials = this.getProperties( 'email', 'password' )
-				var user = BB.User.create({
-					name: '',
-					provider: 'local',
-					role: '',
-					email: credentials.email,
-					password: credentials.password
-				}).saveRecord()
-				.then( function () {
-					return BB.auth.authenticate( credentials )
-				})
-				.then( function () {
-					BB.__container__.lookup( 'router:main' ).transitionTo( 'home' )
-				})
-			}
-		}
 	})
 
 

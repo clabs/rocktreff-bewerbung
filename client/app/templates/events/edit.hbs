@@ -1,22 +1,41 @@
-<form role="form" {{action "save" model on="submit"}}>
-	<div class="form-group">
-		<label for="exampleInputEmail1">Event Name</label>
-		{{input value=model.name placeholder="ROCKTREFF xxxx"}}
-	</div>
-	<div class="form-group">
-		<label for="exampleInputPassword1">Bewerbungsfrist</label>
-		<div class="row">
-			<div class="col-lg-6">
-				<label>von</label>
-				{{input type="datetime-local" value=model.opening_date}}
-			</div>
-			<div class="col-lg-6">
-				<label>bis {{model.closing_date}}</label>
-				{{input type="datetime-local" value=model.closing_date}}
-			</div>
+<h2>Allgemeines</h2>
+<div class="form-group">
+	<label>Name</label>
+	{{input value=model.name placeholder="ROCKTREFF xxxx"}}
+</div>
+
+<h2>Datum</h2>
+<div class="form-group">
+	<label for="exampleInputPassword1">Bewerbungsfrist</label>
+	<div class="row">
+		<div class="col-lg-6">
+			<label>von</label>
+			{{input type="datetime-local" value=model.opening_date}}
+		</div>
+		<div class="col-lg-6">
+			<label>bis {{model.closing_date}}</label>
+			{{input type="datetime-local" value=model.closing_date}}
 		</div>
 	</div>
-	<div class="pull-right">
+</div>
+
+<h2>Tracks</h2>
+<form {{action "addTrack" on="submit"}}>
+	<ul>
+		{{#each tracks}}
+		<li>{{name}} <button {{action "removeTrack" this}} class="btn btn-default">{{icon "trash-o"}}</button></li>
+		{{/each}}
+	</ul>
+	<div class="input-group">
+		{{input placeholder="Name der Tracks" valueBinding="trackname"}}
+		<span class="input-group-btn">
+			<button type="submit" class="btn btn-default">Add</button>
+		</span>
+	</div>
+</form>
+
+<form {{action "save" model on="submit"}}>
+	<div class="pull-right" style="margin-top:4em">
 		<button {{action "abort" model}} class="btn btn-default">Abbrechen</button>
 		<button type="submit" class="btn btn-primary">Speichern</button>
 	</div>

@@ -1,11 +1,11 @@
 <div class="xhrprogress"><span>
-
-	{{#each content}}
+	{{#each model}}
+	{{#if upload}}
 		<div class="progress progress-striped active">
 			<div class="progress-bar" role="progressbar" {{bind-attr aria-valuenow=percent style=percentStyle}} aria-valuemin="0" aria-valuemax="100">
 				<span>{{msg}}</span>
 			</div>
 		</div>
+	{{/if}}
 	{{/each}}
-
 </span></div>

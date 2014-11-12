@@ -1,0 +1,87 @@
+<div class="row">
+	<div class="col-md-4 col-md-push-8 col-xs-12">
+		<h2>
+			{{view BB.StarRatingView}}
+		</h2>
+	</div>
+	<div class="col-md-8 col-md-pull-4 col-xs-12">
+		<h2>
+			{{#link-to 'bids'}}{{icon "chevron-circle-left"}}{{/link-to}}&nbsp;
+			{{unbound content.bandname}}<br>{{controller.controllers.lightbox.picture}}
+		</h2>
+	</div>
+</div>
+<div class="row">
+	<div class="col-md-6">
+		<p class="facts">
+			<span class="fact">
+				<span class="type">{{icon "music"}} Style:</span> {{unbound content.style}}
+			</span>&nbsp;
+			<span class="fact">
+				<span class="type">{{icon "globe"}} Region:</span> {{unbound content.region.name}}
+			</span>&nbsp;
+			<span class="fact">
+				<span class="type">{{icon "tag"}} Track:</span> {{content.track.name}}
+			</span>&nbsp;
+			{{#if content.student}}
+			<span class="fact student">
+				{{icon "smile-o"}} Schülerband</small>
+			</span>
+			{{/if}}
+		</p>
+		<p>
+			{{icon "quote-left"}}
+			{{#if content.letter}}
+				{{unbound content.letter}}
+			{{else}}
+				kein Text eingegeben
+			{{/if}}
+		</p>
+		<h3 class="hidden-xs">Dokumente</h3>
+		<p class="doclist hidden-xs">
+			{{#each content.documents}}
+				<a href="{{unbound url}}" target="_blank">{{icon "file"}} {{unbound filename}}</a><br>
+			{{/each}}
+		</p>
+		<h3 class="hidden-xs">Links</h3>
+		<p class="linklist hidden-xs">
+			{{#if content.url}}
+				<a href="{{unbound url}}" target="_blank">{{icon "home"}} {{unbound url}}</a><br>
+			{{/if}}
+			{{#if content.fb}}
+				<a href="{{unbound fb}}" target="_blank">{{icon "facebook-square"}} {{unbound fb}}</a><br>
+			{{/if}}
+			{{#each content.youtube}}
+				<a href="{{unbound url}}" target="_blank">{{icon "video-camera"}} {{unbound url}}</a><br>
+			{{/each}}
+		</p>
+		<p>
+			<small>
+				{{icon "calendar"}} Bewerbung vom: {{calendar content.created}}
+			</small>
+		</p>
+		{{#if auth.user.isAdmin}}
+		<div class="bs-callout">
+			Track:
+				{{view Ember.Select viewName="select"
+					content=controller.tracks
+					optionValuePath="content.id"
+					optionLabelPath="content.name"
+					selectionBinding="content.track"
+					prompt="Track auswählen"
+				}}<br>
+			{{icon "user"}} Kontakt: {{unbound content.contact}} {{#if content.managed}}{{icon "exclamation-triangle"}}{{/if}}<br>
+			{{icon "envelope"}} Email: {{unbound content.mail}}<br>
+			{{icon "phone"}} Phone: {{unbound content.phone}}
+		</div>
+		{{/if}}
+	</div>
+	<div class="col-md-6">
+		{{view BB.BandPictureView}}
+		<ul class="songs">
+		{{#each content.audio}}
+			<li {{action "playaudio" this}}>{{icon "play"}} {{unbound filename}}</li>
+		{{/each}}
+	</ul>
+	</div>
+</div>

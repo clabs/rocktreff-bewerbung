@@ -22,14 +22,71 @@ define([
 	'use strict';
 
 
+	BB.BidsController = Ember.ArrayController.extend({
+
+		track: function () {
+			var bid = this.get( 'content.0' )
+			if ( bid ) {
+				return bid.get( 'track' )
+			}
+		}.property( 'content' )
+
+	})
+
+
+	BB.BidDetailsController = Ember.ObjectController.extend({
+
+		needs: [ 'lightbox', 'audioplayer' ],
+
+		tracks: [],
+		_lasttrack: null,
+		trackChanged: function () {
+			var bid = this.get( 'content' )
+			var track = bid.get( 'track' )
+			if ( track !== this.get( '_lasttrack' ) ) {
+				this.set( '_lasttrack', track )
+				bid.save()
+			}
+		}.observes( 'content.track' ),
+
+		ratingIsNone: Ember.computed.equal( 'content.vote.rating', 0 ),
+		ratingIsOne: Ember.computed.equal( 'content.vote.rating', 1 ),
+		ratingIsTwo: Ember.computed.equal( 'content.vote.rating', 2 ),
+		ratingIsThree: Ember.computed.equal( 'content.vote.rating', 3 ),
+		ratingIsFour: Ember.computed.equal( 'content.vote.rating', 4 ),
+		ratingIsFive: Ember.computed.equal( 'content.vote.rating', 5 ),
+
+		actions: {
+			rate: function ( rating ) {
+				var bid = this.get( 'content' )
+				var vote = bid.get( 'vote' )
+				if ( !vote ) {
+					vote = this.store.createRecord( 'vote', {
+						user: this.get( 'auth.user' ),
+						bid: bid,
+						rating: rating
+					})
+					vote.save().then( function () {
+						bid.get( 'votes' ).addObject( vote )
+					})
+				} else {
+					vote.set( 'rating', rating ).save()
+				}
+			},
+			playaudio: function ( media ) {
+				this.get( 'controllers.audioplayer' ).load( media )
+			},
+			showDetails: function ( bid ) {
+				this.transitionToRoute( 'BidDetails', bid )
+			}
+		}
+	})
+
 
 	BB.BidController = Ember.ObjectController.extend({
 
 		needs: [ 'audioplayer' ],
-
-
 		youtubelink: '',
-
 
 
 		phonevalid: function () {
@@ -74,11 +131,11 @@ define([
 
 
 		autoSave: function () {
-			this.save()
+			console.log( 'autosave disabled' ) // this.save()
 		}.debounce( 3000 ).observes( 'content.isDirty' ),
 
 		save: function () {
-			this.get( 'content' ).saveRecord()
+			this.get( 'content' ).save()
 		},
 
 		actions: {
@@ -91,6 +148,7 @@ define([
 			mediaremove: function ( mediaitem ) {
 				var bid = this.get( 'content' )
 				mediaitem.deleteRecord()
+				mediaitem.save()
 					.then( function () {
 						bid.get( 'media' ).removeObject( mediaitem )
 						Ember.run.later( bid, bid.reloadRecord, 100 )
@@ -110,11 +168,10 @@ define([
 					filename: file.name,
 					filesize: file.size,
 					url: file.url,
-					data: file.data
+					blob: file.data
 				}
 				mediaitem.setProperties( properties )
-				mediaitem
-					.saveRecord()
+				mediaitem.save()
 					.then( function () {
 						Ember.run.later( bid, bid.reloadRecord, 100 )
 					})
@@ -123,17 +180,16 @@ define([
 			mediacreate: function ( file ) {
 				var bid = this.get( 'content' )
 				var properties = {
-					bid: bid.get( 'id' ),
+					bid: bid,
 					type: file.mediatype,
 					mimetype: file.type,
 					filename: file.name,
 					filesize: file.size,
 					url: file.url,
-					data: file.data
+					blob: file.data
 				}
-				var mediaitem = BB.Media.create( properties )
-				mediaitem
-					.saveRecord()
+				var mediaitem = this.store.createRecord( 'media', properties )
+				mediaitem.save()
 					.then(function () {
 						bid.get( 'media' ).addObject( mediaitem )
 						Ember.run.later( bid, bid.reloadRecord, 100 )

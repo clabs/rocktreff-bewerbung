@@ -1,67 +1,111 @@
-<nav class="navbar navbar-fixed-top navbar-inverse">
-	{{render "xhrprogress"}}
-	<div class="container">
-		<div>
-			{{#link-to 'home' classNames="navbar-brand"}}{{/link-to}}
-		</div>
-		<div>
-			{{#if BB.userExists}}
-				<ul class="nav navbar-nav">
-					{{#if BB.user.isNeither}}
-					<li>
-						{{#if BB.currentBid}}
-							{{#link-to 'bid' BB.currentBid}} Meine Bewerbung{{/link-to}}
-						{{else}}
-							{{#link-to 'NewBid'}} Meine Bewerbung{{/link-to}}
-						{{/if}}
-					</li>
-					{{else}}
-					<li>
-						{{#link-to 'bids'}}Bewerbungen{{/link-to}}
-					</li>
-					{{/if}}
-					{{#if BB.user.isAdmin}}
-					<li class="dropdown">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">Administration {{icon "caret-down"}}</a>
-						<ul class="dropdown-menu">
-							<li>{{#link-to 'users'}}{{icon "group"}} Users{{/link-to}}</li>
-							{{!-- <li>{{#link-to 'events'}}{{icon "heart"}} Events{{/link-to}}</li>
-							<li><a href="#">{{icon "globe"}} Regions</a></li> --}}
-						</ul>
-					</li>
-					{{/if}}
-				</ul>
-			{{/if}}
-		</div>
-		<ul class="nav navbar-nav navbar-right">
-			<li>
-				{{render audioplayer}}
-			</li>
-			{{#if BB.userExists}}
-			<li>
-				<a href="#" data-toggle="dropdown">
-				{{#if BB.user.picture}}
-					<img src="{{unbound BB.user.picture}}" width="24">
-				{{else}}
-					{{gravatar BB.user.email size="24"}}
+{{render "xhrprogress"}}
+<div class="container">
+	<!-- Brand and toggle get grouped for better mobile display -->
+	<div class="navbar-header">
+		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navmenuitem">
+			<span class="sr-only">Toggle navigation</span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+		</button>
+		{{#link-to 'home' classNames="navbar-brand"}}{{/link-to}}
+	</div>
+
+
+<!-- Collect the nav links, forms, and other content for toggling -->
+<div class="collapse navbar-collapse" id="navmenuitem">
+  <ul class="nav navbar-nav">
+  	{{#if auth.signedIn}}
+	{{#if auth.user.isNeither}}
+	<li>
+		{{#if BB.currentBid}}
+			{{#link-to 'bid' BB.currentBid}} Meine Bewerbung{{/link-to}}
+		{{else}}
+			{{#link-to 'NewBid'}} Meine Bewerbung{{/link-to}}
+		{{/if}}
+	</li>
+	{{else}}
+	<li>
+		<a href="#" data-toggle="dropdown">
+			{{icon "th-large"}} Bewerbungen
+			{{icon "caret-down"}}
+		</a>
+		<ul class="dropdown-menu">
+			{{#each BB.currentEvent.tracks}}
+				{{#if visible}}
+					<li>{{#link-to 'bids' this.id}}{{icon "tag"}} {{unbound name}}{{/link-to}}</li>
 				{{/if}}
-				{{BB.user.displayName}} {{icon "caret-down"}}
-				</a>
-				<ul class="dropdown-menu">
-					{{#if BB.user.isNeither}}
-						{{#if BB.currentBid}}
-						<li>{{#link-to 'bid' BB.currentBid}} Meine aktuelle Bewerbung{{/link-to}}
-						<li class="divider"></li>
-						{{/if}}
-					{{/if}}
-					<li><a {{action logout}} href="#">{{icon "power-off"}} Abmelden</a></li>
-				</ul>
-			</li>
-			{{else}}
-			<li>
-				{{#link-to "login"}}{{icon "sign-in"}} Anmelden{{/link-to}}
-			</li>
+			{{/each}}
+			{{#if auth.user.isAdmin}}
+				<li class="divider"></li>
+				<li role="presentation" class="dropdown-header">Versteckte Tracks</li>
+				{{#each BB.currentEvent.tracks}}
+					{{#unless visible}}
+						<li>{{#link-to 'bids' this.id}}{{icon "tag"}} {{unbound name}}{{/link-to}}</li>
+					{{/unless}}
+				{{/each}}
+				<li class="divider"></li>
+				<li role="presentation" class="dropdown-header">Administration</li>
+				<li>{{#link-to 'analysis'}}{{icon "cog"}} Auswertung{{/link-to}}</li>
+				<li>{{#link-to 'export'}}{{icon "download"}} Export{{/link-to}}</li>
 			{{/if}}
 		</ul>
+	</li>
+	{{/if}}
+	{{/if}}
+  </ul>
+  <ul class="nav navbar-nav navbar-right">
+	{{#if auth.signedIn}}
+		<li>
+			<a href="#" data-toggle="dropdown">
+			{{#if auth.user.picture}}
+				<img src="{{unbound auth.user.picture}}" width="24">
+			{{else}}
+				{{gravatar auth.user.email size="24"}}
+			{{/if}}
+			{{auth.user.displayName}} {{icon "caret-down"}}
+			</a>
+			<ul class="dropdown-menu">
+				{{#if auth.user.isAdmin}}
+					<li role="presentation" class="dropdown-header">Administration</li>
+					<li>{{#link-to 'users'}}{{icon "group"}} Users{{/link-to}}</li>
+					<li>{{#link-to 'events'}}{{icon "heart"}} Events{{/link-to}}</li>
+					<li class="divider"></li>
+				{{/if}}
+				{{#if auth.user.isNeither}}
+					{{#if BB.currentBid}}
+					<li>{{#link-to 'bid' BB.currentBid}} Meine aktuelle Bewerbung{{/link-to}}
+					<li class="divider"></li>
+					{{/if}}
+				{{/if}}
+				<li><a {{action "logout"}} href="#">{{icon "power-off"}} Abmelden</a></li>
+			</ul>
+		</li>
+		{{else}}
+		<li>
+			{{#link-to "login"}}{{icon "sign-in"}} Anmelden{{/link-to}}
+		</li>
+		{{/if}}
+	</ul>
+	<div class="nav navbar-nav navbar-right hidden-xs">
+		{{render "audioplayer"}}
 	</div>
-</nav>
+</div>
+
+
+{{!--
+
+	<div>
+		{{#if auth.signedIn}}
+			<ul class="nav navbar-nav">
+
+			</ul>
+		{{/if}}
+	</div>
+	<ul class="nav navbar-nav navbar-right">
+		<li>
+
+		</li>
+
+	</ul> --}}
+</div>

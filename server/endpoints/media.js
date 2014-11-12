@@ -34,7 +34,7 @@ exports = module.exports = function ( app ) {
 		return function ( media ) {
 			var path = app.get( 'upload-directory' ) + '/' + media.id
 			if ( !dataurl ) return media
-			return new Promise( function ( fulfill, reject) {
+			return new Promise( function ( fulfill, reject ) {
 				var data = dataurl.replace( /^data:.*?;base64,/, '' )
 				fs.writeFile( path, data, 'base64', function ( err ) {
 					if ( err ) reject( err )
@@ -45,7 +45,7 @@ exports = module.exports = function ( app ) {
 	}
 	var deleteFile = function ( media ) {
 		var path = app.get( 'upload-directory' ) + '/' + media.id
-		return new Promise( function ( fulfill, reject) {
+		return new Promise( function ( fulfill, reject ) {
 			fs.unlink( path, function ( err ) {
 				if ( err ) reject( err )
 				else fulfill( media )
@@ -161,8 +161,8 @@ exports = module.exports = function ( app ) {
 		},
 
 		post: function ( req, res ) {
-			var data = req.body.data
-			delete req.body.data
+			var blob = req.body.blob
+			delete req.body.blob
 
 			models.bid.get( req.body.bid )
 				.then( function ( bid ) {
@@ -175,7 +175,7 @@ exports = module.exports = function ( app ) {
 				.then( function ( media ) {
 					return models.media.create( media )
 				})
-				.then( saveFile( data ) )
+				.then( saveFile( blob ) )
 				.then( processMedia )
 				.then( function ( media ) {
 					return models.media.set( media.id, media )
@@ -188,8 +188,8 @@ exports = module.exports = function ( app ) {
 		put: function ( req, res ) {
 			var id = req.params.id
 			req.body.id = id
-			var data = req.body.data
-			delete req.body.data
+			var blob = req.body.blob
+			delete req.body.blob
 
 			if ( !models.bid.has( req.body.bid ) )
 				return res.status( 404 ).send()
@@ -197,7 +197,7 @@ exports = module.exports = function ( app ) {
 				return res.status( 400 ).send()
 
 			models.media.save( req.body )
-				.then( saveFile( data ) )
+				.then( saveFile( blob ) )
 				.then( processMedia )
 				.then( function ( media ) {
 					return models.media.save( media )

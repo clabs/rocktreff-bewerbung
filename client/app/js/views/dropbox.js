@@ -89,7 +89,7 @@ define([
 			return this._file( file )
 				// read as data url
 				.then( this.readAsDataURL, function ( file ) {
-					console.error( 'given file does not match rules', file )
+					window.alert( 'Given file does not match rules.', file )
 				})
 				.then( function ( url ) {
 					file.data = url
@@ -97,7 +97,7 @@ define([
 					self.get( 'controller' ).send( mediatype, file )
 					return file
 				}, function ( file ) {
-					console.error( 'could not read file as data url', file )
+					window.alert( 'Could not read file as data url.', file )
 				})
 				.then( function ( file ) {
 					return self.update( file )

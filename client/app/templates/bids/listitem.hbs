@@ -1,0 +1,8 @@
+{{#link-to "BidDetails" this}}
+<div class="name">{{unbound bandname}}</div><br>
+<div class="region">{{region.name}}</div>
+<div class="icons">
+	{{#if student}}<span>{{icon "circle"}}</span>{{/if}}
+	{{#if vote}}<span>{{icon "star"}} {{vote.rating}}</span>{{/if}}
+</div>
+{{/link-to}}

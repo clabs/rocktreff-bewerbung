@@ -16,15 +16,29 @@ define([
 
 	'bb'
 
-], function ( BB ) {
+], function ( BB ) { 'use strict';
 
-	'use strict';
+	BB.BidListitemView = Ember.View.extend({
 
+		tagName: 'li',
 
-	BB.XhrprogressController = Ember.ArrayController.extend({
-		contentBinding: 'BB.requestQueue'
+		classNames: [ 'pull-left' ],
+		attributeBindings: [ 'style' ],
+
+		style: function () {
+			var url = this.get( 'content.picture.url' ) || this.get( 'content.logo.url' )
+			return url ? 'background-image:url('+url+'_small)' : ''
+		}.property( 'content.picture', 'content.logo' ),
+
+		layoutName: 'bids/listitem',
+
+		eventManager: {
+			click: function ( evt, view ) {
+				var bid = view.get( 'content' )
+				view.send( 'showDetails', bid  )
+			}
+		}
+
 	})
-
-
 
 })

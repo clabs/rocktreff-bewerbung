@@ -1,0 +1,17 @@
+<div class="container">
+	<h1>Auswertung</h1>
+	{{#each byTracks}}
+		{{#if track.visible}}
+		<h2> {{track.name}} </h2>
+		{{#collection tagName="ol" contentBinding="values.arrangedContent"}}
+			{{unbound bandname}}
+			<span title="{{unbound all_votes}}" data-toggle="tooltip" data-placement="top" class="gelb">
+				{{icon "signal"}} {{score_formatted}}
+			</span>
+			<small>{{icon "globe"}} {{region.name}}</small>
+			{{#if student}}{{icon "circle"}}{{/if}}
+			| <small>{{unbound contact}} {{unbound mail}} {{unbound phone}}</small>
+		{{/collection}}
+		{{/if}}
+	{{/each}}
+</div>

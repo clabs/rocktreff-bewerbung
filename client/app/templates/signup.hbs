@@ -2,7 +2,7 @@
 	<div class="container" style="max-width:750px">
 		<h1 class="gelb">Anmelden</h1>
 		<div class="row">
-			<form class="form-horizontal" role="form" {{action 'signup' on="sumbit"}}>
+			<form class="form-horizontal" role="form" {{action "signup" on="sumbit"}}>
 				<div class="form-group">
 					<div {{bind-attr class=":col-lg-6 email_valid:has-success email_invalid:has-error" }}>
 						{{input value=email type="email" placeholder="Email"}}
@@ -29,10 +29,15 @@
 						</label>
 					</div>
 				</div>
+				{{#if controller.servermsg }}
+				<div class="alert alert-danger" role="alert">
+					{{ controller.servermsg }}
+				</div>
+				{{/if}}
 				<div class="form-group">
 					<div class="col-lg-12" style="text-align:right">
 						{{#link-to 'login' classNames="btn btn-default"}} {{icon "times"}} Abbrechen {{/link-to}}
-						<button {{action 'signup'}} class="btn btn-primary" {{bindAttr disabled="incomplete"}}>
+						<button {{action "signup"}} class="btn btn-primary" {{bindAttr disabled="incomplete"}}>
 							{{icon "pencil"}} Anmelden
 						</button>
 					</div>

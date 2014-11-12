@@ -1,18 +1,18 @@
-<div class="row">
-	<div class="container">
-		<h2>Bewerbungen</h2>
-		<ul>
-		{{#each content}}
-		<li>
-			{{#link-to 'bid' this}}
-				{{#if bandname}}
-					{{bandname}}
-				{{else}}
-					…
-				{{/if}}
-			{{/link-to}}
-		</li>
-		{{/each}}
-		</ul>
+<div class="left">
+	<div class="container list">
+		<div class="row">
+			<h2>
+				{{track.name}}
+				 <span class="badge">{{content.length}}</span>
+			</h2>
+			{{collection contentBinding="content" tagName="ul" itemViewClass="BB.BidListitemView"}}
+		</div>
+	</div>
+</div>
+<div class="right">
+	<div class="row">
+		<div class="container details">
+			{{outlet}}
+		</div>
 	</div>
 </div>

@@ -32,7 +32,7 @@ define([
 	Ember.Handlebars.registerBoundHelper( 'gravatar', function ( email, options ) {
 		var hash = md5( email || 'some@one.com' )
 		var size = options.hash.size || 32
-		var img = '<img src="http://gravatar.com/avatar/%@?s=%@&d=retro" alt="Gravatar">'.fmt( hash, size )
+		var img = '<img src="http://gravatar.com/avatar/%@?s=%@&d=mm" alt="Gravatar">'.fmt( hash, size )
 		return new Ember.Handlebars.SafeString( img )
 	})
 
@@ -40,5 +40,30 @@ define([
 		var date = new Date( datestring )
 		return moment( date ).fromNow()
 	})
+
+	Ember.Handlebars.registerBoundHelper( 'calendar', function ( datestring ) {
+		var date = new Date( datestring )
+		return moment( date ).calendar()
+	})
+
+
+	Ember.Handlebars.registerHelper('group', function(options) {
+	  var data = options.data,
+		  fn   = options.fn,
+		  view = data.view,
+		  childView;
+
+	  childView = view.createChildView(Ember._MetamorphView, {
+		context: view.get( 'context' ),
+
+		template: function(context, options) {
+		  options.data.insideGroup = true;
+		  return fn(context, options);
+		}
+	  })
+
+	  view.appendChild(childView)
+	})
+
 
 })

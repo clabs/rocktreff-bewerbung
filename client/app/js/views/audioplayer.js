@@ -26,6 +26,10 @@ define([
 
 		templateName: 'audioplayer_controls',
 
+		progresswidth: function () {
+			return 'width: ' + this.get( 'controller.progress' ) + '%'
+		}.property( 'controller.progress' ),
+
 		didInsertElement: function () {
 			var self = this
 			var controller = this.get( 'controller' )
@@ -48,6 +52,12 @@ define([
 			this.$().find( '.audioplayer-stop' )
 				.on( 'click', function ( evt ) {
 					controller.send( 'stop' )
+				})
+			this.$().find( '.progress' )
+				.on( 'click', function ( evt ) {
+					var x = evt.offsetX / evt.target.clientWidth
+					controller.send( 'seek', x )
+					return false
 				})
 		}
 

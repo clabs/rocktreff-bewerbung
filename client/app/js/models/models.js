@@ -14,123 +14,179 @@
  */
 define([
 
-	'bb',
-	'restless'
+	'bb'
 
-], function ( BB, RL ) {
+], function ( BB ) { 'use strict';
 
-	'use strict';
+	var DS = window.DS
 
-	BB.User = RL.Model.extend({
+	BB.ISODateTransform = DS.Transform.extend({
+		deserialize: function ( datestring ) {
+			return new Date( datestring )
+		},
+		serialize: function ( obj ) {
+			if ( typeof obj === 'string' )
+				return ( new Date( obj ) ).toISOString()
+			if ( typeof obj === 'date' )
+				return obj.toISOString()
+			if ( obj !== undefined )
+				return obj.toString()
+		}
+	})
 
-		name: RL.attr( 'string', { defaultValue: '' } ),
-		password: RL.attr( 'string' ),
-		email: RL.attr( 'string' ),
-		provider: RL.attr( 'string' ),
-		role: RL.attr( 'string' ),
-		picture: RL.attr( 'string', { readOnly: true } ),
+
+	BB.User = DS.Model.extend({
+		name: DS.attr( 'string' ),
+		password: DS.attr( 'string' ),
+		email: DS.attr( 'string' ),
+		provider: DS.attr( 'string' ),
+		role: DS.attr( 'string' ),
+		picture: DS.attr( 'string' ),
 
 		displayName: function () {
-			return this.get( 'name' ).trim() || this.get( 'email' )
+			try {
+				return this.get( 'name' ).trim() || this.get( 'email' )
+			} catch (e) {
+				return ''
+			}
 		}.property( 'name', 'email' ),
 
 		isMe: function () {
-			return this.get( 'id' ) === BB.get( 'user.id' )
-		}.property( 'BB.user.id' ),
-
-		isAdmin: function () {
-			return this.get( 'role' ) === 'admin'
-		}.property( 'role' ),
-
-		isCrew: function () {
-			return this.get( 'role' ) === 'crew'
-		}.property( 'role' ),
-
-		isNeither: function () {
-			return this.get( 'role' ) === ''
-		}.property( 'role' ),
-
-		viaFacebook: function () {
-			return this.get( 'provider' ) === 'facebook'
-		}.property( 'provider' )
-
+			return this.get( 'id' ) === BB.get( 'auth.userId' )
+		}.property( 'BB.auth.userId' ),
+		isAdmin: Ember.computed.equal( 'role', 'admin' ),
+		isCrew: Ember.computed.equal( 'role', 'crew' ),
+		isNeither: Ember.computed.equal( 'role', '' )
 	})
 
 
-	BB.Event = RL.Model.extend({
-		name: RL.attr( 'string' ),
-		opening_date: RL.attr( 'isodate', { defaultValue: new Date() } ),
-		closing_date: RL.attr( 'isodate' )
+	BB.Event = DS.Model.extend({
+		name: DS.attr( 'string' ),
+		opening_date: DS.attr( 'ISODate' ),
+		closing_date: DS.attr( 'ISODate' ),
+		tracks: DS.hasMany( 'track', { inverse: 'event' } )
 	})
 
 
-	BB.Region = RL.Model.extend({
-		name: RL.attr( 'string' )
+	BB.Track = DS.Model.extend({
+		name: DS.attr( 'string' ),
+		event: DS.belongsTo( 'event' ),
+		visible: DS.attr( 'boolean' )
 	})
 
 
-	BB.Media = RL.Model.extend({
-		bid: RL.attr( 'string' ),
-		type: RL.attr( 'string' ),
-		url: RL.attr( 'string' ),
-		meta: RL.attr( 'string' ),
-		mimetype: RL.attr( 'string' ),
-		filename: RL.attr( 'string' ),
-		filesize: RL.attr( 'number' ),
-		data: RL.attr( 'string' )
+	BB.Region = DS.Model.extend({
+		name: DS.attr( 'string' )
 	})
 
 
-	BB.Vote = RL.Model.extend({
-		user: RL.attr( 'string' ),
-		bid: RL.attr( 'string' ),
-		rating: RL.attr( 'number' )
+	BB.Media = DS.Model.extend({
+		bid: DS.belongsTo( 'bid', { async: true } ),
+		type: DS.attr( 'string' ),
+		url: DS.attr( 'string' ),
+		meta: DS.attr( 'string' ),
+		mimetype: DS.attr( 'string' ),
+		filename: DS.attr( 'string' ),
+		filesize: DS.attr( 'number' ),
+		blob: DS.attr( 'string' )
 	})
 
 
-	BB.Note = RL.Model.extend({
-		user: RL.attr( 'string' ),
-		bid: RL.attr( 'string' ),
-		type: RL.attr( 'string' ),
-		text: RL.attr( 'string' )
+	BB.Vote = DS.Model.extend({
+		user: DS.belongsTo( 'user' ),
+		bid: DS.belongsTo( 'bid' ),
+		rating: DS.attr( 'number' )
 	})
 
 
-	BB.Bid = RL.Model.extend({
-		user: RL.attr( 'string' ),
-		event: RL.attr( 'string' ),
-		region: RL.attr( 'string' ),
-		bandname: RL.attr( 'string' ),
-		style: RL.attr( 'string' ),
-		student: RL.attr( 'boolean' ),
-		managed: RL.attr( 'boolean' ),
-		letter: RL.attr( 'string' ),
-		contact: RL.attr( 'string' ),
-		phone: RL.attr( 'string' ),
-		mail: RL.attr( 'string' ),
-		url: RL.attr( 'string' ),
-		fb: RL.attr( 'string' ),
-		media: RL.hasMany( 'BB.Media', { readOnly: true } ),
-		votes: RL.hasMany( 'BB.Vote', { readOnly: true } ),
-		notes: RL.hasMany( 'BB.Note', { readOnly: true } ),
+	BB.Note = DS.Model.extend({
+		user: DS.belongsTo( 'user' ),
+		bid: DS.belongsTo( 'bid' ),
+		type: DS.attr( 'string' ),
+		text: DS.attr( 'string' )
+	})
+
+
+	BB.Bid = DS.Model.extend({
+		created: DS.attr( 'ISODate' ),
+		modified: DS.attr( 'ISODate' ),
+		user: DS.belongsTo( 'user' ),
+		event: DS.belongsTo( 'event', { async: true } ),
+		track: DS.belongsTo( 'track' ),
+		region: DS.belongsTo( 'region', { async: true } ),
+		bandname: DS.attr( 'string' ),
+		style: DS.attr( 'string' ),
+		student: DS.attr( 'boolean' ),
+		managed: DS.attr( 'boolean' ),
+		letter: DS.attr( 'string' ),
+		contact: DS.attr( 'string' ),
+		phone: DS.attr( 'string' ),
+		mail: DS.attr( 'string' ),
+		url: DS.attr( 'string' ),
+		fb: DS.attr( 'string' ),
+		media: DS.hasMany( 'media', { inverse: 'bid' }  ),
+		votes: DS.hasMany( 'vote', { inverse: 'bid' }  ),
+		notes: DS.hasMany( 'note', { inverse: 'bid' }  ),
 
 		// computed lists & stuff
-		picture: null,
-		logo: null,
-		documents: null,
-		audio: null,
-		youtube: null,
-		mediaChanged: function () {
-			var media = this.get( 'media.content' )
-			if ( !media ) return
-			this.setProperties({
-				picture:   media.filterBy( 'type', 'picture' ).get( 'firstObject' ),
-				logo:      media.filterBy( 'type', 'logo' ).get( 'firstObject' ),
-				documents: media.filterBy( 'type', 'document' ) || Ember.A(),
-				audio:     media.filterBy( 'type', 'audio' ) || Ember.A(),
-				youtube:   media.filterBy( 'type', 'youtube' ) || Ember.A()
-			})
-		}.observes( 'media.content.@each.isLoaded', 'media.content.length', 'media.content.[]' )
+		vote: function () {
+			var user = BB.__container__.lookup('controller:bids').get( 'auth.user' )
+			return this.get( 'votes.content' ).filterBy( 'user', user ).get( 'firstObject' )
+		}.property( 'votes.content.length' ),
+
+		all_votes: function () {
+			return this.get( 'votes' )
+				.mapBy( 'rating' )
+				.reduce( function ( list, vote ) {
+					if ( vote in list )
+						list[ vote ] += 1
+					else
+						list[ vote ] = 1
+					return list
+				}, [] )
+				.map( function ( sum, index ) {
+					var stars = ''
+					for ( var i = 0; i < index; i += 1 )
+						stars += '\u2605'
+					return sum + ' ' + stars
+				})
+				.join( ', ' )
+		}.property( 'votes.content.length' ),
+
+		score: function () {
+			var votes = this.get( 'votes' ).mapBy( 'rating' )
+			var sum = votes.reduce( function ( a, b ) { return a + b }, 0 )
+			var num = votes.length
+			return num > 0 ? sum / num : 0
+		}.property( 'votes.content.length' ),
+
+		score_formatted: function () {
+			return this.get( 'score' ).toFixed( 3 )
+		}.property( 'score' ),
+
+		num_votes: function () {
+			return this.get( 'votes.content.length' )
+		}.property( 'votes.content.length' ),
+
+		picture: function () {
+			return this.get( 'media.content' ).filterBy( 'type', 'picture' ).get( 'firstObject' )
+		}.property( 'media.content.length' ),
+
+		logo: function () {
+			return this.get( 'media.content' ).filterBy( 'type', 'logo' ).get( 'firstObject' )
+		}.property( 'media.content.length' ),
+
+		documents: function () {
+			return this.get( 'media.content' ).filterBy( 'type', 'document' ) || Ember.A()
+		}.property( 'media.content.length' ),
+
+		audio: function () {
+			return this.get( 'media.content' ).filterBy( 'type', 'audio' ) || Ember.A()
+		}.property( 'media.content.length' ),
+
+		youtube: function () {
+			return this.get( 'media.content' ).filterBy( 'type', 'youtube' ) || Ember.A()
+		}.property( 'media.content.length' )
 
 	})
 

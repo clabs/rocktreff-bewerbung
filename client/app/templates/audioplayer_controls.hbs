@@ -1,31 +1,21 @@
 <div {{bind-attr class="content::hidden :audioplayer"}}>
-	{{#if useWaveSurfer}}
-		<div {{bind-attr class="isReady::hidden"}} {{action 'playpause' bubble=false}}>
-			{{#if playing}}
-				{{icon "pause"}}
-			{{else}}
-				{{icon "play"}}
-			{{/if}}
-		</div>
-		<div {{bind-attr class=":waveform isReady::hidden"}}></div>
-		<div {{bind-attr class="isReady:hidden"}}>{{icon "cog fa-spin fa-2x"}}</div>
-		<div {{bind-attr class=":trackname isReady::hidden"}}>
+	<div {{bind-attr class="isReady::hidden"}} {{action 'playpause' bubble=false}}>
+		{{#if playing}}
+			{{icon "play"}}
+		{{else}}
+			{{icon "pause"}}
+		{{/if}}
+	</div>
+	<div {{bind-attr class="isReady::hidden"}}>
+		<small>{{fposition}}</small>
+	</div>
+	<div {{bind-attr class="isReady:hidden"}}>{{icon "cog fa-spin fa-2x"}}</div>
+	<div {{bind-attr class=":trackname"}}>
+		<marquee behavior="alternate" direction="left" scrollamount="2">
 			{{content.filename}}
-		</div>
-	{{else}}
-		<div {{bind-attr class="isReady::hidden"}} {{action 'playpause' bubble=false}}>
-			{{#if playing}}
-				{{icon "pause"}}
-			{{else}}
-				{{icon "play"}}
-			{{/if}}
-		</div>
-		<div {{bind-attr class="isReady::hidden"}}>
-			<small>{{position}}</small>
-		</div>
-		<div {{bind-attr class="isReady:hidden"}}>{{icon "cog fa-spin fa-2x"}}</div>
-		<div {{bind-attr class=":trackname isReady::hidden"}}>
-			{{content.filename}}
-		</div>
-	{{/if}}
+		</marquee>
+	</div>
+	<div {{bind-attr class=":progress isReady::hidden"}}>
+		<div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" {{bind-attr style="view.progresswidth"}}></div>
+	</div>
 </div>

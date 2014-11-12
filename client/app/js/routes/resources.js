@@ -24,7 +24,14 @@ define([
 
 
 		this.resource( 'bid', { path: '/bewerbung/:bid_id' } )
-		this.resource( 'bids', { path: '/bewerbungen' } )
+		this.resource( 'bids', { path: '/bewerbungen/:track_id' }, function () {
+			this.resource( 'BidsUnassigned', { path: '/offen' } )
+			this.resource( 'BidDetails', { path: '/:bid_id/details' } )
+		})
+		this.resource( 'analysis', { path: '/auswertung' } )
+		this.resource( 'export' )
+
+
 		this.resource( 'NewBid', { path: '/bewerben' } )
 
 
@@ -40,6 +47,7 @@ define([
 
 
 		this.resource( 'home' )
+		this.resource( 'crew' )
 		this.resource( 'login' )
 		this.resource( 'signup' )
 		this.resource( 'no' )

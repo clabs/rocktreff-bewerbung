@@ -16,12 +16,19 @@ define([
 
 	'bb',
 	'audio5js',
-	'wavesurfer'
 
-], function ( BB, Audio5js, WaveSurfer ) {
+], function ( BB, Audio5js ) {
 
 	'use strict';
 
+
+	function format ( time ) {
+		var minutes = parseInt( time / 60, 10 )
+		var seconds = parseInt( time % 60, 10 )
+		minutes = minutes < 10 ? '0' + minutes : minutes
+		seconds = seconds < 10 ? '0' + seconds : seconds
+		return minutes + ':' + seconds
+	}
 
 
 	BB.AudioplayerController = Ember.ObjectController.extend({
@@ -30,45 +37,42 @@ define([
 		isReady: false,
 		isPlaying: false,
 
-		useWaveSurfer: false, /*function () {
-			var a = document.createElement( 'audio' )
-			return !!( a.canPlayType && a.canPlayType( 'audio/mpeg;' ).replace( /no/, '' ) )
-		}.property()*/
-
 		player: function () {
 			var controller = this
-			var useWaveSurfer = this.get( 'useWaveSurfer' )
-			if ( useWaveSurfer ) {
-				var wavesurfer = Object.create( WaveSurfer )
-				wavesurfer.on( 'ready', function () {
-					controller.set( 'isReady', true )
-					wavesurfer.play()
-				})
-				return wavesurfer
-			}
-			else {
-				return new Audio5js({
-					swf_path: './swf/audio5js.swf',
-					throw_errors: true,
-					ready: function ( player ) {
-						player = this
-						this.on( 'timeupdate', function ( position, duration ) {
-							controller.setProperties({
-								duration: duration,
-								position: position
-							})
+			return new Audio5js({
+				swf_path: './swf/audio5js.swf',
+				throw_errors: true,
+				format_time: false,
+				ready: function ( player ) {
+					player = this
+					this.on( 'timeupdate', function ( position, duration ) {
+						controller.setProperties({
+							duration: duration,
+							position: position
 						})
-						player.on( 'canplay', function () {
-							controller.set( 'isReady', true )
-							player.play()
-						})
-					}
-				})
-			}
+					})
+					player.on( 'canplay', function () {
+						controller.set( 'isReady', true )
+						player.play()
+					})
+				}
+			})
 		}.property(),
 
-		duration: '00:00',
-		position: '00:00',
+		duration: 1,
+		position: 0,
+
+		fposition: function () {
+			return format( this.get( 'position' ) )
+		}.property( 'position' ),
+
+		fduration: function () {
+			return format( this.get( 'duration' ) )
+		}.property( 'duration' ),
+
+		progress: function () {
+			return this.get( 'position' ) / this.get( 'duration' ) * 100
+		}.property( 'position', 'duration' ),
 
 
 		load: function ( media ) {
@@ -84,14 +88,18 @@ define([
 			playpause: function () {
 				var player = this.get( 'player' )
 				player.playPause()
-				var playing = player.playing // || !(player.backend && player.backend.paused )
+				var playing = player.playing
 				this.set( 'playing', playing )
 			},
 			stop: function () {
 				var player = this.get( 'player' )
 				player.pause()
-				if ( player.seekTo ) player.seekTo( 0 )
-				else player.seek( 0 )
+				player.seek( 0 )
+			},
+			seek: function ( percent ) {
+				var player = this.get( 'player' )
+				var duration = this.get( 'duration' )
+				player.seek( percent * duration )
 			}
 		}
 

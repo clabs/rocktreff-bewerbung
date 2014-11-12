@@ -31,24 +31,104 @@ define([
 				childView.connectOutlet( outletName, view )
 			})
 		},
+
 		childViews: [
 			Ember.View.extend({
+				tagName: 'nav',
+				classNames: [ 'navbar', 'navbar-fixed-top', 'navbar-inverse' ],
 				templateName: 'navbar'
 			}),
 			Ember.View.extend({
-				classNames: [ 'viewport' ],
 				templateName: 'index'
 			})
 		]
 	})
 
+
+
 	BB.HomeView = Ember.View.extend({
 		classNames: [ 'home' ]
 	})
 
+
+
 	BB.BidView = Ember.View.extend({
 		classNames: [ 'bid' ]
 	})
+
+	BB.BidsView = Ember.View.extend({
+		classNames: [ 'bids' ]
+	})
+
+	BB.BidDetailsView = Ember.View.extend({
+		templateName: 'bids/details',
+
+		didInsertElement: function () {
+			this.$().closest( '.bids' ).addClass('rightpush')
+		},
+
+		willDestroyElement: function () {
+			this.$().closest( '.bids' ).removeClass('rightpush')
+		}
+	})
+
+
+	BB.StarRatingView = Ember.View.extend({
+		templateName: 'starrating'
+	})
+
+	BB.BandPictureView = Ember.View.extend({
+		classNames: [ 'bandpicture' ],
+		templateName: 'bids/bandpicture',
+		attributeBindings: [ 'style' ],
+
+		style: function () {
+			var url = this.get( 'controller.content.picture.url' ) || this.get( 'controller.content.logo.url' )
+			return url ? 'background-image:url('+url+'_small)' : ''
+		}.property( 'controller.content.picture', 'controller.content.logo' ),
+
+		eventManager: {
+			click: function ( event, view ) {
+				var pic = view.get( 'controller.content.picture' ) || view.get( 'controller.content.logo' )
+				view.get( 'controller.controllers.lightbox' ).send( 'show', pic )
+			},
+			keyPress: function ( evt ) {
+
+			}
+		}
+	})
+
+
+	BB.LightboxView = Ember.View.extend({
+		classNames: [ 'lightbox' ],
+		classNameBindings: [ 'visible' ],
+		attributeBindings: [ 'style' ],
+
+		style: function () {
+			var url = this.get( 'controller.picture.url' )
+			return url ? 'background-image:url('+url+')' : ''
+		}.property( 'controller.picture' ),
+
+		visible: function () {
+			var picture = this.get( 'controller.picture' )
+			return this.inDOM && !!picture ? 'visible' : ''
+		}.property( 'controller.picture' ),
+
+		didInsertElement: function () {
+			this.set( 'inDOM', true )
+		},
+
+		eventManager: {
+			click: function ( event, view ) {
+				view.get( 'controller' ).send( 'hide' )
+			},
+			keyPress: function ( event, view ) {
+				view.get( 'controller' ).send( 'hide' )
+			}
+		}
+
+	})
+
 
 	BB.XhrprogressView = Ember.View.extend({
 		classNames: [ 'xhrprogress' ],
