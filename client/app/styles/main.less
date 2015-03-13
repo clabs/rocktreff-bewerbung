@@ -19,9 +19,8 @@
 @modal-content-border-color:     darken( @gelb, 20% );
 
 @font-face {
-	font-family: "321impact";
-	src: url(http://rocktreff.de/wp-content/themes/rocktreff/font/321impact.ttf);
-	src: local("321impact"), url(http://rocktreff.de/wp-content/themes/rocktreff/font/321impact.ttf) format('truetype');
+  font-family: '321impact';
+  src: url('http://rocktreff.de/fonts/321impact.otf') format('otf'), url('http://rocktreff.de/fonts/321impact.woff') format('woff');
 }
 
 @easing_function:     cubic-bezier(0.785, 0.135, 0.15, 0.86);
@@ -229,9 +228,9 @@ ul.nav > li > a {
 
 
 .login {
-	background-image: url('../images/login.jpg');
-	background-repeat: no-repeat;
-	background-size: cover;
+	// background-image: url('../images/login.jpg');
+	// background-repeat: no-repeat;
+	// background-size: cover;
 	padding-top: 80px;
 
 	.form-control {
@@ -275,16 +274,14 @@ ul.nav > li > a {
 }
 
 .crew {
-	background-size: contain;
+	background-size: cover;
 	background-position: 50%;
 	background-repeat: no-repeat;
 	top: 51px;
 	bottom: 0;
 	position: absolute;
 	width: 100%;
-	background-image: url('https://fbcdn-sphotos-f-a.akamaihd.net/hphotos-ak-ash3/t1/1235351_575483052540324_944250515_n.jpg');
-	background-image: url('https://fbcdn-sphotos-h-a.akamaihd.net/hphotos-ak-frc3/t1/538347_313325845423329_988306759_n.jpg');
-	background-image: url('../images/plakat2014.jpg');
+	background-image: url('http://rocktreff.de/images/background.jpg');
 	background-color: #000;
 
 	h1 {

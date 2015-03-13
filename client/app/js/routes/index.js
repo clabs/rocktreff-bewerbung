@@ -47,7 +47,7 @@ define([
 				else if ( err.status === 403 )
 					this.transitionTo( 'no' )
 				else {
-					this.transitionTo( 'home' )
+					this.transitionTo( 'crew' )
 					console.error( err )
 					throw err
 				}
@@ -58,7 +58,7 @@ define([
 
 	BB.IndexRoute = BB.Route.extend({
 		redirect: function () {
-			this.transitionTo( 'home' )
+			this.transitionTo( 'crew' )
 		}
 	})
 
@@ -84,7 +84,7 @@ define([
 		actions: {
 			logout: function () {
 				this.auth.logout()
-				this.transitionTo( 'index' )
+				this.transitionTo( 'login' )
 			}
 		}
 
@@ -94,10 +94,17 @@ define([
 
 	BB.NewBidRoute = BB.AuthenticatedRoute.extend({
 		model: function () {
+			var self = this
 			return this.store.createRecord( 'bid', {
 				user: this.auth.user,
 				event: BB.get( 'events.firstObject' )
-			}).save()
+			}).save().then( function ( bid ) {
+				return self.store.find( 'bid', { id: bid.id } )
+			})
+		},
+
+		afterModel: function ( bid, transition ) {
+			this.transitionTo( 'bid', bid.get( 'firstObject' ) )
 		},
 
 		actions: {
@@ -138,7 +145,7 @@ define([
 						return self.auth.authenticateViaLocal( credentials )
 					})
 					.then( function () {
-						self.transitionTo( 'home' )
+						self.transitionTo( 'crew' )
 					})
 			}
 		}
@@ -164,9 +171,13 @@ define([
 	})
 
 
-	BB.BidsUnassignedRoute = BB.AuthenticatedRoute.extend({
+	BB.UnreviewedRoute = BB.AuthenticatedRoute.extend({
 		model: function ( params ) {
-			return this.store.find( 'bid', { track: '' } )
+			return this.store.find( 'bid' ).then( function ( bids ) {
+				return bids.filter( function ( bid ) {
+					return !bid._data.track
+				})
+			})
 		}
 	})
 

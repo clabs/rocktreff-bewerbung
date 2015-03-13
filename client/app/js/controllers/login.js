@@ -45,7 +45,7 @@ define([
 					attemptedTransition.retry()
 					self.set( 'attemptedTransition', null )
 				} else {
-					BB.__container__.lookup( 'router:main' ).transitionTo( 'home' )
+					BB.__container__.lookup( 'router:main' ).transitionTo( 'crew' )
 				}
 			}, 1000 )
 		},

@@ -110,7 +110,7 @@ define([
 	BB.Bid = DS.Model.extend({
 		created: DS.attr( 'ISODate' ),
 		modified: DS.attr( 'ISODate' ),
-		user: DS.belongsTo( 'user' ),
+		user: DS.belongsTo( 'user', { async: true } ),
 		event: DS.belongsTo( 'event', { async: true } ),
 		track: DS.belongsTo( 'track' ),
 		region: DS.belongsTo( 'region', { async: true } ),

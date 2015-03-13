@@ -7,7 +7,7 @@
 	<div class="col-md-8 col-md-pull-4 col-xs-12">
 		<h2>
 			{{#link-to 'bids'}}{{icon "chevron-circle-left"}}{{/link-to}}&nbsp;
-			{{unbound content.bandname}}<br>{{controller.controllers.lightbox.picture}}
+			{{unbound content.bandname}}
 		</h2>
 	</div>
 </div>
@@ -72,7 +72,7 @@
 				}}<br>
 			{{icon "user"}} Kontakt: {{unbound content.contact}} {{#if content.managed}}{{icon "exclamation-triangle"}}{{/if}}<br>
 			{{icon "envelope"}} Email: {{unbound content.mail}}<br>
-			{{icon "phone"}} Phone: {{unbound content.phone}}
+			{{icon "phone"}} Phone: {{unbound content.phone}} <br>
 		</div>
 		{{/if}}
 	</div>

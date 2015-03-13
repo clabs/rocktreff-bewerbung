@@ -27,6 +27,7 @@ exports = module.exports = function ( app ) {
 	var stripVotes = json.omit( 'votes' )
 	var stripNotes = json.omit( 'notes' )
 	var stripTrack = json.omit( 'track' )
+	var stripPassword = json.omit( 'password' )
 	var empty = function ( res ) {
 		return function () {
 			console.log( arguments )
@@ -66,6 +67,19 @@ exports = module.exports = function ( app ) {
 			.then( function ( votes ) {
 				restful.sideload( res, 'vote', votes )
 				return votes
+			})
+			.then( function ( votes ) {
+				var users = _.map( votes, function ( vote ) {
+					return models.user.find( { id: vote.user } )
+				})
+				return Promise.all( users )
+					.then( function ( users ) {
+						_.each( users, function ( user ) {
+							restful.sideload( res, 'user', stripPassword(user) )
+						})
+						process.stdout.write( "done" )
+						return votes
+					})
 			})
 			.then( function ( votes ) {
 				return { votes: _.map( votes, function ( item ) { return item.id }) }
@@ -166,9 +180,10 @@ exports = module.exports = function ( app ) {
 			var id = req.params.id
 			models.bid.get( id )
 				.then( function ( bid ) {
-					if ( bid.user !== req.user.id && req.user.role === '' )
+					if ( bid.user === req.user.id || req.user.role === 'admin' )
+						return models.bid.del( id )
+					else
 						throw res.status( 403 ).send()
-					return models.bid.del( id )
 				}, function ( err ) {
 					res.status( 400 ).send( err )
 				})
@@ -192,7 +207,7 @@ exports = module.exports = function ( app ) {
 							.then( injectMedia( res ) )
 							.then( injectVotes( user, res ) )
 							.then( injectNotes( user, res ) )
-							//.then( injectTrack( user, res ) )
+							.then( injectTrack( user, res ) )
 					}))
 				})
 				.then( send( res ), function ( err ) {

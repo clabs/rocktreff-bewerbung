@@ -25,9 +25,9 @@ define([
 
 		this.resource( 'bid', { path: '/bewerbung/:bid_id' } )
 		this.resource( 'bids', { path: '/bewerbungen/:track_id' }, function () {
-			this.resource( 'BidsUnassigned', { path: '/offen' } )
 			this.resource( 'BidDetails', { path: '/:bid_id/details' } )
 		})
+		this.resource( 'unreviewed', { path: '/offen' } )
 		this.resource( 'analysis', { path: '/auswertung' } )
 		this.resource( 'export' )
 

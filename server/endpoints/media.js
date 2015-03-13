@@ -37,6 +37,7 @@ exports = module.exports = function ( app ) {
 			return new Promise( function ( fulfill, reject ) {
 				var data = dataurl.replace( /^data:.*?;base64,/, '' )
 				fs.writeFile( path, data, 'base64', function ( err ) {
+					console.log( err )
 					if ( err ) reject( err )
 					else fulfill( media )
 				})
@@ -92,7 +93,8 @@ exports = module.exports = function ( app ) {
 	var transcodeMP3 = function ( media ) {
 		var src = app.get( 'upload-directory' ) + '/' + media.id
 		var tmp = src + '_tmp'
-		var cmd = 'ffmpeg -i '+src+' -c:a libmp3lame -b:a 128k -f mp3 '+tmp
+		var cmd = 'ffmpeg -i '+src+' -acodec libmp3lame -b:a 128k -f mp3 '+tmp
+		console.log( cmd )
 		return new Promise( function ( fulfill, reject ) {
 			exec( cmd, function ( err, stdout, stderr ) {
 				if ( err ) reject( err )

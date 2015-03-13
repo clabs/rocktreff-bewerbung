@@ -78,6 +78,16 @@ define([
 			},
 			showDetails: function ( bid ) {
 				this.transitionToRoute( 'BidDetails', bid )
+			},
+			delete: function ( bid ) {
+				var self = this
+				var track = bid.track
+				if ( window.confirm( 'Bewerbung wirklich löschen?' ) ) {
+					bid.deleteRecord()
+					bid.save().then( function () {
+						self.transitionToRoute( 'bids', track )
+					})
+				}
 			}
 		}
 	})
@@ -90,49 +100,49 @@ define([
 
 
 		phonevalid: function () {
-			var phone = this.get( 'content.phone' )
+			var phone = this.get( 'model.phone' )
 			var regexp = /^[\d\(\)\/\-\s]{7,}$/
 			return regexp.test( phone )
-		}.property( 'content.phone' ),
+		}.property( 'model.phone' ),
 
 		mailvalid: function () {
-			var mail = this.get( 'content.mail' )
+			var mail = this.get( 'model.mail' )
 			var regexp = /^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$/
 			return regexp.test( mail )
-		}.property( 'content.mail' ),
+		}.property( 'model.mail' ),
 
 		musicComplete: function () {
-			return this.get( 'content.audio.length' ) >= 3
-		}.property( 'content.audio.length' ),
+			return this.get( 'model.audio.length' ) >= 3
+		}.property( 'model.audio.length' ),
 
 		docComplete: function () {
-			return this.get( 'content.documents.length' ) >= 1
-		}.property( 'content.documents.length' ),
+			return this.get( 'model.documents.length' ) >= 1
+		}.property( 'model.documents.length' ),
 
 		urlvalid: function () {
-			var url = this.get( 'content.url' )
+			var url = this.get( 'model.url' )
 			var regexp = /^https?:\/\/.+$/
 			return regexp.test( url ) || url === ''
-		}.property( 'content.url' ),
+		}.property( 'model.url' ),
 
 		fbvalid: function () {
-			var url = this.get( 'content.fb' )
+			var url = this.get( 'model.fb' )
 			var regexp = /^https?:\/\/www\.facebook\.com\/.+$/
 			return regexp.test( url ) || url === ''
-		}.property( 'content.fb' ),
+		}.property( 'model.fb' ),
 
 		hasURL: function () {
 			var urlvalid = this.get( 'urlvalid' )
 			var fbvalid = this.get( 'fbvalid' )
-			var url = this.get( 'content.url' )
-			var fb = this.get( 'content.fb' )
+			var url = this.get( 'model.url' )
+			var fb = this.get( 'model.fb' )
 			return ( urlvalid && url !== '' ) || ( fbvalid && fb !== '' )
-		}.property( 'urlvalid', 'fbvalid', 'content.fb', 'content.url' ),
+		}.property( 'urlvalid', 'fbvalid', 'model.fb', 'model.url' ),
 
 
 		autoSave: function () {
-			console.log( 'autosave disabled' ) // this.save()
-		}.debounce( 3000 ).observes( 'content.isDirty' ),
+			//this.model.save()
+		}.debounce( 3000 ).observes( 'model.isDirty' ),
 
 		save: function () {
 			this.get( 'content' ).save()
@@ -162,7 +172,7 @@ define([
 					return
 				}
 				var properties = {
-					bid: bid.get( 'id' ),
+					bid: bid,
 					type: file.mediatype,
 					mimetype: file.type,
 					filename: file.name,
