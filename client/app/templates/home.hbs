@@ -1,8 +1,14 @@
 <div class="image teaser" style="background-image:url('./images/home1.jpg')">
 	{{#if BB.currentEvent}}
 	<div class="container">
-		<h1>{{BB.currentEvent.name}}</h1>
-		<h3>10.-12. Juli 2015</h3>
+		<h1>Bandbewerbung</h1>
+		<h3>{{BB.currentEvent.name}} | 8.-10. Juli 2016</h3>
+		<p>
+			{{icon "arrow-circle-down"}}
+		</p>
+		<p class="gelb">
+			Mehr Informationen
+		</p>
 	</div>
 	{{/if}}
 </div>
@@ -95,12 +101,12 @@
 			<p>
 				Ihr habt Lust auf dem Rocktreff zu spielen und habt keine Angst vor
 				einem großen Publikum? Dann bewerbt Euch jetzt! Der Bewerbungsschluss
-				ist der {{icon "calendar"}} 28.02.2015.
+				ist der {{icon "calendar"}} 14.02.2016.
 			</p>
 		</div>
 		<div class="col-xs-6" style="padding-top: 55px;">
 			{{#if BB.currentEvent}}
-				{{#link-to 'NewBid' class="btn btn-lnk btn-lg"}}
+				{{#link-to 'new' class="btn btn-lnk btn-lg"}}
 					Jetzt zum {{BB.currentEvent.name}} bewerben!
 				{{/link-to}}
 			{{/if}}
@@ -124,9 +130,9 @@
 		</div>
 		<div class="col-xs-6">
 			<div class="heading">Veranstalter</div>
-			<img src="http://rocktreff.de/wp-content/themes/rocktreff/images/JATS_B_RGB_500p_neg.png" alt="Jugendamt">
-			<img src="http://rocktreff.de/wp-content/themes/rocktreff/images/footer_rockini.png" alt="Rockinitiative Tempelhof">
-			<img src="http://rocktreff.de/wp-content/themes/rocktreff/images/footer_cpye.png" alt="CPYE e.V.">
+			<img src="https://static.rocktreff.de/sponsors/jugendamt.png" alt="Jugendamt">
+			<img src="https://rocktreff.de/images/footer_rockini.png" alt="Rockinitiative Tempelhof">
+			<img src="https://static.rocktreff.de/sponsors/cpye.png" alt="CPYE e.V.">
 		</div>
 	</div>
 	</div>

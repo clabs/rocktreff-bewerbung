@@ -134,7 +134,7 @@ define([
 		classNames: [ 'xhrprogress' ],
 
 		uploadsCompleted: function () {
-			if ( this.get( 'state' ) !== 'inDOM' ) return
+			if ( this.get( '_state' ) !== 'inDOM' ) return
 			if ( this.get( 'controller.content.length' ) > 0 )
 				this.$().fadeIn( 600 )
 			else

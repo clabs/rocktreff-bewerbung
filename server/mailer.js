@@ -20,10 +20,10 @@ var Promise = require( 'promise' )
 
 exports = module.exports = function ( app ) {
 
-	var smtpTransport = nodemailer.createTransport( 'SMTP', {
+	var smtpTransport = nodemailer.createTransport({
 		host: app.get( 'email-host' ),
 		port: app.get( 'email-port' ),
-		secureConnection: app.get( 'email-usetls' ),
+		secure: app.get( 'email-usetls' ),
 		auth: {
 			user: app.get( 'email-user' ),
 			pass: app.get( 'email-pass' )
@@ -37,28 +37,38 @@ exports = module.exports = function ( app ) {
 			subject: subject,
 			text: text
 		}
+		console.log( mailOptions )
 		return new Promise( function ( fulfill, reject ) {
 			smtpTransport.sendMail( mailOptions, function ( err, res ) {
+				console.log(err)
 				if ( err ) reject( err )
 				else fulfill( res )
 			})
 		})
 	}
 
-	var greetings = function ( user ) {
-		var subject = 'ROCKTREFF 2015 - Deine Anmeldung'
-		var text = 'Vielen Dank für Eure Anmeldung!\n\n' +
-		           'Bis zum 28.2.2015 habt Ihr Zeit Eure Bewerbung zu bearbeiten.' +
-		           'Dazu einfach wieder auf die Bewerbungsseite gehen und anmelden.\n\n' +
-		           'http://www.rocktreff.de/bewerben\n\n' +
+	var greetings = function ( bid ) {
+		var subject = 'ROCKTREFF 2016 - Deine Anmeldung'
+		var text = 'Vielen Dank für Deine Anmeldung!\n\n' +
+		           'Bis zum 14.2.2015 habt Ihr Zeit Eure Bewerbung zu bearbeiten.\n\n' +
+		           'http://www.rocktreff.de/bewerben/#/bewerbung/'+ bid.id +'\n\n' +
 		           'Anfang März 2015 machen wir die Auswahl und melden uns kurz darauf bei Euch.\n\n' +
+		           'Gruß Euer ROCKTREFF-Team'
+		return send( bid.mail, subject, text )
+	}
+
+	var welcome = function ( user ) {
+		var subject = 'ROCKTREFF Bandbewerbung'
+		var text = 'Herzlich willkommen im System! ' +
+		           'Infos zur Freischaltung im System gibt es in der ROCKINI!\n\n' +
 		           'Gruß Euer ROCKTREFF-Team'
 		return send( user.email, subject, text )
 	}
 
 	app.set( 'mailer', {
 		send: send,
-		greetings: greetings
+		greetings: greetings,
+		welcome: welcome
 	})
 
 }

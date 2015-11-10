@@ -51,7 +51,7 @@
 	{ .button-variant( #fff; #00acee; #00acee); }
 
 .btn-trash
-	{ .button-variant( #fff; #655; #111); }
+	{ .button-variant( #fff; darken(@gelb,30%); @gelb); }
 
 
 
@@ -104,15 +104,25 @@ html, body {
 
 body {
 	color: #999;
-	background-image: url( "../images/bgtextur.png" );
-	background-color: rgb(20, 20, 20);
-	margin-top: 51px;
-	height: auto;
+	background-color: black;
+	min-height: 100vh;
 	overflow-x: hidden;
 
 	> .viewport {
 		width: 100vw;
 	}
+}
+
+.theme {
+	position: absolute;
+	background-image: url( "../images/home1.jpg" );
+	background-size: cover;
+	background-position-x: center;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	overflow: auto;
 }
 
 
@@ -122,6 +132,7 @@ body {
 
 .navbar {
 	margin: 0;
+	border-bottom: 1px solid transparent;
 }
 
 
@@ -135,13 +146,13 @@ body {
 		background-image: url( "../images/rt.png" );
 		background-size: 100% auto;
 		background-repeat: no-repeat;
-		width: 150px;
-		height: 60px;
+		width: 170px;
+		height: 80px;
 	}
 }
 
 .navbar-inverse {
-	background: #000;
+	background: transparent;
 }
 
 .navbar-collapse {
@@ -190,10 +201,11 @@ ul.nav > li > a {
 		background-position: 50%;
 		background-size: cover;
 		background-repeat: no-repeat;
-		height: 450px;
+		height: 100vh;
+		background-color: black;
 
 		&.teaser {
-
+			text-align: center;
 			text-shadow: 0 0 30px #000;
 			h1 {
 				font-family: Impact, Arial, sans-serif;
@@ -206,6 +218,11 @@ ul.nav > li > a {
 				margin-top: 0px;
 			}
 			padding: 140px 0;
+
+			.fa {
+				color: @gelb;
+				font-size: 4em;
+			}
 		}
 	}
 
@@ -228,9 +245,7 @@ ul.nav > li > a {
 
 
 .login {
-	// background-image: url('../images/login.jpg');
-	// background-repeat: no-repeat;
-	// background-size: cover;
+	background-color: black;
 	padding-top: 80px;
 
 	.form-control {
@@ -304,14 +319,33 @@ ul.nav > li > a {
 		margin-top: 50px;
 	}
 
+	.container {
+		background-color: fadeout( black, 20% );
+		padding: 30px;
+		border-radius: 10px;
+		color: #ccc;
+
+		&:first-child {
+			padding-top: 50px;
+			border-top-left-radius: 0;
+			border-top-right-radius: 0;
+		}
+	}
+
 	.section {
 		margin: 40px 0 40px 0;
 		padding: 0px 80px 10px;
 		background-color: @gelb;
 		.transform( rotate(-1.2deg) );
+		box-shadow: 0 5px 30px black;
 
 		h3, i {
 			color: #000;
+		}
+
+		.container {
+			background-color: transparent;
+			padding: 0;
 		}
 	}
 
@@ -345,6 +379,24 @@ ul.nav > li > a {
 }
 
 
+.newbid {
+
+	h1 {
+		font-family: "321impact", Impact, Arial, sans-serif;
+		font-size: 4em;
+		color: @gelb;
+	}
+
+	.container > * {
+		background-color: fadeout( black, 30% );
+		padding: 50px;
+		border-bottom-right-radius: 8px;
+		border-bottom-left-radius: 8px;
+		color: white;
+		box-shadow:  0 0 30px fadeout( black, 20% );
+	}
+}
+
 
 .dropbox {
 
@@ -353,7 +405,7 @@ ul.nav > li > a {
 	border-radius: 8px;
 
 	&.hover {
-		background-color: rgba(50,50,50,0.5);
+		background-color: fadeout(@gelb, 70%);
 	}
 
 	.form-control {
@@ -388,14 +440,18 @@ ul.nav > li > a {
 			text-align: left;
 			padding: 10px;
 			border-radius: 5px;
-			background-color: #222;
+			background-color: darken(@gelb, 40%);
 			width: 100%;
-			border: 1px solid #333;
+			border: 1px solid darken( @gelb, 30% );
 			margin-bottom: 5px;
 			cursor: pointer;
 
 			&:hover {
-				background-color: #333;
+				background-color: @gelb;
+
+				.name {
+					color: black;
+				}
 			}
 
 			.name {
@@ -504,8 +560,11 @@ ul.nav > li > a {
 	-webkit-user-select: none;
 	-ms-user-select: none;
 	position: relative;
-	background-color: #333;
-	box-shadow: 0 0 10px rgba(0,0,0,0.7) inset;
+	background-color: fadeout( black, 30%);
+	box-shadow: 0 0 10px rgba(0,0,0,0.7);
+	border: 1px solid darken(@gelb, 30%);
+	border-bottom-left-radius: 8px;
+	border-bottom-right-radius: 8px;
 	float: right;
 	height: 50px;
 	text-shadow: 1px 1px 3px #000;
@@ -523,6 +582,7 @@ ul.nav > li > a {
 
 	.fa {
 		cursor: pointer;
+		&:hover { color: white }
 	}
 
 	.trackname {
@@ -545,7 +605,7 @@ ul.nav > li > a {
 		right: 9px;
 		top: 38px;
 		background-image: none;
-		background-color: #666;
+		background-color: fadeout( black, 70%);
 		cursor: pointer;
 	}
 }
@@ -573,7 +633,7 @@ ul.nav > li > a {
 	background-repeat: no-repeat;
 	position: fixed;
 	z-index: -1;
-	top: 50px;
+	top: 0;
 	bottom: 0;
 	width: 100%;
 	opacity: 0;

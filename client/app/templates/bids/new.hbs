@@ -1,0 +1,39 @@
+<div class="newbid theme">
+	<div class="container">
+		<div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-12">
+			<h1>{{BB.events.firstObject.name}}</h1>
+			<p>
+				Als erstes brauchen wir ein paar Kontaktinformationen für Eure Bewerbung.
+				Danach erhaltet Ihr eine Email mit allen weiterführenden Informationen.
+			</p>
+			<div {{bind-attr class=":input-group content.contact:has-success:has-error"}}>
+				<span class="input-group-addon">{{icon "user"}}</span>
+				{{input value=content.contact placeholder="Ansprechpartner"}}
+			</div>
+			<div class="checkbox-inline">
+				<label>
+					{{view Ember.Checkbox checkedBinding="content.managed"}}Bewerbung via Management
+				</label>
+			</div>
+			<div {{bind-attr class=":input-group phonevalid:has-success:has-error"}}>
+				<span class="input-group-addon">{{icon "phone"}}</span>
+				{{input value=content.phone placeholder="AAAA BBBBBB"}}
+			</div>
+			&nbsp;
+			<div {{bind-attr class=":input-group mailvalid:has-success:has-error"}}>
+				<span class="input-group-addon">{{icon "envelope"}}</span>
+				{{input value=content.mail type="email" placeholder="name@band.de"}}
+			</div>
+			<br>
+			<div class="pull-right">
+				<button {{action "create"}} {{bind-attr disabled=content.isClean}} class="btn btn-primary">
+					{{#if content.isSaving}}
+						{{icon "refresh fa-spinner"}}
+					{{else}}
+						{{icon "envelope"}}
+					{{/if}} Weiter
+				</button>
+			</div>
+		</div>
+	</div>
+</div>

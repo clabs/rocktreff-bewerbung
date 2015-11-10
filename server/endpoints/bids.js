@@ -77,7 +77,6 @@ exports = module.exports = function ( app ) {
 						_.each( users, function ( user ) {
 							restful.sideload( res, 'user', stripPassword(user) )
 						})
-						process.stdout.write( "done" )
 						return votes
 					})
 			})
@@ -118,13 +117,8 @@ exports = module.exports = function ( app ) {
 
 		get: function ( req, res ) {
 			var id = req.params.id
-			var user = req.user
+			var user = req.user || {}
 			models.bid.get( id )
-				.then( function ( bid ) {
-					if ( bid.user !== req.user.id && req.user.role === '' )
-							throw res.status( 403 ).send()
-					return bid
-				})
 				.then( injectMedia( res ) )
 				.then( injectVotes( user, res ) )
 				.then( injectNotes( user, res ) )
@@ -133,17 +127,12 @@ exports = module.exports = function ( app ) {
 		},
 
 		post: function ( req, res ) {
-			var user = req.user
+			var user = req.user || {}
 
-			if ( req.body.user !== user.id )
-				return res.status( 403 ).send()
-			if ( req.user.role !== '' )
-				return res.status( 403 ).send()
-
-			models.bid.find( { user: req.user.id, event: req.body.event } )
+			models.bid.create( req.body )
 				.then( function ( bid ) {
-					if ( bid.length > 0 ) throw res.status( 409 ).send()
-					return models.bid.create( req.body )
+					app.get( 'mailer' ).greetings( bid )
+					return bid
 				})
 				.then( injectMedia( res ) )
 				.then( injectVotes( user, res ) )
@@ -156,10 +145,8 @@ exports = module.exports = function ( app ) {
 		put: function ( req, res ) {
 			var id = req.params.id
 			req.body.id = id
-			var user = req.user
+			var user = req.user || {}
 
-			if ( req.body.user !== req.user.id && req.user.role !== 'admin' )
-				return res.status( 403 ).send()
 			if ( !models.bid.has( id ) )
 				return res.status( 404 ).send()
 			if ( req.body.id !== id )
@@ -178,23 +165,23 @@ exports = module.exports = function ( app ) {
 
 		del: function ( req, res ) {
 			var id = req.params.id
+			if ( req.user.role === 'admin' )
+				return res.status( 403 ).send()
+			if ( !models.bid.has( id ) )
+				return res.status( 404 ).send()
 			models.bid.get( id )
 				.then( function ( bid ) {
-					if ( bid.user === req.user.id || req.user.role === 'admin' )
-						return models.bid.del( id )
-					else
-						throw res.status( 403 ).send()
-				}, function ( err ) {
+					return models.bid.del( id )
+				})
+				.then( send( res ), function ( err ) {
 					res.status( 400 ).send( err )
 				})
-				.then( send( res ) )
 		},
 
 
 		list: function ( req, res ) {
-			var user = req.user
-			var query = user.role === '' ?
-				{ user: user.id } : req.query
+			var user = req.user || {}
+			var query = req.query
 			models.bid.find( query )
 				.then( function ( bids ) {
 					if ( !( bids instanceof Array ) )
@@ -214,8 +201,5 @@ exports = module.exports = function ( app ) {
 					res.status( 500 ).send( err )
 				})
 		}
-
 	}
-
-
 }

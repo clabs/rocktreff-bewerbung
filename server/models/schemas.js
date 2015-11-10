@@ -17,7 +17,6 @@
 // based on http://tools.ietf.org/html/draft-zyp-json-schema-03
 exports = module.exports = {
 
-
 	user: {
 		id: '/User',
 		properties: {
@@ -32,14 +31,12 @@ exports = module.exports = {
 		}
 	},
 
-
 	bid: {
 		id: '/Bid',
 		properties: {
 			id: { type: 'string' },
 			created: { type: 'string', format: 'date-time' },
 			modified: { type: 'string', format: 'date-time' },
-			user: { type: 'string', required: true },
 			event: { type: 'string', required: true },
 			category: { type: 'string' },
 			region: { type: 'string' },
@@ -50,7 +47,7 @@ exports = module.exports = {
 			letter: { type: 'string' },
 			contact: { type: 'string' },
 			phone: { type: 'string' },
-			mail: { type: 'string' },
+			mail: { type: 'string', required: true, format: 'email' },
 			url: { type: 'string' },
 			fb: { type: 'string' },
 			media: { type: 'array', items: { type: 'string' } },
@@ -59,7 +56,6 @@ exports = module.exports = {
 			notes: { type: 'array', items: { type: 'string' } }
 		}
 	},
-
 
 	media: {
 		id: '/Media',
@@ -76,7 +72,6 @@ exports = module.exports = {
 			filesize: { type: 'number' },
 		}
 	},
-
 
 	event: {
 		id: '/Event',
@@ -116,7 +111,6 @@ exports = module.exports = {
 
 	},
 
-
 	note: {
 		id: '/Note',
 		properties: {
@@ -129,7 +123,6 @@ exports = module.exports = {
 			text: { type: 'string' }
 		}
 	},
-
 
 	region: {
 		id: '/Region',

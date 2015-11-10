@@ -7,7 +7,9 @@
     "type": "git",
     "url": "https://github.com/clabs/rocktreff-bewerbung.git"
   },
-  "dependencies": {},
+  "dependencies": {
+    "nodemailer": "^1.9.0"
+  },
   "devDependencies": {
     "ministore": "~0.0.5",
     "express": "~3.4.0",

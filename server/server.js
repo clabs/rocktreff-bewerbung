@@ -39,8 +39,7 @@
 		app.use( express.compress() )
 		app.use( express.cookieParser() )
 		app.use( express.bodyParser() )
-		//if ( 'production' !== ENV )
-			app.use( express.session({ secret: 'keyboard cat' }) )
+		app.use( express.session({ secret: 'keyboard cat' }) )
 		app.use( passport.initialize() )
 		app.use( passport.session() )
 

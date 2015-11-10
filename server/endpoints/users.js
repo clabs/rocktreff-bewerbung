@@ -105,7 +105,7 @@ exports = module.exports = function ( app ) {
 				})
 				.then( stripPassword )
 				.then( function ( user ) {
-					app.get( 'mailer' ).greetings( user )
+					app.get( 'mailer' ).welcome( user )
 					return user
 				})
 				.then( send( res ) )

@@ -27,6 +27,7 @@ define([
 		}
 	})
 
+
 	BB.AuthenticatedRoute = BB.Route.extend({
 
 		beforeModel: function ( transition ) {
@@ -58,7 +59,7 @@ define([
 
 	BB.IndexRoute = BB.Route.extend({
 		redirect: function () {
-			this.transitionTo( 'crew' )
+			this.transitionTo( 'home' )
 		}
 	})
 
@@ -91,23 +92,28 @@ define([
 	})
 
 
-
-	BB.NewBidRoute = BB.AuthenticatedRoute.extend({
+	BB.NewRoute = BB.Route.extend({
 		model: function () {
 			var self = this
 			return this.store.createRecord( 'bid', {
-				user: this.auth.user,
 				event: BB.get( 'events.firstObject' )
-			}).save().then( function ( bid ) {
-				return self.store.find( 'bid', { id: bid.id } )
 			})
 		},
-
-		afterModel: function ( bid, transition ) {
-			this.transitionTo( 'bid', bid.get( 'firstObject' ) )
+		renderTemplate: function () {
+			this.render( 'bids/new' )
 		},
-
 		actions: {
+			create: function () {
+				var self = this
+				return this.currentModel.save().then( function ( bid ) {
+					return self.store
+						.findById( 'bid', bid.id )
+						.then( function ( bids ) {
+							var bid = bids.get( 'firstObject' )
+							self.transitionTo( 'thanks' )
+						})
+				})
+			},
 			error: function ( err, transition ) {
 				if ( err.status === 409 ) {
 					var self = this
@@ -126,6 +132,14 @@ define([
 			}
 		}
 	})
+
+
+	BB.ThanksRoute = BB.Route.extend({
+		renderTemplate: function () {
+			this.render( 'thanks' )
+		}
+	})
+
 
 	BB.SignupRoute = BB.Route.extend({
 		actions: {
@@ -152,14 +166,11 @@ define([
 	})
 
 
-
-
-	BB.BidRoute = BB.AuthenticatedRoute.extend({
+	BB.BidRoute = BB.Route.extend({
 		model: function ( params ) {
 			return this.store.find( 'bid', params.bid_id )
 		}
 	})
-
 
 
 	BB.BidsRoute = BB.AuthenticatedRoute.extend({
@@ -182,7 +193,6 @@ define([
 	})
 
 
-
 	BB.BidDetailsRoute = BB.AuthenticatedRoute.extend({
 		setupController: function ( controller, model ) {
 			this._super( controller, model )
@@ -191,6 +201,7 @@ define([
 			})
 		}
 	})
+
 
 	BB.AnalysisRoute = BB.ExportRoute = BB.AuthenticatedRoute.extend({
 		model: function () {
@@ -205,7 +216,6 @@ define([
 			return this.store.find( 'event' )
 		}
 	})
-
 
 
 	BB.EventsNewRoute = BB.AuthenticatedRoute.extend({
@@ -223,7 +233,6 @@ define([
 			}
 		}
 	})
-
 
 
 	BB.EventEditRoute = BB.AuthenticatedRoute.extend({
@@ -253,12 +262,10 @@ define([
 	})
 
 
-
 	BB.UsersRoute = BB.AuthenticatedRoute.extend({
 		model: function () {
 			return this.store.find( 'user' )
 		},
-
 		actions: {
 			promoteUser: function ( user ) {
 				var role = user.get( 'role' )
@@ -272,9 +279,7 @@ define([
 				user.set( 'role', new_role )
 				user.save()
 			}
-
-		},
-
+		}
 	})
 
 })

@@ -170,8 +170,6 @@ exports = module.exports = function ( app ) {
 				.then( function ( bid ) {
 					if ( !bid )
 						throw res.status( 406 ).send()
-					if ( bid.user !== req.user.id && req.user.role !== 'admin')
-						throw res.status( 403 ).send()
 					return json.create( req.body )
 				})
 				.then( function ( media ) {

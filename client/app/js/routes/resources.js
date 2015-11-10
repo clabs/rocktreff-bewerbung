@@ -32,7 +32,8 @@ define([
 		this.resource( 'export' )
 
 
-		this.resource( 'NewBid', { path: '/bewerben' } )
+		this.resource( 'new', { path: '/bewerben' } )
+		this.resource( 'thanks', { path: '/danke' } )
 
 
 		this.resource( 'users' )

@@ -56,9 +56,9 @@
 	</li>
 	{{/if}}
 	{{/if}}
-  </ul>
-  <ul class="nav navbar-nav navbar-right">
-	{{#if auth.signedIn}}
+	</ul>
+	<ul class="nav navbar-nav navbar-right">
+		{{#if auth.signedIn}}
 		<li>
 			<a href="#" data-toggle="dropdown">
 			{{#if auth.user.picture}}
@@ -84,31 +84,11 @@
 				<li><a {{action "logout"}} href="#">{{icon "power-off"}} Abmelden</a></li>
 			</ul>
 		</li>
-		{{else}}
-		<li>
-			{{#link-to "login"}}{{icon "sign-in"}} Anmelden{{/link-to}}
-		</li>
 		{{/if}}
-	</ul>
+	</ul-->
 	<div class="nav navbar-nav navbar-right hidden-xs">
 		{{render "audioplayer"}}
 	</div>
 </div>
 
-
-{{!--
-
-	<div>
-		{{#if auth.signedIn}}
-			<ul class="nav navbar-nav">
-
-			</ul>
-		{{/if}}
-	</div>
-	<ul class="nav navbar-nav navbar-right">
-		<li>
-
-		</li>
-
-	</ul> --}}
 </div>

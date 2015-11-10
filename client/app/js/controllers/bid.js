@@ -235,4 +235,23 @@ define([
 		}
 
 	})
+
+	BB.NewController = Ember.ObjectController.extend({
+
+		phonevalid: function () {
+			var phone = this.get( 'model.phone' )
+			var regexp = /^\+?[\d\(\)\/\-\s]{7,}$/
+			return regexp.test( phone )
+		}.property( 'model.phone' ),
+
+		mailvalid: function () {
+			var mail = this.get( 'model.mail' )
+			var regexp = /^[A-Za-z0-9](([_\.\-]?[a-zA-Z0-9]+)*)@([A-Za-z0-9]+)(([\.\-]?[a-zA-Z0-9]+)*)\.([A-Za-z]{2,})$/
+			return regexp.test( mail )
+		}.property( 'model.mail' ),
+
+		save: function () {
+			this.get( 'content' ).save()
+		}
+	})
 })

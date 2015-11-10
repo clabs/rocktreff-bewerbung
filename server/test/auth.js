@@ -51,8 +51,10 @@ describe( 'Authentication', function() {
 				.expect( 200 )
 				.end( function ( err, res ) {
 					should.not.exist( err )
-					res.body.should.be.json
 					res.body.should.have.property( 'token' )
+					res.body.token.should.have.property( 'user' )
+					res.body.token.should.have.property( 'id' )
+					res.body.token.should.have.property( 'timestamp' )
 					done()
 				})
 		})

@@ -37,6 +37,9 @@ exports = module.exports = {
 		sideloads[ key ] = sideloads[ key ] || []
 		if ( obj instanceof Array ) {
 			sideloads[ key ] = sideloads[ key ].concat( obj )
+			// sideloads[ key ] = _.uniq( sideloads[ key ], function ( item ) {
+			// 	return item.id || item
+			// })
 		}
 		else {
 			sideloads[ key ].push( obj )

@@ -71,7 +71,7 @@ exports = module.exports = function ( name ) {
 
 
 		create: function ( item ) {
-			do { item.id = guid( 12 ) }
+			do { item.id = guid( 15 ) }
 			while ( collection.has( item.id ) )
 			item.created = ( new Date() ).toISOString()
 			return new Promise( function ( fulfill, reject ) {

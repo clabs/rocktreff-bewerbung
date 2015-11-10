@@ -1,286 +1,250 @@
-<div class="container">
-	<h1>{{#if content.bandname}}
-			{{content.bandname}}
-		{{else}}
-			Deine Band
-		{{/if}}
-		{{icon "arrow-circle-right"}}
-		<span class="gelb">{{content.event.name}}</span>
-	</h1>
-	<p>
-		Datenschutz und Rechtliches: Die Bewerbungen speichern wir maximal bis zum nächsten Rocktreff. Insbesondere werden die von Euch hochgeladenen Medien nicht veröffentlicht, ohne dass darüber eine gesonderte Vereinbarung vorliegt. Die unten auszufüllenden Kontaktdaten dienen ausschließlich der Kontaktaufnahme mit Euch und werden niemals weitergegeben.
-	</p>
-</div>
-
-<div class="section">
-	<div class="row container">
-		<h3>{{icon "group fa-lg"}} Band</h3>
-	</div>
-</div>
-
-<div class="container">
-	<div class="col-md-4">
-		<h4>Allgemeines</h4>
-		<div {{bind-attr class=":input-group content.bandname:has-success:has-error"}}>
-			<span class="input-group-addon">{{icon "group"}}</span>
-			{{input placeholder="Name der Band" value=content.bandname}}
-		</div>
-		<div class="checkbox">
-			<label>
-				{{view Ember.Checkbox checkedBinding="content.student"}} ist Schülerband
-			</label>
-		</div>
-		<div {{bind-attr class=":input-group content.style:has-success:has-error"}}>
-			<span class="input-group-addon">{{icon "music"}}</span>
-			{{input placeholder="Musikrichtung" value=content.style}}
-		</div>
+<div class="theme">
+	<div class="container">
+		<h1>{{#if content.bandname}}
+				{{content.bandname}}
+			{{else}}
+				Deine Band
+			{{/if}}
+			//
+			<span class="gelb">{{BB.currentEvent.name}}</span>
+		</h1>
 		<p>
-			Hier ist Platz für Eure Schublade!
-		</p>
-		<div {{bind-attr class=":input-group content.region:has-success:has-error"}}>
-			<span class="input-group-addon">{{icon "globe"}}</span>
-			{{view Ember.Select
-				content=BB.regions
-				valueBinding="content.region"
-				optionValuePath="content"
-				optionLabelPath="content.name"
-			}}
-		</div>
-		<p>
-			Aus welchem Bundesland kommt Ihr?
-		</p>
-
-	</div>
-	<div class="col-md-4">
-		<h4 {{bind-attr class="hasURL:has-success:has-error"}}>
-			{{icon "globe"}} Webseite
-		</h4>
-		Ihr habt eine Seite im Netz? Wir wollen sie sehen! Alternativ reicht uns Euer Facebook-Profil.
-		(Adressen immer mit <u>http://</u> vorne!)
-		<p>
-		<div {{bind-attr class=":input-group urlvalid::has-error"}}>
-			<span class="input-group-addon">{{icon "home"}}</span>
-			{{input value=content.url placeholder="http://www.meineband.com"}}
-		</div>
-		&nbsp;
-		<div {{bind-attr class=":input-group fbvalid::has-error"}}>
-			<span class="input-group-addon">{{icon "facebook"}}</span>
-			{{input value=content.fb placeholder="http://www.facebook.com/…"}}
-		</div>
+			Datenschutz und Rechtliches: Die Bewerbungen speichern wir maximal bis zum nächsten Rocktreff. Insbesondere werden die von Euch hochgeladenen Medien nicht veröffentlicht, ohne dass darüber eine gesonderte Vereinbarung vorliegt. Die bereits ausgefüllten Kontaktdaten dienen ausschließlich der Kontaktaufnahme mit Euch und werden niemals weitergegeben.
 		</p>
 	</div>
-	<div {{bind-attr class=":col-md-4 content.letter:has-success:has-error"}}>
-		<h4>{{icon "pencil"}} Warum Ihr?</h4>
-		<div class="input-group">
-			<span class="input-group-addon">{{icon "pencil"}}</span>
-			{{view Ember.TextArea value=content.letter placeholder="Hier habt Ihr kreativ die Möglichkeit in Kürze zu beschreiben warum wir uns für Euch entscheiden sollen."}}
+
+	<div class="section">
+		<div class="row container">
+			<h3>{{icon "group fa-lg"}} Band</h3>
 		</div>
 	</div>
-</div>
 
-<div class="section">
-	<div class="row container">
-		<h3>{{icon "file-text fa-lg"}} Dokumente</h3>
-	</div>
-</div>
-
-
-<div class="container">
-	{{#view BB.DocumentDropbox classNames="col-md-12"}}
-		<div class="col-xs-4">
+	<div class="container">
+		<div class="col-md-4">
+			<h4>Allgemeines</h4>
+			<div {{bind-attr class=":input-group content.bandname:has-success:has-error"}}>
+				<span class="input-group-addon">{{icon "group"}}</span>
+				{{input placeholder="Name der Band" value=content.bandname}}
+			</div>
+			<div class="checkbox">
+				<label>
+					{{view Ember.Checkbox checkedBinding="content.student"}} ist Schülerband
+				</label>
+			</div>
+			<div {{bind-attr class=":input-group content.style:has-success:has-error"}}>
+				<span class="input-group-addon">{{icon "music"}}</span>
+				{{input placeholder="Musikrichtung" value=content.style}}
+			</div>
 			<p>
-				Wir brauchen von Euch eine aussagekräftige Bandinfo. Diese enthält
-				Angaben zur Geschichte der Band. Desweiteren könnt Ihr hier Stage-
-				und auch Techrider hochladen. Letztere sind nicht notwendig für eine
-				vollständige Bewerbung – machen uns aber viel Freude.
+				Hier ist Platz für Eure Schublade!
 			</p>
-			<div {{bind-attr class=" docComplete:has-success:has-error :form-control"}}>
-				{{documents.length}}/1 Dokumenten
-				{{#if docComplete}} {{icon "check"}} {{/if}}
+			<div {{bind-attr class=":input-group content.region:has-success:has-error"}}>
+				<span class="input-group-addon">{{icon "globe"}}</span>
+				{{view Ember.Select
+					content=BB.regions
+					valueBinding="content.region"
+					optionValuePath="content"
+					optionLabelPath="content.name"
+				}}
+			</div>
+			<p>
+				Aus welchem Bundesland kommt Ihr?
+			</p>
+
+		</div>
+		<div class="col-md-4">
+			<h4 {{bind-attr class="hasURL:has-success:has-error"}}>
+				{{icon "globe"}} Webseite
+			</h4>
+			Ihr habt eine Seite im Netz? Wir wollen sie sehen! Alternativ reicht uns Euer Facebook-Profil.
+			(Adressen immer mit <u>http://</u> vorne!)
+			<p>
+			<div {{bind-attr class=":input-group urlvalid::has-error"}}>
+				<span class="input-group-addon">{{icon "home"}}</span>
+				{{input value=content.url placeholder="http://www.meineband.com"}}
+			</div>
+			&nbsp;
+			<div {{bind-attr class=":input-group fbvalid::has-error"}}>
+				<span class="input-group-addon">{{icon "facebook"}}</span>
+				{{input value=content.fb placeholder="http://www.facebook.com/…"}}
+			</div>
+			</p>
+		</div>
+		<div {{bind-attr class=":col-md-4 content.letter:has-success:has-error"}}>
+			<h4>{{icon "pencil"}} Warum Ihr?</h4>
+			<div class="input-group">
+				<span class="input-group-addon">{{icon "pencil"}}</span>
+				{{view Ember.TextArea value=content.letter placeholder="Hier habt Ihr kreativ die Möglichkeit in Kürze zu beschreiben warum wir uns für Euch entscheiden sollen."}}
+			</div>
+		</div>
+	</div>
+
+	<div class="section">
+		<div class="row container">
+			<h3>{{icon "file-text fa-lg"}} Dokumente</h3>
+		</div>
+	</div>
+
+
+	<div class="container">
+		{{#view BB.DocumentDropbox classNames="col-md-12"}}
+			<div class="col-xs-4">
+				<p>
+					Wir brauchen von Euch eine aussagekräftige Bandinfo. Diese enthält
+					Angaben zur Geschichte der Band. Desweiteren könnt Ihr hier Stage-
+					und auch Techrider hochladen. Letztere sind nicht notwendig für eine
+					vollständige Bewerbung – machen uns aber viel Freude.
+				</p>
+				<div {{bind-attr class=" docComplete:has-success:has-error :form-control"}}>
+					{{documents.length}}/1 Dokumenten
+					{{#if docComplete}} {{icon "check"}} {{/if}}
+				</div>
+				<span {{action "selectfile" target=view}} class="btn btn-default btn-sm upload">
+					{{icon "upload fa-lg"}}
+				</span>
+			</div>
+			<div class="col-xs-8 docbox">
+				<div class="overflow">
+					<ul class="list-unstyled">
+					{{#each documents}}
+						<li {{action 'open' url}}>
+							<span class="name">
+								{{icon "file"}} {{filename}}
+							</span>
+							<button class="btn btn-default btn-sm" {{action "mediaremove" this bubbles=false}}>{{icon "trash-o"}}</button>
+						</li>
+					{{/each}}
+					</ul>
+				</div>
+			</div>
+
+		{{/view}}
+	</div>
+
+
+	<div class="section">
+		<div class="row container">
+			<h3>{{icon "camera fa-lg"}} Medien</h3>
+		</div>
+	</div>
+
+
+	<div class="container">
+		<div class="col-md-4">
+			<h4>{{icon "camera-retro"}} Bilder</h4>
+			<p>
+				Wir brauchen ein aussagekräftiges Pressefoto von Euch. Dieses wird ggf. später
+				veröffentlicht. Daher sollte das Bild eine Breite oder Höhe von mehr als 1200 Pixeln
+				haben.
+			</p>
+			<p>
+				Ihr könnt auch gerne Euer Bandlogo hochladen. Dies ist aber <u>nicht</u> notwendig für die Bewerbung.
+		</div>
+		<div class="col-md-4">
+			{{#view BB.PictureDropbox}}
+				<h4 {{bind-attr class="view.valid:has-success:has-error"}}>
+					{{icon "camera"}} Pressefoto
+				</h4>
+				<div class="viewbox">
+					{{#unless view.valid}}
+						<div class="picture_warning">Bild zu klein {{icon "bolt"}}</div>
+					{{/unless}}
+					<span {{action "selectfile" target=view}} class="btn btn-default btn-sm upload">
+						{{icon "upload fa-lg"}}
+					</span>
+				</div>
+			{{/view}}
+		</div>
+		<div class="col-md-4">
+			{{#view BB.LogoDropbox}}
+				<h4 {{bind-attr class="view.valid:has-success:"}}>
+					{{icon "picture-o"}} Bandlogo
+				</h4>
+				<div class="viewbox">
+					{{#unless view.valid}}
+						<div class="picture_warning">Bild zu klein {{icon "bolt"}}</div>
+					{{/unless}}
+					<span {{action "selectfile" target=view}} class="btn btn-default btn-sm upload">
+						{{icon "upload fa-lg"}}
+					</span>
+				</div>
+			{{/view}}
+		</div>
+	</div>
+
+	<div class="spacer"></div>
+
+	<div class="container">
+		{{#view BB.AudioDropbox tagName="form"}}
+		<div class="col-md-3">
+			<h4 {{bind-attr class="musicComplete:has-success:has-error"}}>
+				{{icon "headphones"}} Musik</h4>
+			<p>
+				Welche <u>drei</u> Eurer Songs beschreiben Eure Musik am besten?
+				Uns ist es dabei egal ob die Aufnahmen aus Eurem Proberaum, dem
+				Studio, oder von der Bühne sind.
+			</p>
+			<div {{bind-attr class=" musicComplete:has-success:has-error :form-control"}}>
+				{{audio.length}}/3 Songs
+				{{#if musicComplete}} {{icon "check"}} {{/if}}
 			</div>
 			<span {{action "selectfile" target=view}} class="btn btn-default btn-sm upload">
 				{{icon "upload fa-lg"}}
 			</span>
 		</div>
-		<div class="col-xs-8 docbox">
+		<div class="col-md-5 audiobox">
 			<div class="overflow">
-				<ul class="list-unstyled">
-				{{#each documents}}
-					<li {{action 'open' url}}>
-						<span class="name">
-							{{icon "file"}} {{filename}}
-						</span>
-						<button class="btn btn-trash btn-sm" {{action "mediaremove" this bubbles=false}}>{{icon "trash-o"}}</button>
-					</li>
-				{{/each}}
-				</ul>
+			<ul class="list-inline">
+			{{#each audio}}
+				<li {{action "playaudio" this}}>
+						<div class="name">{{icon "music"}} {{filename}}</div>
+						<button class="btn btn-default btn-sm" {{action "mediaremove" this bubbles=false}}>{{icon "trash-o fa-lg"}}</button>
+				</li>
+			{{/each}}
+			</ul>
 			</div>
 		</div>
-
-	{{/view}}
-</div>
-
-
-<div class="section">
-	<div class="row container">
-		<h3>{{icon "camera fa-lg"}} Medien</h3>
-	</div>
-</div>
-
-
-<div class="container">
-	<div class="col-md-4">
-		<h4>{{icon "camera-retro"}} Bilder</h4>
-		<p>
-			Wir brauchen ein aussagekräftiges Pressefoto von Euch. Dieses wird ggf. später
-			veröffentlicht. Daher sollte das Bild eine Breite oder Höhe von mehr als 1200 Pixeln
-			haben.
-		</p>
-		<p>
-			Ihr könnt auch gerne Euer Bandlogo hochladen. Dies ist aber <u>nicht</u> notwendig für die Bewerbung.
-	</div>
-	<div class="col-md-4">
-		{{#view BB.PictureDropbox}}
-			<h4 {{bind-attr class="view.valid:has-success:has-error"}}>
-				{{icon "camera"}} Pressefoto
-			</h4>
-			<div class="viewbox">
-				{{#unless view.valid}}
-					<div class="picture_warning">Bild zu klein {{icon "bolt"}}</div>
-				{{/unless}}
-				<span {{action "selectfile" target=view}} class="btn btn-default btn-sm upload">
-					{{icon "upload fa-lg"}}
-				</span>
-			</div>
 		{{/view}}
-	</div>
-	<div class="col-md-4">
-		{{#view BB.LogoDropbox}}
-			<h4 {{bind-attr class="view.valid:has-success:"}}>
-				{{icon "picture-o"}} Bandlogo
+		<div class="col-md-4">
+			<h4 {{bind-attr class="content.youtube.length:has-success"}}>
+				{{icon "video-camera"}} Videos
 			</h4>
-			<div class="viewbox">
-				{{#unless view.valid}}
-					<div class="picture_warning">Bild zu klein {{icon "bolt"}}</div>
-				{{/unless}}
-				<span {{action "selectfile" target=view}} class="btn btn-default btn-sm upload">
-					{{icon "upload fa-lg"}}
-				</span>
-			</div>
-		{{/view}}
+			<p>
+				Habt Ihr Videos online, die Ihr uns zeigen wollt?
+				Dann fügt sie hier hinzu (Enter drücken).
+			</p>
+			<ul class="list-unstyled links">
+			{{#each content.youtube}}
+				<li>
+					<a href="{{unbound url}}" target="_blank">
+						{{icon "youtube"}} {{url}}
+					</a>
+					<span class="btn btn-default btn-xs" {{action 'mediaremove' this }}> {{icon "times"}}</span>
+				</li>
+			{{/each}}
+			</ul>
+			<form {{action 'link' on="submit"}}>
+				<div class="input-group">
+					<span class="input-group-addon">{{icon "youtube"}}</span>
+					{{input placeholder="Link" valueBinding="youtubelink"}}
+				</div>
+			</form>
+		</div>
 	</div>
+
+
+	<div class="container footer">
+		<div class="pull-right">
+			<button {{action "saveBid"}} {{bind-attr disabled=content.isClean}} class="btn btn-primary">
+				{{#if content.isSaving}}
+					{{icon "refresh fa-spinner"}}
+				{{else}}
+					{{icon "save"}}
+				{{/if}} Speichern
+			</button><br>
+			<small>zuletzt gespeicht {{fromNow content.modified}}</small>
+		</div>
+	</div>
+
+	<div class="spacer"></div>
 </div>
-
-<div class="spacer"></div>
-
-<div class="container">
-	{{#view BB.AudioDropbox tagName="form"}}
-	<div class="col-md-3">
-		<h4 {{bind-attr class="musicComplete:has-success:has-error"}}>
-			{{icon "headphones"}} Musik</h4>
-		<p>
-			Welche <u>drei</u> Eurer Songs beschreiben Eure Musik am besten?
-			Uns ist es dabei egal ob die Aufnahmen aus Eurem Proberaum, dem
-			Studio, oder von der Bühne sind.
-		</p>
-		<div {{bind-attr class=" musicComplete:has-success:has-error :form-control"}}>
-			{{audio.length}}/3 Songs
-			{{#if musicComplete}} {{icon "check"}} {{/if}}
-		</div>
-		<span {{action "selectfile" target=view}} class="btn btn-default btn-sm upload">
-			{{icon "upload fa-lg"}}
-		</span>
-	</div>
-	<div class="col-md-5 audiobox">
-		<div class="overflow">
-		<ul class="list-inline">
-		{{#each audio}}
-			<li {{action "playaudio" this}}>
-					<div class="name">{{icon "music"}} {{filename}}</div>
-					<button class="btn btn-default btn-sm" {{action "mediaremove" this bubbles=false}}>{{icon "trash-o fa-lg"}}</button>
-			</li>
-		{{/each}}
-		</ul>
-		</div>
-	</div>
-	{{/view}}
-	<div class="col-md-4">
-		<h4 {{bind-attr class="content.youtube.length:has-success"}}>
-			{{icon "video-camera"}} Videos
-		</h4>
-		<p>
-			Habt Ihr Videos online, die Ihr uns zeigen wollt?
-			Dann fügt sie hier hinzu (Enter drücken).
-		</p>
-		<ul class="list-unstyled links">
-		{{#each content.youtube}}
-			<li>
-				<a href="{{unbound url}}" target="_blank">
-					{{icon "youtube"}} {{url}}
-				</a>
-				<span class="btn btn-default btn-xs" {{action 'mediaremove' this }}> {{icon "times"}}</span>
-			</li>
-		{{/each}}
-		</ul>
-		<form {{action 'link' on="submit"}}>
-			<div class="input-group">
-				<span class="input-group-addon">{{icon "youtube"}}</span>
-				{{input placeholder="Link" valueBinding="youtubelink"}}
-			</div>
-		</form>
-	</div>
-</div>
-
-
-
-<div class="section">
-	<div class="row container">
-		<h3>{{icon "bullhorn fa-lg"}} Kontaktdaten</h3>
-	</div>
-</div>
-
-
-<div class="container">
-	<div class="col-md-4">
-		<p>
-			Um den Kontakt mit Euch zu vereinfachen, brauchen wir noch Kontaktdaten
-			des Ansprechpartners.
-		</p>
-	</div>
-	<div class="col-md-4">
-		<div {{bind-attr class=":input-group content.contact:has-success:has-error"}}>
-			<span class="input-group-addon">{{icon "user"}}</span>
-			{{input value=content.contact placeholder="Ansprechpartner"}}
-		</div>
-		<div class="checkbox-inline">
-			<label>
-				{{view Ember.Checkbox checkedBinding="content.managed"}}Bewerbung via Management
-			</label>
-		</div>
-		<div {{bind-attr class=":input-group phonevalid:has-success:has-error"}}>
-			<span class="input-group-addon">{{icon "phone"}}</span>
-			{{input value=content.phone placeholder="AAAA BBBBBB"}}
-		</div>
-		&nbsp;
-		<div {{bind-attr class=":input-group mailvalid:has-success:has-error"}}>
-			<span class="input-group-addon">{{icon "envelope"}}</span>
-			{{input value=content.mail type="email" placeholder="name@band.de"}}
-		</div>
-	</div>
-</div>
-
-
-<div class="container footer">
-	<div class="pull-right">
-		<button {{action "saveBid"}} {{bind-attr disabled=content.isClean}} class="btn btn-primary">
-			{{#if content.isSaving}}
-				{{icon "refresh fa-spinner"}}
-			{{else}}
-				{{icon "save"}}
-			{{/if}} Speichern
-		</button><br>
-		<small>zuletzt gespeicht {{fromNow content.modified}}</small>
-	</div>
-</div>
-
-<div class="spacer"></div>

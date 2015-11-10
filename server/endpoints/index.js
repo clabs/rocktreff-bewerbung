@@ -119,7 +119,7 @@ exports = module.exports = function ( app, passport ) {
 
 	app.get( '/events', EventViews.list )
 	app.post( '/events', [ adminRequired, validateJSON( 'event' ) ], EventViews.post )
-	app.get( '/events/:id', loginRequired, EventViews.get )
+	app.get( '/events/:id', EventViews.get )
 	app.del( '/events/:id', adminRequired, EventViews.del )
 	app.put( '/events/:id', [ adminRequired, validateJSON( 'event' ) ], EventViews.put )
 
@@ -150,14 +150,14 @@ exports = module.exports = function ( app, passport ) {
 
 
 	app.get( '/media', CrewRequired, MediaViews.list )
-	app.post( '/media', [ loginRequired, validateJSON( 'media' ) ], MediaViews.post )
-	app.put( '/media/:id', [ loginRequired, validateJSON( 'media' ) ], MediaViews.put )
-	app.get( '/media/:id', loginRequired, MediaViews.get )
-	app.del( '/media/:id', loginRequired, MediaViews.del )
+	app.post( '/media', validateJSON( 'media' ), MediaViews.post )
+	app.put( '/media/:id', validateJSON( 'media' ), MediaViews.put )
+	app.get( '/media/:id', MediaViews.get )
+	app.del( '/media/:id', MediaViews.del )
 
-	app.get( '/bids', loginRequired, BidViews.list )
-	app.post( '/bids', [ loginRequired, validateJSON( 'bid' ) ], BidViews.post )
-	app.get( '/bids/:id', loginRequired, BidViews.get )
+	app.get( '/bids', adminRequired, BidViews.list )
+	app.post( '/bids', validateJSON( 'bid' ), BidViews.post )
+	app.get( '/bids/:id', BidViews.get )
 	app.del( '/bids/:id', adminRequired, BidViews.del )
-	app.put( '/bids/:id', [ loginRequired, validateJSON( 'bid' ) ], BidViews.put )
+	app.put( '/bids/:id', validateJSON( 'bid' ), BidViews.put )
 }
