@@ -16,7 +16,7 @@
 
 requirejs.config({
 	paths: {
-		jquery:'vendor/jquery/jquery',
+		jquery:'vendor/jquery/dist/jquery.min',
 		handlebars:'vendor/handlebars/handlebars',
 		ember: 'vendor/ember/ember',
 		data: 'vendor/ember-data/ember-data',

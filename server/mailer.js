@@ -48,11 +48,11 @@ exports = module.exports = function ( app ) {
 	}
 
 	var greetings = function ( bid ) {
-		var subject = 'ROCKTREFF 2016 - Deine Anmeldung'
+		var subject = 'ROCKTREFF 2017 - Deine Anmeldung'
 		var text = 'Vielen Dank für Deine Anmeldung!\n\n' +
-		           'Bis zum 14.2.2015 habt Ihr Zeit Eure Bewerbung zu bearbeiten.\n\n' +
+		           'Bis zum 28.2.2017 habt Ihr Zeit Eure Bewerbung zu bearbeiten.\n\n' +
 		           'http://www.rocktreff.de/bewerben/#/bewerbung/'+ bid.id +'\n\n' +
-		           'Anfang März 2015 machen wir die Auswahl und melden uns kurz darauf bei Euch.\n\n' +
+		           'Anfang März 2017 machen wir die Auswahl und melden uns kurz darauf bei Euch.\n\n' +
 		           'Gruß Euer ROCKTREFF-Team'
 		return send( bid.mail, subject, text )
 	}

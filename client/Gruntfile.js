@@ -24,8 +24,10 @@ module.exports = function( grunt ) {
 
 	var path = require( 'path' )
 	var livereload = require( 'grunt-contrib-livereload/lib/utils' ).livereloadSnippet
-	var mount = function ( connect, dir ) {
-		return connect.static( path.resolve( dir ) )
+	var mount = function ( dir ) {
+		var serve = require( 'serve-static' )
+		var path = require( 'path' ).resolve( dir )
+		return serve( path )
 	}
 
 	//
@@ -105,30 +107,30 @@ module.exports = function( grunt ) {
 			},
 			server: {
 				options: {
-					middleware: function ( connect ) {
+					middleware: function () {
 						return [
 								livereload,
-								mount( connect, '.tmp' ),
-								mount( connect, 'app' )
+								mount( '.tmp' ),
+								mount( 'app' )
 							]
 						}
 				}
 			},
 			test: {
 				options: {
-					middleware: function ( connect ) {
+					middleware: function () {
 						return [
-							mount( connect, '.tmp' ),
-							mount( connect, 'test' )
+							mount( '.tmp' ),
+							mount( 'test' )
 						]
 					}
 				}
 			},
 			release: {
 				options: {
-					middleware: function ( connect ) {
+					middleware: function () {
 						return [
-							mount( connect, 'dist' )
+							mount( 'dist' )
 						]
 					}
 				}
@@ -296,7 +298,7 @@ module.exports = function( grunt ) {
 
 
 	grunt.registerTask( 'build', [
-		'jshint:core',
+		//'jshint:core',
 		'clean:dist',
 		'clean:release',
 		'handlebars:release',
