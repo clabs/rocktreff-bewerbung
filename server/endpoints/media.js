@@ -100,7 +100,7 @@ exports = module.exports = function ( app ) {
 				if ( err ) reject( err )
 				else {
 					media.filesize = fs.lstatSync( tmp ).size
-					media.mimetype = 'audio/mpeg'
+					media.mimetype = 'audio/aac'
 					fulfill( media )
 				}
 			})

@@ -123,9 +123,9 @@ define([
 		mail: DS.attr( 'string' ),
 		url: DS.attr( 'string' ),
 		fb: DS.attr( 'string' ),
-		media: DS.hasMany( 'media', { inverse: 'bid' }  ),
-		votes: DS.hasMany( 'vote', { inverse: 'bid' }  ),
-		notes: DS.hasMany( 'note', { inverse: 'bid' }  ),
+		media: DS.hasMany( 'media', { inverse: 'bid' } ),
+		votes: DS.hasMany( 'vote', { inverse: 'bid' } ),
+		notes: DS.hasMany( 'note', { inverse: 'bid' } ),
 
 		// computed lists & stuff
 		vote: function () {
@@ -185,7 +185,15 @@ define([
 
 		youtube: function () {
 			return this.get( 'media.content' ).filterBy( 'type', 'youtube' ) || Ember.A()
-		}.property( 'media.content.length' )
+		}.property( 'media.content.length' ),
+
+		incomplete: function () {
+			var no_bandname = this.get( 'bandname' ) === ''
+			var no_songs = this.get( 'audio' ).length === 0
+			var no_pics = !this.get( 'picture' ) && !this.get( 'logo' )
+			var no_link = !this.get( 'url' ) && !this.get( 'fb' )
+			return no_bandname || no_songs || no_pics || no_link
+		}.property( 'bandname', 'audio', 'picture', 'logo', 'url', 'fb' )
 
 	})
 

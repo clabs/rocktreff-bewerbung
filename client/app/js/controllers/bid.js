@@ -139,7 +139,6 @@ define([
 			return ( urlvalid && url !== '' ) || ( fbvalid && fb !== '' )
 		}.property( 'urlvalid', 'fbvalid', 'model.fb', 'model.url' ),
 
-
 		autoSave: function () {
 			//this.model.save()
 		}.debounce( 3000 ).observes( 'model.isDirty' ),

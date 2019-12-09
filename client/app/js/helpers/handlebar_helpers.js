@@ -32,7 +32,7 @@ define([
 	Ember.Handlebars.registerBoundHelper( 'gravatar', function ( email, options ) {
 		var hash = md5( email || 'some@one.com' )
 		var size = options.hash.size || 32
-		var img = '<img src="http://gravatar.com/avatar/%@?s=%@&d=mm" alt="Gravatar">'.fmt( hash, size )
+		var img = '<img src="https://gravatar.com/avatar/%@?s=%@&d=mm" alt="Gravatar">'.fmt( hash, size )
 		return new Ember.Handlebars.SafeString( img )
 	})
 

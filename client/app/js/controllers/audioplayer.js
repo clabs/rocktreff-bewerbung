@@ -15,11 +15,15 @@
 define([
 
 	'bb',
-	'audio5js',
+	'vendor/howler/dist/howler'
 
-], function ( BB, Audio5js ) {
+], function ( BB, HowlerJS ) {
 
 	'use strict';
+
+	var Howler = HowlerJS.Howler
+	var Howl = HowlerJS.Howl
+	var ID = 0
 
 
 	function format ( time ) {
@@ -36,28 +40,59 @@ define([
 		content: null,
 		isReady: false,
 		isPlaying: false,
+		player: null,
 
-		player: function () {
+		_timer: null,
+		startPlayerObserver: function () {
 			var controller = this
-			return new Audio5js({
-				swf_path: './swf/audio5js.swf',
-				throw_errors: true,
-				format_time: false,
-				ready: function ( player ) {
-					player = this
-					this.on( 'timeupdate', function ( position, duration ) {
-						controller.setProperties({
-							duration: duration,
-							position: position
-						})
-					})
-					player.on( 'canplay', function () {
-						controller.set( 'isReady', true )
-						player.play()
-					})
+			this._timer = setInterval( function () {
+				var player = controller.get( 'player' )
+				controller.setProperties({
+					duration: player.duration(),
+					position: player.seek()
+				})
+			}, 200)
+		},
+		stopPlayerObserver: function () {
+			clearInterval( this._timer )
+		},
+
+		loadPlayer: function ( url ) {
+			var controller = this
+			var player = this.player = new Howl({
+				src: [ url ],
+				format: 'm4a',
+				buffer: true,
+				html5: true,
+				volume: 1,
+				rate: 1,
+				autoplay: false,
+				onload: function () {
+					controller.set( 'isReady', true )
+					controller.startPlayerObserver()
+				},
+				onunload: function () {
+					controller.stopPlayerObserver()
+				},
+				onpaused: function () {
+					controller.set( 'isPlaying', false )
+					controller.stopPlayerObserver()
+				},
+				onplay: function () {
+					controller.startPlayerObserver()
+				},
+				onend: function () {
+					controller.set( 'isPlaying', false )
+					controller.stopPlayerObserver()
+				},
+				onstop: function () {
+					controller.set( 'isPlaying', false )
+					controller.stopPlayerObserver()
 				}
 			})
-		}.property(),
+			player.play()
+			return player
+		},
 
 		duration: 1,
 		position: 0,
@@ -76,19 +111,27 @@ define([
 
 
 		load: function ( media ) {
-			this.set( 'content', media )
+			var controller = this
 			var player = this.get( 'player' )
 			var url = media.get( 'url' )
-			if ( player.playing ) player.pause()
-			this.set( 'isReady', false )
-			player.load( url )
-		},
+			if ( player ) {
+				player.pause()
+				player.unload()
+			}
+			controller.set( 'content', media )
+			controller.set( 'isReady', false )
+			window.player = controller.loadPlayer( url )
+		}.debounce( 200 ),
 
 		actions: {
 			playpause: function () {
 				var player = this.get( 'player' )
-				player.playPause()
-				var playing = player.playing
+				var playing = player.playing()
+				if ( playing ) {
+					player.pause()
+				} else {
+					player.play()
+				}
 				this.set( 'playing', playing )
 			},
 			stop: function () {

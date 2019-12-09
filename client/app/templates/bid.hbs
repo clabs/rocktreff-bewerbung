@@ -1,6 +1,6 @@
 <div class="theme">
 	<div class="container">
-		<h1>{{#if content.bandname}}
+		<h1 class="bandname">{{#if content.bandname}}
 				{{content.bandname}}
 			{{else}}
 				Deine Band
@@ -234,6 +234,7 @@
 
 
 	<div class="container footer">
+		{{#if incomplete}}<h1>Bewerbung noch unvollständig</h1>{{/if}}
 		<div class="pull-right">
 			<button {{action "saveBid"}} {{bind-attr disabled=content.isClean}} class="btn btn-primary">
 				{{#if content.isSaving}}

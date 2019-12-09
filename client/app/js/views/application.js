@@ -56,7 +56,7 @@ define([
 		classNames: [ 'bid' ]
 	})
 
-	BB.BidsView = BB.UnreviewedView = Ember.View.extend({
+	BB.BidsView = BB.UnreviewedView = BB.IncompleteView = Ember.View.extend({
 		classNames: [ 'bids' ]
 	})
 

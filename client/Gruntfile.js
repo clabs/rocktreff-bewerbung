@@ -200,13 +200,12 @@ module.exports = function( grunt ) {
 						name: 'main'
 					}],
 					paths: {
-						jquery:'vendor/jquery/jquery',
+						jquery:'vendor/jquery/dist/jquery',
 						handlebars:'vendor/handlebars/handlebars',
 						ember: 'vendor/ember/ember',
 						data: 'vendor/ember-data/ember-data',
 						bootstrap: 'vendor/bootstrap/dist/js/bootstrap',
 						moment: 'vendor/moment/min/moment-with-langs.min',
-						audio5js: 'vendor/audio5js/audio5',
 						hammer: 'vendor/hammerjs/hammer.min'
 					},
 					shim: {
@@ -239,6 +238,8 @@ module.exports = function( grunt ) {
 					{ expand: true, cwd: '<%= bb.client %>', src: 'favicon.ico', dest: '<%= bb.release %>' },
 					// copy htaccess
 					{ expand: true, cwd: '<%= bb.client %>', src: '.htaccess', dest: '<%= bb.release %>' },
+					// copy fonts
+					{ expand: true, cwd: '<%= bb.client %>', flatten: true, src: 'fonts/**', dest: '<%= bb.release %>/fonts' },
 					// copy swf
 					{ expand: true, cwd: '<%= bb.client %>', flatten: true, src: 'swf/**', dest: '<%= bb.release %>/swf' }
 				]

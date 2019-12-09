@@ -28,6 +28,7 @@ define([
 			this.resource( 'BidDetails', { path: '/:bid_id/details' } )
 		})
 		this.resource( 'unreviewed', { path: '/offen' } )
+		this.resource( 'incomplete', { path: '/unvollstaendig' } )
 		this.resource( 'analysis', { path: '/auswertung' } )
 		this.resource( 'export' )
 

@@ -1,0 +1,18 @@
+<div class="left">
+	<div class="container list">
+		<div class="row">
+			<h2>
+				Unvollständig
+				<span class="badge">{{content.length}}</span>
+			</h2>
+			{{collection contentBinding="content" tagName="ul" itemViewClass="BB.BidListitemView"}}
+		</div>
+	</div>
+</div>
+<div class="right">
+	<div class="row">
+		<div class="container details">
+			{{outlet}}
+		</div>
+	</div>
+</div>

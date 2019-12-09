@@ -5,7 +5,7 @@
 // BOOTSTRAP Kram
 @import "bootstrap.less";
 @import "../js/vendor/font-awesome/less/font-awesome.less";
-@fa-font-path:                   "http://netdna.bootstrapcdn.com/font-awesome/4.0.1/fonts";
+@fa-font-path:                   "//netdna.bootstrapcdn.com/font-awesome/4.0.1/fonts";
 @brand-primary:                  darken( @gelb, 10% );
 @input-bg:                       rgba(0,0,0,0.5);
 @input-color:                    #ddd;
@@ -21,6 +21,13 @@
 @font-face {
   font-family: '321impact';
   src: url('http://rocktreff.de/fonts/321impact.otf') format('otf'), url('http://rocktreff.de/fonts/321impact.woff') format('woff');
+}
+
+@font-face {
+	font-family: 'big_noodle_titling';
+	src: url( '../fonts/big_noodle_titling.ttf' ) format( 'ttf' ),
+		 url( '../fonts/big_noodle_titling.otf' ) format( 'otf' ),
+		 url( '../fonts/big_noodle_titling.woff' ) format( 'woff' );
 }
 
 @easing_function:     cubic-bezier(0.785, 0.135, 0.15, 0.86);
@@ -110,14 +117,24 @@ body {
 
 	> .viewport {
 		width: 100vw;
+		margin-top: 55px;
+	}
+}
+
+h4 {
+	font-family: 'big_noodle_titling', Arial, sans-serif;
+	font-size: 1.4em;
+	&:after {
+		content: " __";
+		color: @gelb;
 	}
 }
 
 .theme {
 	position: absolute;
-	background-image: url( "../images/home1.jpg" );
-	background-size: cover;
-	background-position-x: center;
+	background-image: url( "../images/bgtextur.png" );
+	//background-size: cover;
+	//background-position-x: center;
 	top: 0;
 	bottom: 0;
 	left: 0;
@@ -131,6 +148,7 @@ body {
 }
 
 .navbar {
+	background-color: black;
 	margin: 0;
 	border-bottom: 1px solid transparent;
 }
@@ -152,7 +170,7 @@ body {
 }
 
 .navbar-inverse {
-	background: transparent;
+	background: black;
 }
 
 .navbar-collapse {
@@ -177,7 +195,7 @@ ul.nav > li > a {
 		padding: 48px 0;
 
 		h1 {
-			font-family: "321impact", Impact, Arial, sans-serif;
+			font-family: 'big_noodle_titling', Arial, sans-serif;
 		}
 
 		.container {
@@ -201,19 +219,19 @@ ul.nav > li > a {
 		background-position: 50%;
 		background-size: cover;
 		background-repeat: no-repeat;
+		background-attachment: fixed;
 		height: 100vh;
 		background-color: black;
 
 		&.teaser {
 			text-align: center;
 			text-shadow: 0 0 30px #000;
+			font-family: 'big_noodle_titling', Arial, sans-serif;
 			h1 {
-				font-family: Impact, Arial, sans-serif;
 				font-size: 5em !important;
 				color: @gelb;
 			}
 			h3 {
-				font-family: "321impact", Impact, Arial, sans-serif;
 				font-size: 3em !important;
 				margin-top: 0px;
 			}
@@ -231,13 +249,19 @@ ul.nav > li > a {
 		font-size: 11px;
 
 		.heading {
-			font-size: 1.3em;
-			color: @gelb;
+			font-family: 'big_noodle_titling', Arial, sans-serif;
+			font-size: 2em;
+			color: white;
 			text-align: left;
-			border-top: 1px solid @gelb;
+
+			&:after {
+				color: @gelb;
+				content: " __";
+			}
 		}
 		img {
 			max-width: 170px;
+			margin-top: 10px;
 			margin-right: 10px;
 		}
 	}
@@ -332,15 +356,23 @@ ul.nav > li > a {
 		}
 	}
 
+	.bandname {
+		font-family: 'big_noodle_titling', Arial, sans-serif;
+	}
+
 	.section {
 		margin: 40px 0 40px 0;
 		padding: 0px 80px 10px;
+		font-family: 'big_noodle_titling', Arial, sans-serif;
 		background-color: @gelb;
 		.transform( rotate(-1.2deg) );
 		box-shadow: 0 5px 30px black;
 
 		h3, i {
 			color: #000;
+		}
+		h3 {
+			font-size: 1.4em;
 		}
 
 		.container {
@@ -368,12 +400,12 @@ ul.nav > li > a {
 	}
 
 	.has-success {
-		.fa { color: @state-success-text !important; }
+		//.fa { color: @state-success-text !important; }
 		border-color: @state-success-text;
 	}
 
 	.has-error {
-		.fa { color: @state-danger-text !important; }
+		//.fa { color: @state-danger-text !important; }
 		border-color: @state-danger-text;
 	}
 }
@@ -382,7 +414,7 @@ ul.nav > li > a {
 .newbid {
 
 	h1 {
-		font-family: "321impact", Impact, Arial, sans-serif;
+		font-family: 'big_noodle_titling', Arial, sans-serif;
 		font-size: 4em;
 		color: @gelb;
 	}
@@ -434,7 +466,7 @@ ul.nav > li > a {
 			right: 2px;
 		}
 
-		ul { margin-top: 15px; }
+		ul { margin-top: 15px; margin-left: 0 ; }
 
 		li {
 			text-align: left;
@@ -512,12 +544,12 @@ ul.nav > li > a {
 	}
 
 	.has-success {
-		.fa { color: @state-success-text !important; }
+		//.fa { color: @state-success-text !important; }
 		border-color: @state-success-text;
 	}
 
 	.has-error {
-		.fa { color: @state-danger-text !important; }
+		//.fa { color: @state-danger-text !important; }
 		border-color: @state-danger-text;
 	}
 }
@@ -727,7 +759,7 @@ ul.nav > li > a {
 				max-width: 100%;
 				font-size: 1.5em;
 				font-weight: bolder;
-				font-family: Arial, sans-serif;
+				font-family: 'big_noodle_titling',Arial, sans-serif;
 				text-shadow: 1px 1px 7px #000;
 				padding: 3px 10px;
 				background-color: rgba(0,0,0,0.8);

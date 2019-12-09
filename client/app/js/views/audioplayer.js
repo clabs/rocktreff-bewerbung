@@ -14,10 +14,9 @@
  */
 define([
 
-	'bb',
-	'audio5js'
+	'bb'
 
-], function ( BB, audio5js ) {
+], function ( BB ) {
 
 	'use strict';
 

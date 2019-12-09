@@ -186,7 +186,18 @@ define([
 		model: function ( params ) {
 			return this.store.find( 'bid' ).then( function ( bids ) {
 				return bids.filter( function ( bid ) {
-					return !bid._data.track
+					return !bid._data.track && !bid.get( 'incomplete' )
+				})
+			})
+		}
+	})
+
+
+	BB.IncompleteRoute = BB.AuthenticatedRoute.extend({
+		model: function ( params ) {
+			return this.store.find( 'bid' ).then( function ( bids ) {
+				return bids.filter( function ( bid ) {
+					return bid.get( 'incomplete' )
 				})
 			})
 		}
