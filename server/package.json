@@ -12,7 +12,7 @@
   },
   "devDependencies": {
     "ministore": "~0.0.5",
-    "express": "~3.4.0",
+    "express": "~4.17.1",
     "socket.io": "~0.9.16",
     "passport-local": "~0.1.6",
     "passport-facebook": "~1.0.3",
