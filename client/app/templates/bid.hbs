@@ -57,16 +57,16 @@
 				{{icon "globe"}} Webseite
 			</h4>
 			Ihr habt eine Seite im Netz? Wir wollen sie sehen! Alternativ reicht uns Euer Facebook-Profil.
-			(Adressen immer mit <u>http://</u> vorne!)
+			(Adressen immer mit <u>https://</u> vorne!)
 			<p>
 			<div {{bind-attr class=":input-group urlvalid::has-error"}}>
 				<span class="input-group-addon">{{icon "home"}}</span>
-				{{input value=content.url placeholder="http://www.meineband.com"}}
+				{{input value=content.url placeholder="https://www.meineband.com"}}
 			</div>
 			&nbsp;
 			<div {{bind-attr class=":input-group fbvalid::has-error"}}>
 				<span class="input-group-addon">{{icon "facebook"}}</span>
-				{{input value=content.fb placeholder="http://www.facebook.com/…"}}
+				{{input value=content.fb placeholder="https://www.facebook.com/…"}}
 			</div>
 			</p>
 		</div>

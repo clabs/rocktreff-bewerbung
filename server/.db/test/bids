@@ -14,7 +14,7 @@
       "name": "Rob",
       "phone": "+49 123 4567890",
       "mail": "me@robnroll.de",
-      "url": "http://www.robnroll.de",
+      "url": "https://www.robnroll.de",
       "fb": ""
     },
     "picture": "",
@@ -35,7 +35,7 @@
       "name": "Some One",
       "phone": "+49 123 4567890",
       "mail": "some@one.com",
-      "url": "http://www.one.com",
+      "url": "https://www.one.com",
       "fb": ""
     },
     "picture": "",
